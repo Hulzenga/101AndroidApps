@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <tags>
+    </tags>
+
+    <apps>
+        <app
+            id="1"
+            name="Hello World"
+            class="HelloWorld"
+            description="displays the world famous hello world string" />
+        <app
+            id="2"
+            name="Bouncy Ball"
+            class="BouncyBall"
+            description="click to make bouncy balls" />
+        <app
+            id="3"
+            name="Monster Database"
+            class=""
+            description="A simple crud app which keeps track of a list of monsters" />
+    </apps>
+
+</resources>
