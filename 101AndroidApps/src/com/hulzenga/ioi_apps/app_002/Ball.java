@@ -1,10 +1,7 @@
 package com.hulzenga.ioi_apps.app_002;
 
-import android.util.Log;
 
 public class Ball {
-
-	private static final String TAG = "BALL";
 	
 	//fundamental physical properties
 	private static final float MIN_RADIUS = 35.0f;

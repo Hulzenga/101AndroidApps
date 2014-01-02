@@ -9,33 +9,42 @@
     tools:context=".MonsterDatabaseActivity" >
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/app_003_inputLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical" >
 
         <EditText
-            android:id="@+id/monsterName"
+            android:id="@+id/app_003_monsterName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/app_003_setRandomMonsterName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="setInputToRandomMonsterName"
+            android:src="@drawable/ic_launcher" />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/app_003_addMonsterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="addMonster"
-            android:text="Button" />
+            android:text="@string/app_003_addMonsterButton" />
     </LinearLayout>
 
     <ListView
-        android:id="@+id/monsterList"
+        android:id="@+id/app_003_monsterList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout1"
-        android:layout_below="@+id/linearLayout1" >
+        android:layout_alignLeft="@+id/app_003_inputLayout"
+        android:layout_below="@+id/app_003_inputLayout" >
     </ListView>
 
 </RelativeLayout>

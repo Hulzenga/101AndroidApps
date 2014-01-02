@@ -6,19 +6,19 @@
 
     <apps>
         <app
-            id="1"
+            id="0"
             name="Hello World"
-            class="HelloWorld"
+            class="com.hulzenga.ioi_apps.app_001.HelloWorldActivity"
             description="displays the world famous hello world string" />
         <app
-            id="2"
+            id="1"
             name="Bouncy Ball"
-            class="BouncyBall"
+            class="com.hulzenga.ioi_apps.app_002.BouncyBallsActivity"
             description="click to make bouncy balls" />
         <app
-            id="3"
+            id="2"
             name="Monster Database"
-            class=""
+            class="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
             description="A simple crud app which keeps track of a list of monsters" />
     </apps>
 

@@ -7,19 +7,18 @@
     android:gravity="center_vertical" >
 
     <TextView
-        android:id="@+id/monsterItemName"
+        android:id="@+id/app_003_monsterItemName"
         android:layout_width="0dp"
-        android:layout_weight="1.0"
         android:layout_height="wrap_content"
-        android:background="#111122"
-        android:ems="10"
-        android:enabled="false" />
+        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageButton
-        android:id="@+id/editButton"
+        android:id="@+id/app_003_editButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_003_edit_description"
+        android:onClick="editMonsterName"
         android:src="@android:drawable/ic_menu_edit" />
 
     <ImageButton
@@ -27,6 +26,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_003_remove_description"
+        android:onClick="removeMonster"
         android:src="@android:drawable/ic_menu_delete" />
-
-</LinearLayout>
+</LinearLayout>

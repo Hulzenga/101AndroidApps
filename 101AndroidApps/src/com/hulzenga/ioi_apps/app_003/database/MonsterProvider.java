@@ -3,8 +3,6 @@ package com.hulzenga.ioi_apps.app_003.database;
 import static com.hulzenga.ioi_apps.app_003.database.MonsterContract.COLUMN_MONSTER_ID;
 import static com.hulzenga.ioi_apps.app_003.database.MonsterContract.TABLE_MONSTERS;
 import static com.hulzenga.ioi_apps.app_003.database.MonsterContract.VALID_COLUMNS;
-
-
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -113,15 +111,16 @@ public class MonsterProvider extends ContentProvider{
 		case MONSTER_ID:
 			String id = uri.getLastPathSegment();
 			if(TextUtils.isEmpty(selection)) {
-				rowsDeleted = db.delete(TABLE_MONSTERS, MONSTER_ID + "=" + id, null);
+				rowsDeleted = db.delete(TABLE_MONSTERS, COLUMN_MONSTER_ID + " = " + id, null);
 			} else {
-				rowsDeleted = db.delete(TABLE_MONSTERS, MONSTER_ID + "=" + id + " and " + selection, selectionArgs);
+				rowsDeleted = db.delete(TABLE_MONSTERS, COLUMN_MONSTER_ID + " = " + id + " and " + selection, selectionArgs);
 			}
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
+		
 		return rowsDeleted;
 	}	
 

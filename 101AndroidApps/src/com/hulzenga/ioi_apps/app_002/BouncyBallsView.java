@@ -52,7 +52,6 @@ public class BouncyBallsView extends View implements OnTouchListener {
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		// TODO Auto-generated method stub
 		super.onDraw(canvas);
 		
 		synchronized(lock) {
@@ -61,8 +60,7 @@ public class BouncyBallsView extends View implements OnTouchListener {
 			}
 			if (mBallSelected) {
 				drawBall(canvas, mSelectedBall);
-			}
-			
+			}			
 		}					
 	}
 	

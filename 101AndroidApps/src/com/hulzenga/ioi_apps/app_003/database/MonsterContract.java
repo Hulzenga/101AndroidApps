@@ -3,9 +3,6 @@ package com.hulzenga.ioi_apps.app_003.database;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 public class MonsterContract {	
 	
 	//this class can not be instantiated

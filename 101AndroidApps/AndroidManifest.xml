@@ -32,6 +32,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_002.BouncyBallsActivity"
+            android:label="@string/app_002_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -39,6 +40,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
+            android:label="@string/app_003_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
