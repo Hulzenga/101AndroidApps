@@ -3,6 +3,9 @@ package com.hulzenga.ioi_apps.app_003.database;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * Contract definition for the Monster Database
+ */
 public class MonsterContract {	
 	
 	//this class can not be instantiated

@@ -7,8 +7,11 @@
     <string name="app_001_hello_world">Hello world!</string>
     <string name="app_002_title">Bouncy Ball</string>
     <string name="app_003_title">Monster Database</string>
+    <string name="app_003_editTextHint">monster name</string>
     <string name="app_003_remove_description">this button removes this monster from the database</string>
     <string name="app_003_edit_description">this button opens an edit dialog to change the monster name</string>
-    <string name="app_003_addMonsterButton">add monster </string>
+    <string name="app_003_edit_dialog">confirm edit</string>
+    <string name="app_003_randomMonsterButton">random</string>
+    <string name="app_003_addMonsterButton">add monster</string>
     <string name="app_003_noNameWarning">Due to contractual obligations the monster with no name cannot appear in this database</string>
-</resources>
+</resources>

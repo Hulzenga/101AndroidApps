@@ -17,22 +17,24 @@
         android:gravity="center_vertical" >
 
         <EditText
-            android:id="@+id/app_003_monsterName"
+            android:id="@+id/app_003_monsterEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:inputType="text" />
-
-        <ImageButton
-            android:id="@+id/app_003_setRandomMonsterName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="setInputToRandomMonsterName"
-            android:src="@drawable/ic_launcher" />
+            android:hint="@string/app_003_editTextHint"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
-            android:id="@+id/app_003_addMonsterButton"
+            android:id="@+id/app_003_randomButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="setRandomMonster"
+            android:text="@string/app_003_randomMonsterButton" />
+
+        <Button
+            android:id="@+id/app_003_addButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="addMonster"

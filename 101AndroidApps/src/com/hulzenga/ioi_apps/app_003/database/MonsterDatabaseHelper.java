@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import static com.hulzenga.ioi_apps.app_003.database.MonsterContract.*;
 
-
+/**
+ * SQLiteOpenHelper to guarantee existance of an up to date database 
+ */
 public class MonsterDatabaseHelper extends SQLiteOpenHelper {
 	
 	private static final String TAG 				= "MONSTER_DATABASE_HELPER";

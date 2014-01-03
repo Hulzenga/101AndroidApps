@@ -41,6 +41,7 @@
         <activity
             android:name="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
             android:label="@string/app_003_title"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

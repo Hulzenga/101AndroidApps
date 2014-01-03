@@ -13,6 +13,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+/**
+ * Provider for the underlying MonsterDatabase as defined in the contract
+ */
 public class MonsterProvider extends ContentProvider{
 
 	//our monster database
@@ -136,9 +139,9 @@ public class MonsterProvider extends ContentProvider{
 		case MONSTER_ID:
 			String id = uri.getLastPathSegment();
 			if(TextUtils.isEmpty(selection)) {
-				rowsUpdated = db.update(TABLE_MONSTERS, values, MONSTER_ID + "=" + id, null);
+				rowsUpdated = db.update(TABLE_MONSTERS, values, COLUMN_MONSTER_ID + "=" + id, null);
 			} else {
-				rowsUpdated = db.update(TABLE_MONSTERS, values, MONSTER_ID + "=" + id + " and " + selection, selectionArgs);
+				rowsUpdated = db.update(TABLE_MONSTERS, values, COLUMN_MONSTER_ID + "=" + id + " and " + selection, selectionArgs);
 			}
 			break;
 		default:
