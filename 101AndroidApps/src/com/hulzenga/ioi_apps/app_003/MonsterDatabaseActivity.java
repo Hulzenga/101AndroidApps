@@ -24,7 +24,13 @@ import com.hulzenga.ioi_apps.app_003.database.MonsterContract;
 import com.hulzenga.ioi_apps.app_003.database.MonsterProvider;
 
 /**
- * A simple CRUD app which keeps track of a list of monsters
+ * A simple CRUD app which keeps track of a list of monsters.
+ * 
+ * A good bit of the code for this app is based on/ispired by Lars Vogel's
+ * excellent "Android SQLite database and content provider" available at <a
+ * href=
+ * "http://www.vogella.com/articles/AndroidSQLite/article.html">http://www.
+ * vogella.com/articles/AndroidSQLite/article.html</a >
  */
 public class MonsterDatabaseActivity extends DemoActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         EditDialogListener {
@@ -102,6 +108,7 @@ public class MonsterDatabaseActivity extends DemoActivity implements LoaderManag
 
     /**
      * This method sets the input monster name to a random monster name
+     * 
      * @param v
      */
     public void setRandomMonster(View v) {
@@ -120,7 +127,9 @@ public class MonsterDatabaseActivity extends DemoActivity implements LoaderManag
     }
 
     /**
-     * Inserts the monster name currently in the mMonsterEditText into the underlying ContentProvider 
+     * Inserts the monster name currently in the mMonsterEditText into the
+     * underlying ContentProvider
+     * 
      * @param view
      */
     public void addMonster(View view) {
@@ -153,7 +162,7 @@ public class MonsterDatabaseActivity extends DemoActivity implements LoaderManag
     public void onLoaderReset(Loader<Cursor> cursor) {
         mAdapter.swapCursor(null);
     }
-    
+
     @Override
     public void onEditDialogPositiveClick(Bundle arguments) {
         String monsterName = arguments.getString(MonsterEditDialog.ARGUMENT_NAME);

@@ -12,7 +12,7 @@
             description="displays the world famous hello world string" />
         <app
             id="1"
-            name="Bouncy Ball"
+            name="Bouncy Balls"
             class="com.hulzenga.ioi_apps.app_002.BouncyBallsActivity"
             description="click to make bouncy balls" />
         <app
@@ -20,6 +20,11 @@
             name="Monster Database"
             class="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
             description="A simple crud app which keeps track of a list of monsters" />
+        <app
+            id="3"
+            name="3D Bouncy Ball"
+            class="com.hulzenga.ioi_apps.app_004.BouncyBall3dActivity"
+            description="Basic OpenGL ES 2.0 scene, showing a bouncy ball" />
     </apps>
 
 </resources>

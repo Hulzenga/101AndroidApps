@@ -41,18 +41,26 @@
         <activity
             android:name="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
             android:label="@string/app_003_title"
-            android:windowSoftInputMode="stateAlwaysHidden"
+            android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+        </activity>
+        <provider
+            android:name="com.hulzenga.ioi_apps.app_003.database.MonsterProvider"
+            android:authorities="com.hulzenga.ioi_androdiapps.app_003.database.monsterprovider"
+            android:exported="false" >
+        </provider>
+        
+        <activity
+            android:name="com.hulzenga.ioi_apps.app_004.BouncyBall3dActivity"
+            android:label="@string/app_004_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
-
-        <provider
-            android:name="com.hulzenga.ioi_apps.app_003.database.MonsterProvider"
-            android:authorities="com.hulzenga.ioi_androdiapps.app_003.database.monsterprovider"
-            android:exported="false" >
-        </provider>
     </application>
 
 </manifest>
