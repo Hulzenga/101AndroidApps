@@ -28,7 +28,7 @@
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContentsActivity" />
+                android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_002.BouncyBallsActivity"
