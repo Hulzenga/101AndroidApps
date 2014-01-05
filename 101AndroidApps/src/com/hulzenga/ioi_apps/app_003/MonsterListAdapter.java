@@ -3,7 +3,6 @@ package com.hulzenga.ioi_apps.app_003;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 
