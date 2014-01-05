@@ -1,32 +1,7 @@
 package com.hulzenga.ioi_apps.app_004;
 
-import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
-import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
-import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
-import static android.opengl.GLES20.GL_LINK_STATUS;
-import static android.opengl.GLES20.GL_TRIANGLES;
-import static android.opengl.GLES20.GL_VERTEX_SHADER;
-import static android.opengl.GLES20.glAttachShader;
-import static android.opengl.GLES20.glBindAttribLocation;
-import static android.opengl.GLES20.glClear;
-import static android.opengl.GLES20.glClearColor;
-import static android.opengl.GLES20.glCreateProgram;
-import static android.opengl.GLES20.glCreateShader;
-import static android.opengl.GLES20.glDeleteProgram;
-import static android.opengl.GLES20.glDrawArrays;
-import static android.opengl.GLES20.glEnableVertexAttribArray;
-import static android.opengl.GLES20.glGetAttribLocation;
-import static android.opengl.GLES20.glGetProgramiv;
-import static android.opengl.GLES20.glGetUniformLocation;
-import static android.opengl.GLES20.glLinkProgram;
-import static android.opengl.GLES20.glUniformMatrix4fv;
-import static android.opengl.GLES20.glUseProgram;
-import static android.opengl.GLES20.glVertexAttribPointer;
+import static android.opengl.GLES20.*;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -36,7 +11,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
-import com.hulzenga.ioi_apps.util.open_gl.ShaderTool;
+import com.hulzenga.ioi_apps.util.open_gl.RenderObject;
+import com.hulzenga.ioi_apps.util.open_gl.ShaderTools;
 import com.hulzenga.ioi_apps.util.open_gl.ShapeFactory;
 
 public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
@@ -50,16 +26,9 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
     private float[]     mMVPMatrix        = new float[16];
 
     private int         mMVPMatrixHandle;
-    private int         mPositionHandle;
-
-    private float[]     triangleVertices  = { -0.5f, -0.25f, 0.0f, 0.5f, -0.25f, 0.0f, 0.0f, 0.559016994f, 0.0f };
-    private FloatBuffer triangleBuffer    = ByteBuffer.allocateDirect(36).order(ByteOrder.nativeOrder())
-                                                  .asFloatBuffer();
-    {
-        triangleBuffer.put(triangleVertices).position(0);
-    }
+    private int         mPositionHandle;    
     
-    private FloatBuffer sphere = ShapeFactory.sphere(1.0f, 16, 0);
+    private RenderObject sphere = ShapeFactory.sphere(1.0f, 16, 0);
     
     
     public BouncyBall3dRenderer(Context context) {
@@ -68,7 +37,13 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
-
+        
+        //glEnable(GL_CULL_FACE);
+        //glCullFace(GL_BACK);
+        
+        //enable depth testing
+        glEnable(GL_DEPTH_TEST);
+        
         // Position the eye behind the origin.
         final float eyeX = 0.0f;
         final float eyeY = 0.0f;
@@ -88,16 +63,14 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
         // Set the view matrix. This matrix represents the camera position.
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
 
-       
-        
-        final String vertexShader = ShaderTool.readShader(context, "app_004/simple.vert");
-        final String fragmentShader = ShaderTool.readShader(context, "app_004/simple.frag");
+        final String vertexShader = ShaderTools.readShader(context, "app_004/simple.vert");
+        final String fragmentShader = ShaderTools.readShader(context, "app_004/simple.frag");
 
         int vertexShaderHandle = glCreateShader(GL_VERTEX_SHADER);
         int fragmentShaderHandle = glCreateShader(GL_FRAGMENT_SHADER);
 
-        ShaderTool.compileShader(vertexShaderHandle, vertexShader);
-        ShaderTool.compileShader(fragmentShaderHandle, fragmentShader);
+        ShaderTools.compileShader(vertexShaderHandle, vertexShader);
+        ShaderTools.compileShader(fragmentShaderHandle, fragmentShader);
 
         int programHandle = glCreateProgram();
 
@@ -147,9 +120,9 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
         glClearColor(0.5f, 0.5f, 1.0f, 2.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        sphere.position(0);
+        sphere.getVertexBuffer().position(0);
         
-        glVertexAttribPointer(mPositionHandle, 3, GL_FLOAT, false, 0, sphere);
+        glVertexAttribPointer(mPositionHandle, 3, GL_FLOAT, false, 0, sphere.getVertexBuffer());
         glEnableVertexAttribArray(mPositionHandle);
         
         final double time = (double) (SystemClock.uptimeMillis() % 10000L);
@@ -161,8 +134,9 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mVPMatrix, 0);
         glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
-        glDrawArrays(GL_TRIANGLES, 0, sphere.capacity()/3);
+        glDrawArrays(GL_TRIANGLES, 0, sphere.getNumberOfVertices());
 
+        
     }
     
     private volatile float mAngle;

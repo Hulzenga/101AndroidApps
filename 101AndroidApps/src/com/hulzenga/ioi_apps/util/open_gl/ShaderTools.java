@@ -8,13 +8,13 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
-public class ShaderTool {
+public class ShaderTools {
     private static final String TAG                   = "SHADER_LOADER";
 
     private static final String SHADER_BASE_DIRECTORY = "shaders/";
 
-    // ShaderTool cannot be instantiated
-    private ShaderTool() {
+    // ShaderTools cannot be instantiated
+    private ShaderTools() {
     }
 
     public static String readShader(Context context, String file) {

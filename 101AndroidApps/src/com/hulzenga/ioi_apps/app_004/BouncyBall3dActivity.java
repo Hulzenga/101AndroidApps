@@ -1,6 +1,5 @@
 package com.hulzenga.ioi_apps.app_004;
 
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
 import com.hulzenga.ioi_apps.DemoActivity;
@@ -16,7 +15,6 @@ public class BouncyBall3dActivity extends DemoActivity {
         mGLSurfaceView = new BouncyBall3dGLSurfaceView(this);
         //mGLSurfaceView.setEGLContextClientVersion(2);
         
-
         setContentView(mGLSurfaceView);
     }
 
