@@ -56,8 +56,8 @@ public class ShapeFactory {
         short[] indices = new short[segments*3];
         
         for(int i = 0; i < segments-1; i++) {
-            indices[i*3+0] = (short) i;
-            indices[i*3+1] = (short) (i+1);
+            indices[i*3+0] = (short) (i+1);
+            indices[i*3+1] = (short) (i+2);
             indices[i*3+2] = (short) 0;
         }
         

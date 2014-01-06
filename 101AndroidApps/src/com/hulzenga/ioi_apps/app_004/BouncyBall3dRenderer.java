@@ -36,6 +36,20 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
     }
 
     @Override
+    public void onSurfaceChanged(GL10 arg0, int width, int height) {
+    
+        final float ratio = ((float) width) / ((float) height);
+        final float left = -ratio;
+        final float right = ratio;
+        final float bottom = -1.0f;
+        final float top = 1.0f;
+        final float near = 1.0f;
+        final float far = 10.0f;
+    
+        Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
+    }
+
+    @Override
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         
         //glEnable(GL_CULL_FACE);
@@ -101,28 +115,15 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
     }
 
     @Override
-    public void onSurfaceChanged(GL10 arg0, int width, int height) {
-
-        final float ratio = ((float) width) / ((float) height);
-        final float left = -ratio;
-        final float right = ratio;
-        final float bottom = -1.0f;
-        final float top = 1.0f;
-        final float near = 1.0f;
-        final float far = 10.0f;
-
-        Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
-    }
-
-    @Override
     public void onDrawFrame(GL10 arg0) {
 
         glClearColor(0.5f, 0.5f, 1.0f, 2.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         sphere.getVertexBuffer().position(0);
+        sphere.getIndexBuffer().position(0);
         
-        glVertexAttribPointer(mPositionHandle, 3, GL_FLOAT, false, 0, sphere.getVertexBuffer());
+        glVertexAttribPointer(mPositionHandle, 3, GL_FLOAT, false, sphere.getStride(), sphere.getVertexBuffer());
         glEnableVertexAttribArray(mPositionHandle);
         
         final double time = (double) (SystemClock.uptimeMillis() % 10000L);
@@ -134,7 +135,9 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mVPMatrix, 0);
         glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
-        glDrawArrays(GL_TRIANGLES, 0, sphere.getNumberOfVertices());
+        
+        glDrawElements(GL_POINTS, 2, GL_UNSIGNED_SHORT, sphere.getIndexBuffer());
+        //glDrawArrays(GL_TRIANGLES, 0, sphere.getNumberOfVertices());
 
         
     }

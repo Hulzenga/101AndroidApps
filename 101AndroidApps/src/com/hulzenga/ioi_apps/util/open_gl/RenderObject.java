@@ -76,7 +76,7 @@ public class RenderObject {
             Log.e(TAG, "texture coordinate array has invalid length");
             return;
         } else {
-            mTextured = true;
+            mTextured = true;            
         }
 
         /*
@@ -84,26 +84,26 @@ public class RenderObject {
          * the mStride
          */
 
-        int stride = 0;
+        int floatStride = 0;
 
         { // braces for style
-            mVertexOffset = stride;
-            stride += FLOATS_PER_VERTEX;
+            mVertexOffset = floatStride;
+            floatStride += FLOATS_PER_VERTEX;
         }
         if (mColored) {
-            mColorOffset = stride;
-            stride += FLOATS_PER_COLOR;
+            mColorOffset = floatStride;
+            floatStride += FLOATS_PER_COLOR;
         }
         if (mNormal) {
-            mNormalOffset = stride;
-            stride += FLOATS_PER_NORMAL;
+            mNormalOffset = floatStride;
+            floatStride += FLOATS_PER_NORMAL;
         }
         if (mTextured) {
-            mTextureOffset = stride;
-            stride += FLOATS_PER_TEXTURE_COORDINATE;
+            mTextureOffset = floatStride;
+            floatStride += FLOATS_PER_TEXTURE_COORDINATE;
         }
 
-        mStride = stride;
+        
 
         /*
          * allocate and fill mVertexBuffer
@@ -115,16 +115,16 @@ public class RenderObject {
 
         for (int i = 0; i < mNumberOfVertices; i++) {
             {// braces for style
-                mVertexBuffer.put(vertices, i * mStride + mVertexOffset, FLOATS_PER_VERTEX);
+                mVertexBuffer.put(vertices, i * floatStride + mVertexOffset, FLOATS_PER_VERTEX);
             }
             if (mColored) {
-                mVertexBuffer.put(vertices, i * mStride + mColorOffset, FLOATS_PER_COLOR);
+                mVertexBuffer.put(vertices, i * floatStride + mColorOffset, FLOATS_PER_COLOR);
             }
             if (mNormal) {
-                mVertexBuffer.put(vertices, i * mStride + mNormalOffset, FLOATS_PER_NORMAL);
+                mVertexBuffer.put(vertices, i * floatStride + mNormalOffset, FLOATS_PER_NORMAL);
             }
             if (mTextured) {
-                mVertexBuffer.put(vertices, i * mStride + mTextureOffset, FLOATS_PER_TEXTURE_COORDINATE);
+                mVertexBuffer.put(vertices, i * floatStride + mTextureOffset, FLOATS_PER_TEXTURE_COORDINATE);
             }
         }
 
@@ -132,6 +132,9 @@ public class RenderObject {
         mIndexBuffer = ByteBuffer.allocateDirect(indices.length * BYTES_PER_SHORT).order(ByteOrder.nativeOrder())
                 .asShortBuffer();
         mIndexBuffer.put(indices);
+        
+        //setup stride (very confusing that this has to be in bytes while the rest is in floats)
+        mStride = floatStride*BYTES_PER_FLOAT; 
     }
 
     public boolean hasColor() {
