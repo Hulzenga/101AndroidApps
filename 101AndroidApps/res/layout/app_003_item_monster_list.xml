@@ -27,5 +27,4 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_003_remove_description"
         android:onClick="removeMonster"
-        android:src="@android:drawable/ic_menu_delete" />
-</LinearLayout>
+        android:src="@android:drawable/ic_menu_delete" /></LinearLayout>

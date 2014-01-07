@@ -30,14 +30,14 @@ public class ShapeFactory {
 
         for (int i = 0; i < slices; i++) {
 
-            final float rScale = (float) Math.sin((i + 1) * Math.PI / (slices + 1));
-            final float segmentHeight = (float) Math.cos((i + 1) * Math.PI / (slices + 1));
+            final float rScale = (float) (radius * Math.sin((i + 1) * Math.PI / (slices + 1)));
+            final float segmentHeight = (float) (radius * Math.cos((i + 1) * Math.PI / (slices + 1)));
 
             for (int j = 0; j < segments; j++) {
                 vertices.add(new Vec3<Float>(
-                        rScale * radius * ((float) Math.sin(j * 2.0 * Math.PI / segments)),
+                        rScale * ((float) Math.sin(j * 2.0 * Math.PI / segments)),
                         segmentHeight,
-                        rScale * radius * ((float) Math.cos(j * 2.0 * Math.PI / segments))
+                        rScale * ((float) Math.cos(j * 2.0 * Math.PI / segments))
                         ));
             }
         }
@@ -93,17 +93,17 @@ public class ShapeFactory {
                 indices.add((short) (i * segments + j + 1));
                 indices.add((short) (i * segments + j + 2));
                 indices.add((short) ((i - 1) * segments + j + 1));
-                
+
                 indices.add((short) (i * segments + j + 2));
                 indices.add((short) ((i - 1) * segments + j + 2));
-                indices.add((short) ((i - 1) * segments + j + 1));       
-                
-            }            
+                indices.add((short) ((i - 1) * segments + j + 1));
+
+            }
             indices.add((short) (i * segments + segments));
             indices.add((short) (i * segments + 1));
-            indices.add((short) ((i - 1) * segments + segments));            
-            
-            indices.add((short) (i * segments + 1));            
+            indices.add((short) ((i - 1) * segments + segments));
+
+            indices.add((short) (i * segments + 1));
             indices.add((short) ((i - 1) * segments + 1));
             indices.add((short) ((i - 1) * segments + segments));
         }
@@ -123,13 +123,114 @@ public class ShapeFactory {
 
         return sphere;
     }
-    
+
     public static RenderObject box(float x, float y, float z) {
         List<Vec3<Float>> vertices = new ArrayList<Vec3<Float>>();
         List<Vec4<Float>> colors = new ArrayList<Vec4<Float>>();
         List<Vec3<Float>> normals = new ArrayList<Vec3<Float>>();
         List<Short> indices = new ArrayList<Short>();
+
+        /*
+         * assign vertices and normals
+         */
+        // front face
+        vertices.add(new Vec3<Float>(-x / 2, -y / 2, z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, -y / 2, z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, +y / 2, z / 2));
+        vertices.add(new Vec3<Float>(-x / 2, +y / 2, z / 2));
+
+        normals.add(new Vec3<Float>(0.0f, 0.0f, 1.0f));
+        normals.add(new Vec3<Float>(0.0f, 0.0f, 1.0f));
+        normals.add(new Vec3<Float>(0.0f, 0.0f, 1.0f));
+        normals.add(new Vec3<Float>(0.0f, 0.0f, 1.0f));
+
+        indices.add((short) 0);
+        indices.add((short) 1);
+        indices.add((short) 2);
+        indices.add((short) 2);
+        indices.add((short) 3);
+        indices.add((short) 0);
+
+        // left face
+        vertices.add(new Vec3<Float>(-x / 2, -y / 2, -z / 2));
+        vertices.add(new Vec3<Float>(-x / 2, -y / 2, +z / 2));
+        vertices.add(new Vec3<Float>(-x / 2, +y / 2, +z / 2));
+        vertices.add(new Vec3<Float>(-x / 2, +y / 2, -z / 2));
+
+        normals.add(new Vec3<Float>(-1.0f, 0.0f, 0.0f));
+        normals.add(new Vec3<Float>(-1.0f, 0.0f, 0.0f));
+        normals.add(new Vec3<Float>(-1.0f, 0.0f, 0.0f));
+        normals.add(new Vec3<Float>(-1.0f, 0.0f, 0.0f));
+
+        indices.add((short) 4);
+        indices.add((short) 5);
+        indices.add((short) 6);
+        indices.add((short) 6);
+        indices.add((short) 7);
+        indices.add((short) 4);
+
+        // right face
+        vertices.add(new Vec3<Float>(+x / 2, -y / 2, -z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, -y / 2, +z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, +y / 2, +z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, +y / 2, -z / 2));
+
+        normals.add(new Vec3<Float>(1.0f, 0.0f, 0.0f));
+        normals.add(new Vec3<Float>(1.0f, 0.0f, 0.0f));
+        normals.add(new Vec3<Float>(1.0f, 0.0f, 0.0f));
+        normals.add(new Vec3<Float>(1.0f, 0.0f, 0.0f));
+
+        indices.add((short) 10);
+        indices.add((short) 9);
+        indices.add((short) 8);
+        indices.add((short) 8);
+        indices.add((short) 11);
+        indices.add((short) 10);
+
+        // back face
+        vertices.add(new Vec3<Float>(-x / 2, -y / 2, -z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, -y / 2, -z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, +y / 2, -z / 2));
+        vertices.add(new Vec3<Float>(-x / 2, +y / 2, -z / 2));
+
+        normals.add(new Vec3<Float>(0.0f, 0.0f, -1.0f));
+        normals.add(new Vec3<Float>(0.0f, 0.0f, -1.0f));
+        normals.add(new Vec3<Float>(0.0f, 0.0f, -1.0f));
+        normals.add(new Vec3<Float>(0.0f, 0.0f, -1.0f));
+
+        indices.add((short) 14);
+        indices.add((short) 13);
+        indices.add((short) 12);
+        indices.add((short) 15);
+        indices.add((short) 14);
+        indices.add((short) 12);
         
+        //top face
+        vertices.add(new Vec3<Float>(-x / 2, +y / 2, +z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, +y / 2, +z / 2));
+        vertices.add(new Vec3<Float>(+x / 2, +y / 2, -z / 2));
+        vertices.add(new Vec3<Float>(-x / 2, +y / 2, -z / 2));
+
+        normals.add(new Vec3<Float>(0.0f, 1.0f, 0.0f));
+        normals.add(new Vec3<Float>(0.0f, 1.0f, 0.0f));
+        normals.add(new Vec3<Float>(0.0f, 1.0f, 0.0f));
+        normals.add(new Vec3<Float>(0.0f, 1.0f, 0.0f));
+
+        indices.add((short) 16);
+        indices.add((short) 17);
+        indices.add((short) 18);
+        indices.add((short) 16);
+        indices.add((short) 18);
+        indices.add((short) 19);
+        
+        /*
+         * assign color
+         */
+        Vec4<Float> uniform = new Vec4<Float>(1.0f, 0.5f, 0.5f, 1.0f);
+        for (int i = 0; i < vertices.size(); i++) {
+            colors.add(uniform);
+        }
+
         return new RenderObject(vertices, colors, normals, null, indices);
 
     }

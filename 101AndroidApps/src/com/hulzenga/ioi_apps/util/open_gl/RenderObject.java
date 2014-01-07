@@ -207,39 +207,5 @@ public class RenderObject {
         return mStride;
     }
 
-    /*
-     * Due to very annoying limitations of the Java language the following
-     * methods are needed to get the generic lists into primitive arrays
-     */
-    private short[] shortListToArray(List<Short> list) {
-        short[] shortArray = new short[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            shortArray[i] = list.get(i);
-        }
-        return shortArray;
-    }
-
-    private Vec2[] vec3ListToArray(List<Vec2> list) {
-        Vec2[] vec2List = new Vec2[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            vec2List[i] = list.get(i);
-        }
-        return vec2List;
-    }
-
-    private Vec3[] vec3ListToArray(List<Vec3> list) {
-        Vec3[] vec3List = new Vec3[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            vec3List[i] = list.get(i);
-        }
-        return vec3List;
-    }
-
-    private Vec4[] vec4ListToArray(List<Vec4> list) {
-        Vec4[] vec4List = new Vec4[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            vec4List[i] = list.get(i);
-        }
-        return vec4List;
-    }
+    
 }
