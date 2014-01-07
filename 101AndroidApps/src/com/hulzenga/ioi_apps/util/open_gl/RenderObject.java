@@ -4,8 +4,14 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.Iterator;
+import java.util.List;
 
 import android.util.Log;
+
+import com.hulzenga.ioi_apps.util.vector.Vec2;
+import com.hulzenga.ioi_apps.util.vector.Vec3;
+import com.hulzenga.ioi_apps.util.vector.Vec4;
 
 public class RenderObject {
 
@@ -17,12 +23,13 @@ public class RenderObject {
 
     public static final int     BYTES_PER_FLOAT               = 4;
     public static final int     BYTES_PER_SHORT               = 2;
-    
-    public static final int     INDICES_PER_TRIANGLE          = 3;              
+
+    public static final int     VERTICES_PER_TRIANGLE         = 3;
 
     private FloatBuffer         mVertexBuffer;
     private ShortBuffer         mIndexBuffer;
     private int                 mNumberOfVertices;
+    private int                 mNumberOfIndices;
 
     private boolean             mColored;
     private boolean             mNormal;
@@ -34,22 +41,25 @@ public class RenderObject {
     private int                 mTextureOffset;
     private int                 mStride;
 
-    public RenderObject(float[] vertices, float[] colors, float[] normals, float[] textureCoords, short[] indices) {
+    // TODO rewrite use integers for indices list
+    public RenderObject(List<Vec3<Float>> vertices, List<Vec4<Float>> colors, List<Vec3<Float>> normals,
+            List<Vec3<Float>> textureCoords, List<Short> indices) {
 
         /*
          * check input validity and set RenderObject state accordingly
          */
-        if (vertices == null || vertices.length % FLOATS_PER_VERTEX != 0) {
-            Log.e(TAG, "vertex array has invalid length or does not exist");
+
+        if (vertices == null || vertices.size() == 0) {
+            Log.e(TAG, "input vertex list is either null or contains no vertices");
             return;
         } else {
-            mNumberOfVertices = vertices.length / FLOATS_PER_VERTEX;
+            mNumberOfVertices = vertices.size();
         }
 
         if (colors == null) {
             mColored = false;
-        } else if (colors.length % FLOATS_PER_COLOR != 0 || colors.length / FLOATS_PER_COLOR != mNumberOfVertices) {
-            Log.e(TAG, "color array has invalid length");
+        } else if (colors.size() != mNumberOfVertices) {
+            Log.e(TAG, "the list of colors does not have the same length as the list of vertices");
             return;
         } else {
             mColored = true;
@@ -57,26 +67,27 @@ public class RenderObject {
 
         if (normals == null) {
             mNormal = false;
-        } else if (normals.length % FLOATS_PER_NORMAL != 0 || normals.length / FLOATS_PER_NORMAL != mNumberOfVertices) {
-            Log.e(TAG, "normal array has invalid length");
+        } else if (normals.size() != mNumberOfVertices) {
+            Log.e(TAG, " the list of vertex normals does not have the same length as the list of vertices");
             return;
         } else {
             mNormal = true;
         }
 
-        if (indices == null || indices.length % INDICES_PER_TRIANGLE != 0) {
-            Log.e(TAG, "indices array has invalid length");
-            return;
-        }         
-
         if (textureCoords == null) {
             mTextured = false;
-        } else if (textureCoords.length % FLOATS_PER_TEXTURE_COORDINATE != 0
-                || textureCoords.length / FLOATS_PER_TEXTURE_COORDINATE != mNumberOfVertices) {
-            Log.e(TAG, "texture coordinate array has invalid length");
+        } else if (textureCoords.size() != mNumberOfVertices) {
+            Log.e(TAG, "the list of texture coordinates does not have the same length as the list of vertices");
             return;
         } else {
-            mTextured = true;            
+            mTextured = true;
+        }
+
+        if (indices == null || indices.size() % VERTICES_PER_TRIANGLE != 0) {
+            Log.e(TAG, "indices array has invalid length");
+            return;
+        } else {
+            mNumberOfIndices = indices.size();
         }
 
         /*
@@ -103,38 +114,49 @@ public class RenderObject {
             floatStride += FLOATS_PER_TEXTURE_COORDINATE;
         }
 
-        
+        // setup stride (very confusing that this has to be in bytes while the
+        // rest is in floats)
+        mStride = floatStride * BYTES_PER_FLOAT;
 
         /*
          * allocate and fill mVertexBuffer
          */
 
-        mVertexBuffer = ByteBuffer.allocateDirect(mNumberOfVertices * mStride * BYTES_PER_FLOAT)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mVertexBuffer = ByteBuffer.allocateDirect(mNumberOfVertices * mStride).order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
         mVertexBuffer.position(0);
 
         for (int i = 0; i < mNumberOfVertices; i++) {
             {// braces for style
-                mVertexBuffer.put(vertices, i * floatStride + mVertexOffset, FLOATS_PER_VERTEX);
+                mVertexBuffer.put(vertices.get(i).x);
+                mVertexBuffer.put(vertices.get(i).y);
+                mVertexBuffer.put(vertices.get(i).z);
             }
             if (mColored) {
-                mVertexBuffer.put(vertices, i * floatStride + mColorOffset, FLOATS_PER_COLOR);
+                mVertexBuffer.put(colors.get(i).x);
+                mVertexBuffer.put(colors.get(i).y);
+                mVertexBuffer.put(colors.get(i).z);
+                mVertexBuffer.put(colors.get(i).w);
             }
             if (mNormal) {
-                mVertexBuffer.put(vertices, i * floatStride + mNormalOffset, FLOATS_PER_NORMAL);
+                mVertexBuffer.put(normals.get(i).x);
+                mVertexBuffer.put(normals.get(i).y);
+                mVertexBuffer.put(normals.get(i).z);
             }
             if (mTextured) {
-                mVertexBuffer.put(vertices, i * floatStride + mTextureOffset, FLOATS_PER_TEXTURE_COORDINATE);
+                mVertexBuffer.put(textureCoords.get(i).x);
+                mVertexBuffer.put(textureCoords.get(i).x);
             }
         }
 
         // add on the index buffer
-        mIndexBuffer = ByteBuffer.allocateDirect(indices.length * BYTES_PER_SHORT).order(ByteOrder.nativeOrder())
+        mIndexBuffer = ByteBuffer.allocateDirect(indices.size() * BYTES_PER_SHORT).order(ByteOrder.nativeOrder())
                 .asShortBuffer();
-        mIndexBuffer.put(indices);
-        
-        //setup stride (very confusing that this has to be in bytes while the rest is in floats)
-        mStride = floatStride*BYTES_PER_FLOAT; 
+
+        for (short s : indices) {
+            mIndexBuffer.put(s);
+        }
+
     }
 
     public boolean hasColor() {
@@ -161,6 +183,10 @@ public class RenderObject {
         return mNumberOfVertices;
     }
 
+    public int getNumberOfIndices() {
+        return mNumberOfIndices;
+    }
+
     public int getVertexOffset() {
         return mVertexOffset;
     }
@@ -179,5 +205,41 @@ public class RenderObject {
 
     public int getStride() {
         return mStride;
+    }
+
+    /*
+     * Due to very annoying limitations of the Java language the following
+     * methods are needed to get the generic lists into primitive arrays
+     */
+    private short[] shortListToArray(List<Short> list) {
+        short[] shortArray = new short[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            shortArray[i] = list.get(i);
+        }
+        return shortArray;
+    }
+
+    private Vec2[] vec3ListToArray(List<Vec2> list) {
+        Vec2[] vec2List = new Vec2[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            vec2List[i] = list.get(i);
+        }
+        return vec2List;
+    }
+
+    private Vec3[] vec3ListToArray(List<Vec3> list) {
+        Vec3[] vec3List = new Vec3[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            vec3List[i] = list.get(i);
+        }
+        return vec3List;
+    }
+
+    private Vec4[] vec4ListToArray(List<Vec4> list) {
+        Vec4[] vec4List = new Vec4[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            vec4List[i] = list.get(i);
+        }
+        return vec4List;
     }
 }

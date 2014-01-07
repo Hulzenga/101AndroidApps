@@ -10,7 +10,7 @@ public class ColorFunctions {
         public Vec4<Float> colorMap(Vec3<Float> position, Vec3<Float> normal);
     }
     
-    class Uniform implements ColorFunction {
+    public class Uniform implements ColorFunction {
 
         Vec4<Float> uniformColor;
         
