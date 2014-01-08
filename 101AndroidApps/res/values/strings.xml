@@ -20,5 +20,9 @@
     <string name="app_003_noNameWarning">Due to contractual obligations the monster with no name cannot appear in this database</string>
     <!-- App 004 -->
     <string name="app_004_title">3D Bouncy Ball</string>
+    <!-- App 005 -->
+    <string name="app_005_title">An Elemental Grid</string>
+    <string name="app_005_addElementButton">Add Element</string>
+    <string name="app_005_addMultipleElementsButton">Add Multiple Elements</string>    
 
 </resources>
