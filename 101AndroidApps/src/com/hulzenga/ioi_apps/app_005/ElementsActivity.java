@@ -6,7 +6,6 @@ import java.util.Random;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 
 import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
@@ -15,12 +14,12 @@ public class ElementsActivity extends DemoActivity {
 
     private static final String[] ELEMENTS      = { "Earth", "Air", "Fire", "Water" };
     private Random                mRandom       = new Random();
-    
-    private List<String>          mGridElements = new ArrayList<String>();
+
+    private List<Element>         mGridElements = new ArrayList<Element>();
 
     private ElementsGridView      mElementsGridView;
 
-    private ArrayAdapter          mAdapter;
+    private ElementAdapter        mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +29,19 @@ public class ElementsActivity extends DemoActivity {
 
         mElementsGridView = (ElementsGridView) findViewById(R.id.app_005_ElementsGridView);
 
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mGridElements);
+        mAdapter = new ElementAdapter(this, R.layout.app_005_item_element, mGridElements);
+        mAdapter.add(new Element());
+        mAdapter.add(new Element());
 
         mElementsGridView.setAdapter(mAdapter);
     }
 
     public void addElement(View v) {
         String randomElement = ELEMENTS[mRandom.nextInt(ELEMENTS.length)];
-        mAdapter.add(randomElement);
+        mAdapter.add(new Element());
+        mElementsGridView.requestLayout();
     }
-    
+
     public void addMultipleElements(View v) {
         addElement(null);
         addElement(null);
