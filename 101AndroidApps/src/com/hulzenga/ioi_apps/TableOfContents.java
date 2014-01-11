@@ -26,6 +26,7 @@ public class TableOfContents extends Activity {
 
     private final String ACTIVITY_NAME        = "app_name";
     private final String ACTIVITY_DESCRIPTION = "app_description";
+    private final String ACTIVITY_ICON        = "app_icon";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +54,23 @@ public class TableOfContents extends Activity {
                         item = new HashMap<String, Object>();
                         item.put(ACTIVITY_NAME, xpp.getAttributeValue(null, "name"));
                         item.put(ACTIVITY_DESCRIPTION, xpp.getAttributeValue(null, "description"));
-                        data.add(item);
                         
+                        String iconIdName = xpp.getAttributeValue(null, "icon");
+                        int iconId = getResources().getIdentifier(iconIdName, "drawable", getPackageName());                  
+                        
+                        item.put(ACTIVITY_ICON, iconId);
+                        data.add(item);
+
                         int index = Integer.parseInt(xpp.getAttributeValue(null, "id"));
                         Class app = null;
-                        
-                        try { 
+
+                        try {
                             app = Class.forName(xpp.getAttributeValue(null, "class"));
                         } catch (ClassNotFoundException e) {
-                            Log.e(TAG, "ClassNotFoundException: the class referenced to in the xml app list is incorrect");                            
+                            Log.e(TAG,
+                                    "ClassNotFoundException: the class referenced to in the xml app list is incorrect");
                         }
-                                
+
                         activityMapping.put(index, app);
                     }
 
@@ -79,9 +86,10 @@ public class TableOfContents extends Activity {
         } catch (IOException e) {
             Log.e(TAG, " IOException: while parsing the xml app list");
         }
-        
+
         SimpleAdapter adapter = new SimpleAdapter(this, data, R.layout.root_item_table_of_contents, new String[] {
-                ACTIVITY_NAME, ACTIVITY_DESCRIPTION }, new int[] { R.id.app_name, R.id.app_description });
+                ACTIVITY_NAME, ACTIVITY_DESCRIPTION, ACTIVITY_ICON }, new int[] { R.id.app_name, R.id.app_description,
+                R.id.app_icon });
         appList.setAdapter(adapter);
 
         appList.setOnItemClickListener(new OnItemClickListener() {

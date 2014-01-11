@@ -28,6 +28,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_001.HelloWorldActivity"
+            android:icon="@drawable/app_001_icon"
             android:label="@string/app_001_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data

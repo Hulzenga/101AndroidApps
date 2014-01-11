@@ -61,7 +61,7 @@ public class ElementAdapter extends ArrayAdapter<Element> {
 
     @Override
     public void add(Element element) {
-        mElements.add(element);
+        mElements.add(0, element);
         mElementIdMap.put(element, mIdCount++);
         notifyDataSetChanged();
     }
