@@ -6,6 +6,8 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +23,16 @@ public class ElementAdapter extends ArrayAdapter<Element> {
     private Context               mContext;
     private List<Element>         mElements;
     private Map<Element, Integer> mElementIdMap = new HashMap<Element, Integer>();
-    private int                   mElementCount = 0;
+    private int                   mIdCount      = 0;
+
+    private static Bitmap         sEarthElement;
+    private static Bitmap         sAirElement;
+    private static Bitmap         sFireElement;
+    private static Bitmap         sWaterElement;
 
     static class ViewHolder {
         ImageView mElementImageView;
-        TextView mElementTextView;
+        TextView  mElementTextView;
     }
 
     public ElementAdapter(Context context, int layoutViewId, List<Element> elements) {
@@ -35,14 +42,19 @@ public class ElementAdapter extends ArrayAdapter<Element> {
         mContext = context;
         mElements = elements;
 
+        sEarthElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_earth_element);
+        sAirElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_air_element);
+        sFireElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_fire_element);
+        sWaterElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_water_element);
+
         setStartIds();
     }
 
     private void setStartIds() {
 
-        mElementCount = mElements.size();
+        mIdCount = mElements.size();
 
-        for (int id = 0; id < mElementCount; id++) {
+        for (int id = 0; id < mIdCount; id++) {
             mElementIdMap.put(mElements.get(id), id);
         }
     }
@@ -50,10 +62,15 @@ public class ElementAdapter extends ArrayAdapter<Element> {
     @Override
     public void add(Element element) {
         mElements.add(element);
-        mElementIdMap.put(element, mElementCount++);
+        mElementIdMap.put(element, mIdCount++);
         notifyDataSetChanged();
     }
 
+    public void removeItem(int position) {
+        mElements.remove(position);
+        notifyDataSetChanged();
+    }
+    
     @Override
     public Element getItem(int position) {
         return mElements.get(position);
@@ -70,21 +87,40 @@ public class ElementAdapter extends ArrayAdapter<Element> {
         View elementView = convertView;
 
         ViewHolder viewHolder;
-        
+
         // apply View Holder pattern optimization
         if (elementView == null) {
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
             elementView = inflater.inflate(R.layout.app_005_item_element, null);
             viewHolder = new ViewHolder();
             viewHolder.mElementImageView = (ImageView) elementView.findViewById(R.id.app_005_elementItemImage);
-            viewHolder.mElementTextView  = (TextView) elementView.findViewById(R.id.app_005_elementPosition);
-            
+            viewHolder.mElementTextView = (TextView) elementView.findViewById(R.id.app_005_elementPosition);
+
             elementView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) elementView.getTag();
         }
 
-        viewHolder.mElementTextView.setText("P:"+position);
+        Element element = mElements.get(position);
+        switch (element.getType()) {
+        case EARTH:
+            viewHolder.mElementImageView.setImageBitmap(sEarthElement);
+            break;
+        case AIR:
+            viewHolder.mElementImageView.setImageBitmap(sAirElement);
+            break;
+        case FIRE:
+            viewHolder.mElementImageView.setImageBitmap(sFireElement);
+            break;
+        case WATER:
+            viewHolder.mElementImageView.setImageBitmap(sWaterElement);
+            break;
+            
+        }
+        
+        viewHolder.mElementImageView.setTag(position);
+        
+        //viewHolder.mElementTextView.setText("P:" + position);
         return elementView;
     }
 
