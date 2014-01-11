@@ -47,10 +47,8 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
         mAdapter.add(new Element());
     }
 
-    public void addMultipleElements(View v) {        
-        addElement(null);
-        addElement(null);
-        addElement(null);
+    // this is a major headache not sure if I will implement this further
+    public void addMultipleElements(View v) {
         addElement(null);
     }
 
