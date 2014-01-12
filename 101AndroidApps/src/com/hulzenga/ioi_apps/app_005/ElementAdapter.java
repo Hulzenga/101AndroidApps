@@ -66,8 +66,14 @@ public class ElementAdapter extends ArrayAdapter<Element> {
         notifyDataSetChanged();
     }
 
-    public void removeItem(int position) {
-        mElements.remove(position);
+    public void removeItem(int p1) {
+        mElements.remove(p1);
+        notifyDataSetChanged();
+    }
+    
+    public void removeTwoItems(int p1, int p2) {
+        mElements.remove(p1);
+        mElements.remove(p2);
         notifyDataSetChanged();
     }
     

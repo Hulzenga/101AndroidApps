@@ -9,7 +9,7 @@ import android.widget.Button;
 
 import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
-import com.hulzenga.ioi_apps.app_005.ElementsView.ElementsViewObserver;
+import com.hulzenga.ioi_apps.app_005.ElementSnakeView.ElementsViewObserver;
 
 public class ElementsActivity extends DemoActivity implements ElementsViewObserver {
 
@@ -18,7 +18,7 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
     private List<Element>         mGridElements       = new ArrayList<Element>();
     private List<Element>         mCachedElementViews = new ArrayList<Element>();
 
-    private ElementsView          mElementsGridView;
+    private ElementSnakeView          mElementsGridView;
     private Button                mAddElementButton;
     private Button                mAddMultipleElementsButton;
 
@@ -31,7 +31,7 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
         setContentView(R.layout.app_005_activity_elements);
 
         // link up member views
-        mElementsGridView = (ElementsView) findViewById(R.id.app_005_ElementsGridView);
+        mElementsGridView = (ElementSnakeView) findViewById(R.id.app_005_ElementsGridView);
         mAddElementButton = (Button) findViewById(R.id.app_005_addElementButton);
         mAddMultipleElementsButton = (Button) findViewById(R.id.app_005_addMultipleElementsButton);
 

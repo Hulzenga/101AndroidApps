@@ -23,7 +23,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-public class ElementsView extends AdapterView<ElementAdapter> {
+public class ElementSnakeView extends AdapterView<ElementAdapter> {
 
     private static final String  TAG                   = "ELEMENTS_VIEW";
     private ElementAdapter       mElementAdapter;
@@ -65,6 +65,10 @@ public class ElementsView extends AdapterView<ElementAdapter> {
     private static final long    ANIMATION_LENGTH      = 400;
     private long                 mAStep;
 
+    // positions of removed elements for use in animation
+    private int                  mRemovedPosition1;
+    private int                  mRemovedPosition2;
+
     // touch state variables
     private float                mTouchStartX;
     private float                mTouchStartY;
@@ -92,7 +96,7 @@ public class ElementsView extends AdapterView<ElementAdapter> {
         public void onAnimationEnd();
     }
 
-    public ElementsView(Context context, AttributeSet attrs) {
+    public ElementSnakeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
     }
@@ -226,7 +230,7 @@ public class ElementsView extends AdapterView<ElementAdapter> {
 
     private void longClickPosition(float x, float y) {
         int position = findPosition(x, y);
-        
+
         mElementAdapter.removeItem(position);
         Toast.makeText(mContext, "child long click position: " + position, Toast.LENGTH_SHORT).show();
         mTouchState = TOUCH_NONE;
@@ -374,6 +378,87 @@ public class ElementsView extends AdapterView<ElementAdapter> {
         long duration;
         long delay;
         switch (mAnimationType) {
+        case ANIMATION_REMOVAL:
+            if (row == 0) {
+                /*
+                 * Animation for new element(s) in the first row
+                 */
+                animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -mWidth, 0);
+                animator.setDuration(ANIMATION_LENGTH);
+                mChildAnimations.add(animator);
+
+            } else {
+                if (row % 2 == 0) {
+                    /*
+                     * Animation for the left to right moving even rows
+                     */
+
+                    // moves in above row
+                    duration = mAStep * (mNumberOfColumns - rowIndex - 1);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, (mNumberOfColumns - 2 * rowIndex - 1)
+                            * mGridBlock, -rowIndex * mGridBlock);
+                    animator.setDuration(duration);
+                    mChildAnimations.add(animator);
+
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, -mGridBlock);
+                    animator.setDuration(duration);
+                    mChildAnimations.add(animator);
+
+                    delay = duration;
+
+                    // move 1 down
+                    duration = mAStep;
+
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, 0);
+                    animator.setDuration(duration);
+                    animator.setStartDelay(delay);
+                    mChildAnimations.add(animator);
+
+                    delay += duration;
+
+                    // move to final position
+                    duration = mAStep * rowIndex;
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -rowIndex * mGridBlock, 0);
+                    animator.setDuration(duration);
+                    animator.setStartDelay(delay);
+                    mChildAnimations.add(animator);
+
+                } else {
+                    /*
+                     * Animation for the right to left moving odd rows
+                     */
+
+                    // moves in above row
+                    duration = mAStep * (mNumberOfColumns - rowIndex - 1);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -(mNumberOfColumns - 2 * rowIndex - 1)
+                            * mGridBlock, rowIndex * mGridBlock);
+                    animator.setDuration(duration);
+                    mChildAnimations.add(animator);
+
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, -mGridBlock);
+                    animator.setDuration(duration);
+                    mChildAnimations.add(animator);
+
+                    delay = duration;
+
+                    // move 1 down
+                    duration = mAStep;
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, 0);
+                    animator.setDuration(duration);
+                    animator.setStartDelay(delay);
+                    mChildAnimations.add(animator);
+
+                    delay += duration;
+
+                    // move to final position
+                    duration = mAStep * rowIndex;
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, rowIndex * mGridBlock, 0);
+                    animator.setDuration(duration);
+                    animator.setStartDelay(delay);
+                    mChildAnimations.add(animator);
+                }
+            }
+            break;
         case ANIMATION_NEW_ROW:
             if (row == 0) {
                 /*
@@ -473,21 +558,20 @@ public class ElementsView extends AdapterView<ElementAdapter> {
         } else {
             mElementsInFirstRow = mCount % mNumberOfColumns == 0 ? mNumberOfColumns : mCount % mNumberOfColumns;
         }
-        
-        mRows = (mCount-mElementsInFirstRow)/mNumberOfColumns + 1;
-        
-        //TODO calculate number of rows on screen
-        
-        
-        mMaxScroll = (mPadding+mRows*mGridBlock) - (int)mHeight;
-        
-      //max scroll must be bigger than MIN_SCROLL
-        mMaxScroll = (mMaxScroll < MIN_SCROLL) ? MIN_SCROLL : mMaxScroll; 
+
+        mRows = (mCount - mElementsInFirstRow) / mNumberOfColumns + 1;
+
+        // TODO calculate number of rows on screen
+
+        mMaxScroll = (mPadding + mRows * mGridBlock) - (int) mHeight;
+
+        // max scroll must be bigger than MIN_SCROLL
+        mMaxScroll = (mMaxScroll < MIN_SCROLL) ? MIN_SCROLL : mMaxScroll;
     }
 
     /**
-     * Observer class used to call back to the ElementsView when the underlying
-     * ElementAdapter has changed
+     * Observer class used to call back to the ElementSnakeView when the
+     * underlying ElementAdapter has changed
      */
     class ElementDataSetObserver extends DataSetObserver {
 
