@@ -13,16 +13,16 @@ import com.hulzenga.ioi_apps.app_005.ElementSnakeView.ElementsViewObserver;
 
 public class ElementsActivity extends DemoActivity implements ElementsViewObserver {
 
-    private static final String[] ELEMENTS            = { "Earth", "Air", "Fire", "Water" };
 
     private List<Element>         mGridElements       = new ArrayList<Element>();
-    private List<Element>         mCachedElementViews = new ArrayList<Element>();
 
-    private ElementSnakeView          mElementsGridView;
+    private ElementSnakeView      mElementsGridView;
     private Button                mAddElementButton;
     private Button                mAddMultipleElementsButton;
 
     private ElementAdapter        mAdapter;
+
+    private int                   mAddNMoreElements   = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +36,6 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
         mAddMultipleElementsButton = (Button) findViewById(R.id.app_005_addMultipleElementsButton);
 
         mAdapter = new ElementAdapter(this, R.layout.app_005_item_element, mGridElements);
-        mAdapter.add(new Element());
-        mAdapter.add(new Element());
 
         mElementsGridView.setAdapter(mAdapter);
         mElementsGridView.registerObserver(this);
@@ -47,8 +45,9 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
         mAdapter.add(new Element());
     }
 
-    // this is a major headache not sure if I will implement this further
+    // the code for this should ideally have been implemented inside the snakeview
     public void addMultipleElements(View v) {
+        mAddNMoreElements = 5;
         addElement(null);
     }
 
@@ -73,6 +72,10 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
 
     @Override
     public void onAnimationEnd() {
+        if (mAddNMoreElements > 0) {
+            addElement(null);
+            mAddNMoreElements--;
+        }
         enableButtons();
     }
 

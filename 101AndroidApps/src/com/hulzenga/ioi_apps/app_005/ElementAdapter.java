@@ -24,6 +24,7 @@ public class ElementAdapter extends ArrayAdapter<Element> {
     private List<Element>         mElements;
     private Map<Element, Integer> mElementIdMap = new HashMap<Element, Integer>();
     private int                   mIdCount      = 0;
+    private int mRemovedItemPosition;
 
     private static Bitmap         sEarthElement;
     private static Bitmap         sAirElement;
@@ -66,16 +67,17 @@ public class ElementAdapter extends ArrayAdapter<Element> {
         notifyDataSetChanged();
     }
 
-    public void removeItem(int p1) {
-        mElements.remove(p1);
+    
+    public int getRemovedItemPosition() {
+        return mRemovedItemPosition;
+    }
+    
+    public void removeItem(int position) {
+        mElements.remove(position);
+        mRemovedItemPosition = position;
         notifyDataSetChanged();
     }
     
-    public void removeTwoItems(int p1, int p2) {
-        mElements.remove(p1);
-        mElements.remove(p2);
-        notifyDataSetChanged();
-    }
     
     @Override
     public Element getItem(int position) {

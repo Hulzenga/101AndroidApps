@@ -25,14 +25,15 @@ import android.widget.Toast;
 
 public class ElementSnakeView extends AdapterView<ElementAdapter> {
 
-    private static final String  TAG                   = "ELEMENTS_VIEW";
+    private static final String  TAG                    = "ELEMENTS_VIEW";
     private ElementAdapter       mElementAdapter;
 
-    private static final int     ELEMENT_SIZE          = 100;
-    private static final int     MIN_PADDING           = 10;
+    private int                  mRemovedItemPosition;
+    private static final int     ELEMENT_SIZE           = 100;
+    private static final int     MIN_PADDING            = 10;
 
-    final int                    mElementMeasureSpec   = MeasureSpec
-                                                               .makeMeasureSpec(ELEMENT_SIZE, MeasureSpec.EXACTLY);
+    final int                    mElementMeasureSpec    = MeasureSpec
+                                                                .makeMeasureSpec(ELEMENT_SIZE, MeasureSpec.EXACTLY);
 
     private int                  mCount;
     private int                  mElementsInFirstRow;
@@ -41,8 +42,8 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
      * distance from the top of the view screen to the top of the first row
      * (including padding)
      */
-    private int                  mScrollDistance       = 0;
-    private static final int     MIN_SCROLL            = 0;
+    private int                  mScrollDistance        = 0;
+    private static final int     MIN_SCROLL             = 0;
     private int                  mMaxScroll;
 
     private int                  mNumberOfColumns;
@@ -53,21 +54,19 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
     private float                mHeight;
 
     // animation state variables
-    private boolean              mDoAnimation          = false;
-    private int                  mAnimationType        = -1;
+    private boolean              mDoAnimation           = false;
+    private int                  mAnimationType         = -1;
 
-    private static final int     ANIMATION_NEW_ELEMENT = 0;
-    private static final int     ANIMATION_NEW_ROW     = 1;
-    private static final int     ANIMATION_REMOVAL     = 2;
+    private static final int     ANIMATION_NEW_ELEMENT  = 0;
+    private static final int     ANIMATION_NEW_ROW      = 1;
+    private static final int     ANIMATION_REMOVAL      = 2;
 
-    private List<Animator>       mChildAnimations      = new ArrayList<Animator>();
+    private List<Animator>       mChildAnimations       = new ArrayList<Animator>();
 
-    private static final long    ANIMATION_LENGTH      = 400;
+    //These two constants should really be screensize dependent
+    private static final long    ANIMATION_LENGTH_SHORT = 250L;
+    private static final long    ANIMATION_LENGTH_LONG  = 800L;
     private long                 mAStep;
-
-    // positions of removed elements for use in animation
-    private int                  mRemovedPosition1;
-    private int                  mRemovedPosition2;
 
     // touch state variables
     private float                mTouchStartX;
@@ -75,19 +74,19 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
     private float                mPrevX;
     private float                mPrevY;
 
-    private static final int     TOUCH_NONE            = 0;
-    private static final int     TOUCH_CLICK           = 1;
-    private static final int     TOUCH_SCROLL          = 2;
-    private static final int     TOUCH_DRAG            = 4;
-    private int                  mTouchState           = TOUCH_NONE;
+    private static final int     TOUCH_NONE             = 0;
+    private static final int     TOUCH_CLICK            = 1;
+    private static final int     TOUCH_SCROLL           = 2;
+    private static final int     TOUCH_DRAG             = 4;
+    private int                  mTouchState            = TOUCH_NONE;
 
-    private static final int     SCROLL_THRESHOLD      = 10;
+    private static final int     SCROLL_THRESHOLD       = 10;
 
     private Runnable             mLongPressRunnable;
 
     private Context              mContext;
     private ElementsViewObserver mElementsViewObserver;
-    private Queue<View>          mElementViewRecycler  = new LinkedBlockingQueue<View>();
+    private Queue<View>          mElementViewRecycler   = new LinkedBlockingQueue<View>();
 
     // callback interface to the ElementsActivity
     public interface ElementsViewObserver {
@@ -198,10 +197,6 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                 }
             }
         };
-
-        boolean test = postDelayed(mLongPressRunnable, ViewConfiguration.getLongPressTimeout());
-
-        int x = 97;
     }
 
     private boolean shouldStartScrolling(float x, float y) {
@@ -224,15 +219,16 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
 
     private void clickPosition(float x, float y) {
         int position = findPosition(x, y);
-
-        Toast.makeText(mContext, "child click position: " + position, Toast.LENGTH_SHORT).show();
+        if (position != -1) {
+            mElementAdapter.removeItem(position);
+        }        
     }
 
     private void longClickPosition(float x, float y) {
         int position = findPosition(x, y);
-
-        mElementAdapter.removeItem(position);
-        Toast.makeText(mContext, "child long click position: " + position, Toast.LENGTH_SHORT).show();
+        if (position != -1) {
+            mElementAdapter.removeItem(position);
+        }        
         mTouchState = TOUCH_NONE;
     }
 
@@ -245,7 +241,6 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                 return (Integer) holder.mElementImageView.getTag();
             }
         }
-
         return -1;
     }
 
@@ -265,7 +260,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
         mGridBlock = mPadding + ELEMENT_SIZE;
 
         // TODO: find a better place to put this
-        mAStep = ANIMATION_LENGTH / mNumberOfColumns;
+        mAStep = ANIMATION_LENGTH_LONG / mNumberOfColumns;
 
         mElementAdapter.notifyDataSetChanged();//
     }
@@ -274,6 +269,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
+        mRemovedItemPosition = mElementAdapter.getRemovedItemPosition();
         // do nothing if no adapter defined
         if (mElementAdapter == null) {
             return;
@@ -369,47 +365,50 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
         }
 
         if (mDoAnimation) {
-            animateChild(child, row, rowIndex);
+            animateChild(child, position, row, rowIndex);
         }
     }
 
-    private void animateChild(View child, int row, int rowIndex) {
+    private void animateChild(View child, int position, int row, int rowIndex) {
         Animator animator;
         long duration;
         long delay;
         switch (mAnimationType) {
-        case ANIMATION_REMOVAL:
-            if (row == 0) {
+        case ANIMATION_NEW_ELEMENT:
+            if (row == 0 && rowIndex == 0) {
                 /*
                  * Animation for new element(s) in the first row
                  */
                 animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -mWidth, 0);
-                animator.setDuration(ANIMATION_LENGTH);
+                animator.setDuration(ANIMATION_LENGTH_SHORT);
                 mChildAnimations.add(animator);
-
-            } else {
+            }
+            break;
+        case ANIMATION_REMOVAL:
+            if (mCount % mNumberOfColumns == 0) {
+                // do row shift up
                 if (row % 2 == 0) {
                     /*
-                     * Animation for the left to right moving even rows
+                     * Animation for the even rows
                      */
 
-                    // moves in above row
-                    duration = mAStep * (mNumberOfColumns - rowIndex - 1);
-                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, (mNumberOfColumns - 2 * rowIndex - 1)
-                            * mGridBlock, -rowIndex * mGridBlock);
+                    // moves in below row
+                    duration = mAStep * rowIndex;
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, +(mNumberOfColumns - 2 * rowIndex - 1)
+                            * mGridBlock, +(mNumberOfColumns - rowIndex - 1) * mGridBlock);
                     animator.setDuration(duration);
                     mChildAnimations.add(animator);
 
-                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, -mGridBlock);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, +mGridBlock, +mGridBlock);
                     animator.setDuration(duration);
                     mChildAnimations.add(animator);
 
                     delay = duration;
 
-                    // move 1 down
+                    // move 1 up
                     duration = mAStep;
 
-                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, 0);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, +mGridBlock, 0);
                     animator.setDuration(duration);
                     animator.setStartDelay(delay);
                     mChildAnimations.add(animator);
@@ -417,8 +416,9 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                     delay += duration;
 
                     // move to final position
-                    duration = mAStep * rowIndex;
-                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -rowIndex * mGridBlock, 0);
+                    duration = mAStep * (mNumberOfColumns - rowIndex - 1);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, +(mNumberOfColumns - rowIndex - 1)
+                            * mGridBlock, 0);
                     animator.setDuration(duration);
                     animator.setStartDelay(delay);
                     mChildAnimations.add(animator);
@@ -428,14 +428,14 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                      * Animation for the right to left moving odd rows
                      */
 
-                    // moves in above row
-                    duration = mAStep * (mNumberOfColumns - rowIndex - 1);
+                    // moves in below row
+                    duration = mAStep * rowIndex;
                     animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -(mNumberOfColumns - 2 * rowIndex - 1)
-                            * mGridBlock, rowIndex * mGridBlock);
+                            * mGridBlock, -(mNumberOfColumns - rowIndex - 1) * mGridBlock);
                     animator.setDuration(duration);
                     mChildAnimations.add(animator);
 
-                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, -mGridBlock);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, +mGridBlock, +mGridBlock);
                     animator.setDuration(duration);
                     mChildAnimations.add(animator);
 
@@ -443,7 +443,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
 
                     // move 1 down
                     duration = mAStep;
-                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, 0);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, +mGridBlock, 0);
                     animator.setDuration(duration);
                     animator.setStartDelay(delay);
                     mChildAnimations.add(animator);
@@ -451,11 +451,37 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                     delay += duration;
 
                     // move to final position
-                    duration = mAStep * rowIndex;
-                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, rowIndex * mGridBlock, 0);
+                    duration = mAStep * (mNumberOfColumns - rowIndex - 1);
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -(mNumberOfColumns - rowIndex - 1)
+                            * mGridBlock, 0);
                     animator.setDuration(duration);
                     animator.setStartDelay(delay);
                     mChildAnimations.add(animator);
+                }
+            } else {
+                if (position >= mRemovedItemPosition) {
+                    return; // do nothing
+                } else {
+
+                    if (rowIndex == 0 && row != 0) {
+                        // move 1 down
+                        duration = mAStep;
+                        animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, -mGridBlock, 0);
+                        animator.setDuration(ANIMATION_LENGTH_SHORT);
+                        mChildAnimations.add(animator);
+                    } else if (row % 2 == 0) {
+                     // move 1 right
+                        duration = mAStep;
+                        animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -mGridBlock, 0);
+                        animator.setDuration(ANIMATION_LENGTH_SHORT);
+                        mChildAnimations.add(animator);
+                    } else {
+                     // move 1 left
+                        duration = mAStep;
+                        animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, +mGridBlock, 0);
+                        animator.setDuration(ANIMATION_LENGTH_SHORT);
+                        mChildAnimations.add(animator);
+                    }
                 }
             }
             break;
@@ -464,9 +490,15 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                 /*
                  * Animation for new element(s) in the first row
                  */
-                animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -mWidth, 0);
-                animator.setDuration(ANIMATION_LENGTH);
-                mChildAnimations.add(animator);
+                if (mCount == 1) {
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -mWidth, 0);
+                    animator.setDuration(ANIMATION_LENGTH_SHORT);
+                    mChildAnimations.add(animator);
+                } else {
+                    animator = ObjectAnimator.ofFloat(child, View.TRANSLATION_X, -mWidth, 0);
+                    animator.setDuration(ANIMATION_LENGTH_LONG);
+                    mChildAnimations.add(animator);
+                }
 
             } else {
                 if (row % 2 == 0) {
