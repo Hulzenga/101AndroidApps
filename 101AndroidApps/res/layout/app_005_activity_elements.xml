@@ -34,6 +34,4 @@
         android:onClick="addElement"
         android:text="@string/app_005_addElementButton" />
 
->
-
 </RelativeLayout>

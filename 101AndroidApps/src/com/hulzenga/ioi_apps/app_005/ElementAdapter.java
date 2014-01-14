@@ -22,10 +22,12 @@ public class ElementAdapter extends ArrayAdapter<Element> {
 
     private Context               mContext;
     private List<Element>         mElements;
-    private Map<Element, Integer> mElementIdMap = new HashMap<Element, Integer>();
-    private int                   mIdCount      = 0;
-    private int mRemovedItemPosition;
+    private Map<Element, Integer> mElementIdMap   = new HashMap<Element, Integer>();
+    private int                   mIdCount        = 0;
+    private int                   mRemovedItemPosition;
 
+    private int                   mDraggedElement = -1;
+    
     private static Bitmap         sEarthElement;
     private static Bitmap         sAirElement;
     private static Bitmap         sFireElement;
@@ -52,7 +54,6 @@ public class ElementAdapter extends ArrayAdapter<Element> {
     }
 
     private void setStartIds() {
-
         mIdCount = mElements.size();
 
         for (int id = 0; id < mIdCount; id++) {
@@ -67,18 +68,26 @@ public class ElementAdapter extends ArrayAdapter<Element> {
         notifyDataSetChanged();
     }
 
-    
+    public void swap(int position1, int position2) {
+        Element e1 = getItem(position1);
+        Element e2 = getItem(position2);
+
+        mElements.set(position1, e2);
+        mElements.set(position2, e1);
+
+        notifyDataSetChanged();
+    }
+
     public int getRemovedItemPosition() {
         return mRemovedItemPosition;
     }
-    
+
     public void removeItem(int position) {
         mElements.remove(position);
         mRemovedItemPosition = position;
         notifyDataSetChanged();
     }
-    
-    
+
     @Override
     public Element getItem(int position) {
         return mElements.get(position);
@@ -91,44 +100,29 @@ public class ElementAdapter extends ArrayAdapter<Element> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("adapter", "view position: " + position);
-        View elementView = convertView;
 
-        ViewHolder viewHolder;
-
-        // apply View Holder pattern optimization
-        if (elementView == null) {
-            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-            elementView = inflater.inflate(R.layout.app_005_item_element, null);
-            viewHolder = new ViewHolder();
-            viewHolder.mElementImageView = (ImageView) elementView.findViewById(R.id.app_005_elementItemImage);
-            viewHolder.mElementTextView = (TextView) elementView.findViewById(R.id.app_005_elementPosition);
-
-            elementView.setTag(viewHolder);
+        ElementView elementView;
+        if (convertView != null) {
+            elementView = (ElementView) convertView;
         } else {
-            viewHolder = (ViewHolder) elementView.getTag();
+            elementView = new ElementView(mContext);
         }
 
-        Element element = mElements.get(position);
-        switch (element.getType()) {
+        switch (mElements.get(position).getType()) {
         case EARTH:
-            viewHolder.mElementImageView.setImageBitmap(sEarthElement);
+            elementView.setImageBitmap(sEarthElement);
             break;
         case AIR:
-            viewHolder.mElementImageView.setImageBitmap(sAirElement);
+            elementView.setImageBitmap(sAirElement);
             break;
         case FIRE:
-            viewHolder.mElementImageView.setImageBitmap(sFireElement);
+            elementView.setImageBitmap(sFireElement);
             break;
         case WATER:
-            viewHolder.mElementImageView.setImageBitmap(sWaterElement);
+            elementView.setImageBitmap(sWaterElement);
             break;
-            
         }
-        
-        viewHolder.mElementImageView.setTag(position);
-        
-        //viewHolder.mElementTextView.setText("P:" + position);
+
         return elementView;
     }
 

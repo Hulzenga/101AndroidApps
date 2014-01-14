@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
+import android.os.Debug;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,16 +14,15 @@ import com.hulzenga.ioi_apps.app_005.ElementSnakeView.ElementsViewObserver;
 
 public class ElementsActivity extends DemoActivity implements ElementsViewObserver {
 
+    private List<Element>    mGridElements     = new ArrayList<Element>();
 
-    private List<Element>         mGridElements       = new ArrayList<Element>();
+    private ElementSnakeView mElementsGridView;
+    private Button           mAddElementButton;
+    private Button           mAddMultipleElementsButton;
 
-    private ElementSnakeView      mElementsGridView;
-    private Button                mAddElementButton;
-    private Button                mAddMultipleElementsButton;
+    private ElementAdapter   mAdapter;
 
-    private ElementAdapter        mAdapter;
-
-    private int                   mAddNMoreElements   = 0;
+    private int              mAddNMoreElements = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +41,20 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
         mElementsGridView.registerObserver(this);
     }
 
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+    }
+
     public void addElement(View v) {
         mAdapter.add(new Element());
     }
 
-    // the code for this should ideally have been implemented inside the snakeview
+    // the code for this should ideally have been implemented inside the
+    // snakeview
     public void addMultipleElements(View v) {
-        mAddNMoreElements = 5;
+        mAddNMoreElements = 99;
         addElement(null);
     }
 
@@ -75,8 +82,9 @@ public class ElementsActivity extends DemoActivity implements ElementsViewObserv
         if (mAddNMoreElements > 0) {
             addElement(null);
             mAddNMoreElements--;
+        } else {
+            enableButtons();
         }
-        enableButtons();
     }
 
 }
