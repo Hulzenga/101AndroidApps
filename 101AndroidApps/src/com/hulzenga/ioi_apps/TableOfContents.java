@@ -106,5 +106,4 @@ public class TableOfContents extends Activity {
             }
         });
     }
-
 }

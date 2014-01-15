@@ -11,7 +11,8 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -71,6 +72,14 @@
         <activity
             android:name="com.hulzenga.ioi_apps.app_005.ElementActivity"
             android:label="@string/app_005_title"
+            android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+        </activity>
+        <activity
+            android:name="com.hulzenga.ioi_apps.app_006.HipsterActivity"
+            android:label="@string/title_activity_hipster"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

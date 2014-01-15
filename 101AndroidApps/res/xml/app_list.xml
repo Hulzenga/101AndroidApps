@@ -31,10 +31,16 @@
             icon="app_004_icon" />
         <app
             id="4"
-            name="An Elemental Grid"
+            name="Snaking Elements"
             class="com.hulzenga.ioi_apps.app_005.ElementActivity"
-            description="Elemental fun with a custom grid view, adapter, animations and gestures"
+            description="Elemental fun with a custom AdapterView, animations and drag'n'drop"
             icon="app_005_icon" />
+        <app
+            id="5"
+            name="Hipster Cam"
+            class="com.hulzenga.ioi_apps.app_006.HipsterActivity"
+            description="A camera view with some ultra hip filters"
+            icon="R.drawable.ic_launcher" />
     </apps>
 
 </resources>

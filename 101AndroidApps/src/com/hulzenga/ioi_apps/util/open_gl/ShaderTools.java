@@ -28,7 +28,6 @@ public class ShaderTools {
             StringBuilder sb = new StringBuilder();
             String line = bufferedReader.readLine();
             while (line != null) {
-
                 sb.append(line + "\n");
                 line = bufferedReader.readLine();
             }

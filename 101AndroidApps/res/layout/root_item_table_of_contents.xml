@@ -12,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:contentDescription="@string/root_app_image"
-        android:padding="5dp"
+        android:padding="8dp"
         android:src="@drawable/ic_launcher" />
 
     <TextView
@@ -20,7 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/app_icon"
+        android:layout_toRightOf="@+id/app_icon"        
+        android:paddingLeft="8dp"
         android:text=""
         android:textSize="25sp" />
 
@@ -30,6 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/app_name"
         android:layout_below="@+id/app_name"
+        android:paddingLeft="8dp"
         android:text="" />
 
 </RelativeLayout>
