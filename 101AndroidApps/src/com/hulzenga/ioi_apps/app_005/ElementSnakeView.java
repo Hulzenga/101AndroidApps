@@ -5,97 +5,106 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.hulzenga.ioi_apps.app_005.ElementAdapter.ElementChangeObserver;
+
 import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
+import android.view.ViewConfiguration;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
-public class ElementSnakeView extends AdapterView<ElementAdapter> {
+public class ElementSnakeView extends AdapterView<ElementAdapter> implements ElementChangeObserver {
 
-    private static final String  TAG                                = "ELEMENTS_VIEW";
-    private ElementAdapter       mElementAdapter;
+    private static final String      TAG                                = "ELEMENTS_VIEW";
+    private ElementAdapter           mElementAdapter;
 
-    private int                  mRemovedItemPosition;
-    private static final int     ELEMENT_SIZE                       = 100;
-    private static final int     MIN_PADDING                        = 15;
+    private int                      mRemovedItemPosition;
+    private static final int         ELEMENT_SIZE                       = 100;
+    private static final int         MIN_PADDING                        = 15;
 
-    final int                    mElementMeasureSpec;
+    final int                        mElementMeasureSpec;
 
-    private int                  mCount;
-    private int                  mElementsInFirstRow;
-    private int                  mVisibleRowCount;
-
+    private int                      mCount;
+    private int                      mElementsInFirstRow;
+    private int                      mVisibleRowCount;
+    private int                      mDraggedElement;
     /**
      * distance from the top of the view screen to the top of the first row
      * (including padding)
      */
-    private int                  mScrollDistance                    = 0;
-    private static final int     MIN_SCROLL                         = 0;
-    private int                  mMaxScroll;
+    private int                      mScrollDistance                    = 0;
+    private static final int         MIN_SCROLL                         = 0;
+    private int                      mMaxScroll;
 
-    private int                  mColumnCount;
-    private int                  mRowCount;
-    private int                  mPadding;
-    private int                  mGridBlock;
-    private float                mWidth;
-    private float                mHeight;
+    private int                      mColumnCount;
+    private int                      mRowCount;
+    private int                      mPadding;
+    private int                      mGridBlock;
+    private float                    mWidth;
+    private float                    mHeight;
+
+    private int                      mSwapPosition0;
+    private int                      mSwapPosition1;
 
     /*
      * Animation variables
      */
-    private ElementAnimator      mElementAnimator;
+    private ElementAnimator          mElementAnimator;
 
-    private boolean              mDoAnimation                       = false;
-    private int                  mAnimationType                     = -1;
+    private boolean                  mDoAnimation                       = false;
+    private int                      mAnimationType                     = -1;
 
-    private static final int     ANIMATION_NEW_ELEMENT              = 0;
-    private static final int     ANIMATION_NEW_ELEMENT_SHIFT_ROW    = 1;
-    private static final int     ANIMATION_REMOVE_ELEMENT           = 2;
-    private static final int     ANIMATION_REMOVE_ELEMENT_SHIFT_ROW = 4;
-    private static final int     ANIMATION_CLEAR_DRAGGED_ELEMENT    = 8;
-    private static final int     ANIMATION_SWAP_ELEMENTS            = 16;
+    private static final int         ANIMATION_NEW_ELEMENT              = 0;
+    private static final int         ANIMATION_NEW_ELEMENT_SHIFT_ROW    = 1;
+    private static final int         ANIMATION_REMOVE_ELEMENT           = 2;
+    private static final int         ANIMATION_REMOVE_ELEMENT_SHIFT_ROW = 3;
+    private static final int         ANIMATION_DRAG_FLIP                = 4;
+    private static final int         ANIMATION_SWAP_ELEMENTS            = 5;
 
-    private AnimatorSet          mAnimatorSet;
-    private List<Animator>       mChildAnimations                   = new ArrayList<Animator>();
+    private List<Animator>           mChildAnimations                   = new ArrayList<Animator>();
 
-    private Interpolator         mInterpolator                      = new LinearInterpolator();
-    private AnimatorListener     mOnAnimationEndListener;
+    private Interpolator             mInterpolator                      = new LinearInterpolator();
+    private AnimatorListener         mReleaseOnEndListener;
+    private AnimatorListener         mRequestLayoutOnEndListener;
 
     /*
      * Touch state variables
      */
-    private float                mTouchStartX;
-    private float                mTouchStartY;
-    private float                mPrevX;
-    private float                mPrevY;
+    private float                    mTouchStartX;
+    private float                    mTouchStartY;
+    private float                    mPrevX;
+    private float                    mPrevY;
 
-    private static final int     TOUCH_NONE                         = 0;
-    private static final int     TOUCH_CLICK                        = 1;
-    private static final int     TOUCH_SCROLL                       = 2;
-    private static final int     TOUCH_DRAG                         = 4;
-    private int                  mTouchState                        = TOUCH_NONE;
+    private static final int         TOUCH_NONE                         = 0;
+    private static final int         TOUCH_CLICK                        = 1;
+    private static final int         TOUCH_SCROLL                       = 2;
+    private int                      mTouchState                        = TOUCH_NONE;
 
-    private static final int     SCROLL_THRESHOLD                   = 10;
+    private static final int         SCROLL_THRESHOLD                   = 10;
 
-    private Runnable             mLongPressRunnable;
+    private Runnable                 mLongPressRunnable;
 
-    private Context              mContext;
-    private ElementsViewObserver mElementsViewObserver;
-    private Queue<View>          mElementViewRecycler               = new LinkedBlockingQueue<View>();
+    private Context                  mContext;
+    private ElementAnimationCallback mAnimationCallback;
+    private Queue<View>              mElementViewRecycler               = new LinkedBlockingQueue<View>();
+    private int                      mDoNotRecycleThisView              = -1;
 
-    // callback interface to the ElementsActivity
-    public interface ElementsViewObserver {
+    // callback interface to the ElementActivity
+    public interface ElementAnimationCallback {
         public void onAnimationStart();
 
         public void onAnimationEnd();
@@ -110,15 +119,11 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
          */
         mElementMeasureSpec = MeasureSpec.makeMeasureSpec(ELEMENT_SIZE, MeasureSpec.EXACTLY);
 
-        mAnimatorSet = new AnimatorSet();
-        mAnimatorSet.addListener(mOnAnimationEndListener);
-        mAnimatorSet.setInterpolator(mInterpolator);
-
-        mOnAnimationEndListener = new AnimatorListener() {
+        mReleaseOnEndListener = new AnimatorListener() {
 
             @Override
             public void onAnimationStart(Animator animation) {
-                mElementsViewObserver.onAnimationStart();
+                mAnimationCallback.onAnimationStart();
             }
 
             @Override
@@ -129,13 +134,41 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
             public void onAnimationEnd(Animator animation) {
                 mChildAnimations.clear();
                 mDoAnimation = false;
-                mElementsViewObserver.onAnimationEnd();
+                mAnimationCallback.onAnimationEnd();
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
             }
         };
+
+        // TODO: rewrite so main animation follows the following logic
+        // This is the path I should have taken from the beginning:
+        // layout after animation, Not animation after layout
+        mRequestLayoutOnEndListener = new AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                mAnimationCallback.onAnimationStart();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mChildAnimations.clear();
+                requestLayout();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+        };
+
     }
 
     @Override
@@ -146,11 +179,11 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
     @Override
     public void setAdapter(ElementAdapter adapter) {
         mElementAdapter = adapter;
-        mElementAdapter.registerDataSetObserver(new ElementDataSetObserver());
+        mElementAdapter.registerElementChangeObserver(this);
     }
 
-    public void registerObserver(ElementsViewObserver listener) {
-        mElementsViewObserver = listener;
+    public void registerAnimationCallback(ElementAnimationCallback listener) {
+        mAnimationCallback = listener;
     }
 
     @Override
@@ -209,7 +242,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
 
         case MotionEvent.ACTION_UP:
 
-            // up so no long press
+            // up, so no long press
             removeCallbacks(mLongPressRunnable);
 
             switch (mTouchState) {
@@ -227,7 +260,46 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
         return true;
     }
 
-    public void startLongPressCheck() {
+    private boolean mDropSucces = false;
+
+    @Override
+    public boolean onDragEvent(DragEvent event) {
+
+        switch (event.getAction()) {
+        case DragEvent.ACTION_DRAG_STARTED:
+            Log.d(TAG, "started");
+            break;
+        case DragEvent.ACTION_DRAG_ENTERED:
+            Log.d(TAG, "entered");
+            break;
+        case DragEvent.ACTION_DRAG_LOCATION:
+            Log.d(TAG, "location");
+            break;
+        case DragEvent.ACTION_DROP:            
+            int position = findPosition(event.getX(), event.getY());
+            if (position != -1) {
+                mDropSucces = true;
+                mElementAdapter.swap((Integer) event.getLocalState(), position);
+            }
+            Log.d(TAG, "drop");
+            break;
+        case DragEvent.ACTION_DRAG_EXITED:
+            Log.d(TAG, "exited");
+            break;
+        case DragEvent.ACTION_DRAG_ENDED:
+            if (mDropSucces) {
+                mDropSucces = false;
+            } else {
+                mElementAdapter.stopDragging();
+            }
+            Log.d(TAG, "ended");
+            break;
+        }
+
+        return true;
+    }
+
+    private void startLongPressCheck() {
         mLongPressRunnable = new Runnable() {
 
             @Override
@@ -237,6 +309,8 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                 }
             }
         };
+
+        postDelayed(mLongPressRunnable, ViewConfiguration.getLongPressTimeout());
     }
 
     private boolean shouldStartScrolling(float x, float y) {
@@ -269,7 +343,16 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
     private void longClickPosition(float x, float y) {
         int position = findPosition(x, y);
         if (position != -1) {
-            mElementAdapter.removeItem(position);
+
+            ElementView elementView = (ElementView) getChildAt(position - mFirstChildPosition);
+
+            ClipData data = ClipData.newPlainText("", "");
+
+            View.DragShadowBuilder sb = new ElementView.DragShadowBuilder(elementView, mElementAdapter
+                    .getItem(position).getType());
+
+            elementView.startDrag(data, sb, (Integer) position, 0);
+            mElementAdapter.startDragging(position);
         }
         mTouchState = TOUCH_NONE;
     }
@@ -305,7 +388,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
     private int mLastChildPosition;
 
     // set bounds so as to draw one row before and after the visible screen
-    public void setDrawingBounds() {
+    private void setDrawingBounds() {
 
         if (mScrollDistance < 2 * mGridBlock) {
             mFirstChildPosition = 0;
@@ -326,10 +409,15 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
 
         setDrawingBounds();
 
-        // put all the old views in the recycler and remove them from the layout
+        // dirty views need to be cleaned before being put in the recycler
+        cleanViews();
+
+        // put all the old views in the recycler
         for (int i = 0; i < getChildCount(); i++) {
             mElementViewRecycler.offer(getChildAt(i));
         }
+
+        // remove all views from layout
         removeAllViewsInLayout();
 
         for (int position = mFirstChildPosition; position < mCount && position < mLastChildPosition; position++)
@@ -350,15 +438,23 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
         // if needed start animation
         if (mDoAnimation) {
 
+            // I can't tell if there is a nice way to recycle an Animatorset,
+            // so a new one must be created
+            @SuppressLint("DrawAllocation")
+            AnimatorSet set = new AnimatorSet();
+
+            set.addListener(mReleaseOnEndListener);
+            set.setInterpolator(mInterpolator);
+
             if (mChildAnimations.size() > 0) {
-                mAnimatorSet.playTogether(mChildAnimations);
+                set.playTogether(mChildAnimations);
             } else {
                 // an animation is going on off screen, but nothing happens on
                 // screen, use empty animator to keep program flow as expected
-                mAnimatorSet.play(mElementAnimator.doNothingAnimator(getChildAt(0)));
+                set.play(mElementAnimator.doNothingAnimator(getChildAt(0)));
             }
 
-            mAnimatorSet.start();
+            set.start();
         }
     }
 
@@ -454,6 +550,17 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
                 mChildAnimations.addAll(mElementAnimator.moveOddRowUp(view, rowIndex));
             }
             break;
+        case ANIMATION_DRAG_FLIP:
+            if (position == mDraggedElement) {
+                mChildAnimations.add(ObjectAnimator.ofFloat(view, View.ROTATION_Y, 90.0f, 0.0f).setDuration(
+                        ElementAnimator.ANIMATION_LENGTH_SHORT));
+            }
+            break;
+        case ANIMATION_SWAP_ELEMENTS:
+            if (position == mSwapPosition0 || position == mSwapPosition1) {
+                mChildAnimations.add(ObjectAnimator.ofFloat(view, View.ROTATION_Y, 90.0f, 0.0f).setDuration(
+                        ElementAnimator.ANIMATION_LENGTH_SHORT));
+            }
         }
     }
 
@@ -481,53 +588,77 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> {
         mMaxScroll = (mMaxScroll < MIN_SCROLL) ? MIN_SCROLL : mMaxScroll;
     }
 
-    /**
-     * Observer class used to call back to the ElementSnakeView when the
-     * underlying ElementAdapter has changed
-     */
-    class ElementDataSetObserver extends DataSetObserver {
+    @Override
+    public void onElementChange(ChangeType type, int... args) {
+        int oldCount = mCount;
 
-        @Override
-        public void onChanged() {
-            int oldCount = mCount;
+        calculateGridDimensions();
 
-            calculateGridDimensions();
-
-            if (oldCount > mCount) {
-                // old element removed
-                mDoAnimation = true;
-                mRemovedItemPosition = mElementAdapter.getRemovedItemPosition();
-
-                if (mCount % mColumnCount == 0) {
-                    mAnimationType = ANIMATION_REMOVE_ELEMENT_SHIFT_ROW;
-                } else {
-                    mAnimationType = ANIMATION_REMOVE_ELEMENT;
-                }
-            } else if (oldCount < mCount) {
-                // new element added
-                mDoAnimation = true;
-                if (oldCount % mColumnCount != 0 || oldCount == 0) {
-                    // insertion of new element
-                    mAnimationType = ANIMATION_NEW_ELEMENT;
-
-                } else {
-                    // shift rows down by 1
-                    mAnimationType = ANIMATION_NEW_ELEMENT_SHIFT_ROW;
-                }
+        switch (type) {
+        case ELEMENT_ADDED:
+            mDoAnimation = true;
+            if (oldCount % mColumnCount != 0 || oldCount == 0) {
+                // insertion of new element
+                mAnimationType = ANIMATION_NEW_ELEMENT;
             } else {
-                // oldCount == mCount, this shouldn't happen
-                Log.w(TAG,
-                        " the ElementAdapter called notifyDataSetChanged() with no change in underlying dataset size");
+                // shift rows down by 1
+                mAnimationType = ANIMATION_NEW_ELEMENT_SHIFT_ROW;
             }
             requestLayout();
-        }
+            break;
+        case ELEMENT_REMOVED:
+            mDoAnimation = true;
+            mRemovedItemPosition = args[0];
 
-        @Override
-        public void onInvalidated() {
-            // TODO Auto-generated method stub
-            super.onInvalidated();
-        }
+            if (mCount % mColumnCount == 0) {
+                mAnimationType = ANIMATION_REMOVE_ELEMENT_SHIFT_ROW;
+            } else {
+                mAnimationType = ANIMATION_REMOVE_ELEMENT;
+            }
+            requestLayout();
+            break;
+        case ELEMENTS_SWAPPED:
+            mDoAnimation = true;
+            mAnimationType = ANIMATION_SWAP_ELEMENTS;
+            mSwapPosition0 = args[0];
+            mSwapPosition1 = args[1];
+            mCleanTheseViews.add(getChildAt(mSwapPosition0 - mFirstChildPosition));
+            mCleanTheseViews.add(getChildAt(mSwapPosition1 - mFirstChildPosition));
 
+            getChildAt(mSwapPosition0 - mFirstChildPosition).animate().rotationY(90.0f)
+                    .setDuration(ElementAnimator.ANIMATION_LENGTH_SHORT).setListener(mRequestLayoutOnEndListener);
+            getChildAt(mSwapPosition1 - mFirstChildPosition).animate().rotationY(90.0f)
+                    .setDuration(ElementAnimator.ANIMATION_LENGTH_SHORT).setListener(mRequestLayoutOnEndListener);
+            break;
+        case STARTED_DRAGGING:
+            mDoAnimation = true;
+            mAnimationType = ANIMATION_DRAG_FLIP;
+            mDraggedElement = args[0];
+            mCleanTheseViews.add(getChildAt(mDraggedElement - mFirstChildPosition));
+            getChildAt(mDraggedElement - mFirstChildPosition).animate().rotationY(90.0f)
+                    .setDuration(ElementAnimator.ANIMATION_LENGTH_SHORT).setListener(mRequestLayoutOnEndListener);
+            break;
+        case STOPPED_DRAGGING:
+            mDoAnimation = true;
+            mAnimationType = ANIMATION_DRAG_FLIP;
+            mCleanTheseViews.add(getChildAt(mDraggedElement - mFirstChildPosition));
+            getChildAt(mDraggedElement - mFirstChildPosition).animate().rotationY(90.0f)
+                    .setDuration(ElementAnimator.ANIMATION_LENGTH_SHORT).setListener(mRequestLayoutOnEndListener);
+            break;
+        }
     }
 
+    /**
+     * Views that need to be cleaned before they can be recycled
+     */
+    List<View> mCleanTheseViews = new ArrayList<View>();
+
+    public void cleanViews() {
+        if (mCleanTheseViews.size() > 0) {
+            for (View v : mCleanTheseViews) {
+                v.setRotationY(0.0f);
+            }
+            mCleanTheseViews.clear();
+        }
+    }
 }

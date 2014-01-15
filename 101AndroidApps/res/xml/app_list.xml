@@ -32,7 +32,7 @@
         <app
             id="4"
             name="An Elemental Grid"
-            class="com.hulzenga.ioi_apps.app_005.ElementsActivity"
+            class="com.hulzenga.ioi_apps.app_005.ElementActivity"
             description="Elemental fun with a custom grid view, adapter, animations and gestures"
             icon="app_005_icon" />
     </apps>

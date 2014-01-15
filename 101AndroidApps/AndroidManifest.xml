@@ -69,7 +69,7 @@
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_005.ElementsActivity"
+            android:name="com.hulzenga.ioi_apps.app_005.ElementActivity"
             android:label="@string/app_005_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data

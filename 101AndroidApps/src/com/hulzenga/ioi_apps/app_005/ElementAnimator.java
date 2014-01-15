@@ -10,8 +10,8 @@ import android.view.View;
 
 public class ElementAnimator {
 
-    public static final long          ANIMATION_LENGTH_SHORT              = 250L;
-    public static final long          ANIMATION_LENGTH_LONG               = 1000L;
+    public static final long           ANIMATION_LENGTH_SHORT              = 250L;
+    public static final long           ANIMATION_LENGTH_LONG               = 1000L;
 
     private float                      mWidth;
     private float                      mGridBlock;
@@ -68,7 +68,6 @@ public class ElementAnimator {
         for (int i = 0; i < mColumnCount; i++) {
             PropertyValuesHolder pvh = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, i * mGridBlock, 0);
             mPvhMoveLeftForwardInSameRowList.add(pvh);
-
         }
 
         // moves left backward same row indexed by final rowIndex
@@ -76,7 +75,6 @@ public class ElementAnimator {
             PropertyValuesHolder pvh = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, +(mColumnCount - i - 1)
                     * mGridBlock, 0);
             mPvhMoveLeftBackwardInSameRowList.add(pvh);
-
         }
 
         // moves left in below row indexed by final rowIndex
@@ -84,7 +82,6 @@ public class ElementAnimator {
             PropertyValuesHolder pvh = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, +(mColumnCount - 2 * i - 1)
                     * mGridBlock, +(mColumnCount - i - 1) * mGridBlock);
             mPvhMoveLeftBackWardInBelowRowList.add(pvh);
-
         }
 
         // moves right in above row indexed by final rowIndex
@@ -92,7 +89,6 @@ public class ElementAnimator {
             PropertyValuesHolder pvh = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, -(mColumnCount - 2 * i - 1)
                     * mGridBlock, i * mGridBlock);
             mPvhMoveRightForwardInAboveRowList.add(pvh);
-
         }
 
         // moves forward right in same row indexed by final rowIndex
@@ -120,7 +116,7 @@ public class ElementAnimator {
     public Animator doNothingAnimator(View view) {
         return ObjectAnimator.ofFloat(view, View.ALPHA, 1.0f, 1.0f).setDuration(ANIMATION_LENGTH_SHORT);
     }
-    
+
     /*
      * First row insertion animators
      */
