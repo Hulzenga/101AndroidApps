@@ -24,8 +24,7 @@
     <string name="app_005_title">An Elemental Grid</string>
     <string name="app_005_addElementButton">Add Element</string>
     <string name="app_005_addMultipleElementsButton">Add 5 Elements</string>
-    <string name="title_activity_hipster">Hipster Cam</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <!-- App 006 -->
+    <string name="app_006_title">Simple Camera</string>    
 
 </resources>

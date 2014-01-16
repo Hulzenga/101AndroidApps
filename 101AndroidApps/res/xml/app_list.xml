@@ -37,9 +37,9 @@
             icon="app_005_icon" />
         <app
             id="5"
-            name="Hipster Cam"
-            class="com.hulzenga.ioi_apps.app_006.HipsterActivity"
-            description="A camera view with some ultra hip filters"
+            name="Simple Camera"
+            class="com.hulzenga.ioi_apps.app_006.SimpleCamActivity"
+            description="A simple camera app"
             icon="R.drawable.ic_launcher" />
     </apps>
 

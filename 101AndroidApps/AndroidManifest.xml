@@ -8,11 +8,17 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="19" />
 
+    <!-- TODO: change glEsVersion required to false and implement checks in app 004 -->
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
         android:allowBackup="true"
@@ -78,8 +84,8 @@
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_006.HipsterActivity"
-            android:label="@string/title_activity_hipster"
+            android:name="com.hulzenga.ioi_apps.app_006.SimpleCamActivity"
+            android:label="@string/app_006_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

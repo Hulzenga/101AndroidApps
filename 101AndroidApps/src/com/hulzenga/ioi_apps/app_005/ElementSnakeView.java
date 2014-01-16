@@ -5,16 +5,13 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.hulzenga.ioi_apps.app_005.ElementAdapter.ElementChangeObserver;
-
 import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,7 +22,8 @@ import android.view.ViewConfiguration;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
-import android.widget.Toast;
+
+import com.hulzenga.ioi_apps.app_005.ElementAdapter.ElementChangeObserver;
 
 public class ElementSnakeView extends AdapterView<ElementAdapter> implements ElementChangeObserver {
 
@@ -98,10 +96,8 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
     private Runnable                 mLongPressRunnable;
 
-    private Context                  mContext;
     private ElementAnimationCallback mAnimationCallback;
     private Queue<View>              mElementViewRecycler               = new LinkedBlockingQueue<View>();
-    private int                      mDoNotRecycleThisView              = -1;
 
     // callback interface to the ElementActivity
     public interface ElementAnimationCallback {
@@ -112,7 +108,6 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
     public ElementSnakeView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
 
         /*
          * setup variables which are too long to setup above

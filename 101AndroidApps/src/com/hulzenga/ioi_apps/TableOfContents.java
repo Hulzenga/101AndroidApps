@@ -36,7 +36,7 @@ public class TableOfContents extends Activity {
         ListView appList = (ListView) findViewById(R.id.appList);
 
         final List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-        final SparseArray<Class> activityMapping = new SparseArray<Class>();
+        final SparseArray<Class<? extends Activity>> activityMapping = new SparseArray<Class<? extends Activity>>();
 
         XmlPullParser xpp = getResources().getXml(R.xml.app_list);
 
@@ -54,10 +54,10 @@ public class TableOfContents extends Activity {
                         item = new HashMap<String, Object>();
                         item.put(ACTIVITY_NAME, xpp.getAttributeValue(null, "name"));
                         item.put(ACTIVITY_DESCRIPTION, xpp.getAttributeValue(null, "description"));
-                        
+
                         String iconIdName = xpp.getAttributeValue(null, "icon");
-                        int iconId = getResources().getIdentifier(iconIdName, "drawable", getPackageName());                  
-                        
+                        int iconId = getResources().getIdentifier(iconIdName, "drawable", getPackageName());
+
                         item.put(ACTIVITY_ICON, iconId);
                         data.add(item);
 

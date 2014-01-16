@@ -4,12 +4,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.Iterator;
 import java.util.List;
 
 import android.util.Log;
 
-import com.hulzenga.ioi_apps.util.vector.Vec2;
 import com.hulzenga.ioi_apps.util.vector.Vec3;
 import com.hulzenga.ioi_apps.util.vector.Vec4;
 

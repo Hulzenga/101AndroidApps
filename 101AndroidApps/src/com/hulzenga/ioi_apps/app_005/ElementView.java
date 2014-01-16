@@ -1,18 +1,15 @@
 package com.hulzenga.ioi_apps.app_005;
 
-import com.hulzenga.ioi_apps.R;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.hulzenga.ioi_apps.R;
 
 public class ElementView extends ImageView {
 
