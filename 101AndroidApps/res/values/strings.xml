@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Generic Strings -->
+    <string name="generic_empty_string">""</string>
+    
     <!-- Table of content Strings -->
     <string name="app_name">101 Android Apps</string>
     <string name="root_app_image">This image gives an impression of the app</string>
@@ -25,6 +28,6 @@
     <string name="app_005_addElementButton">Add Element</string>
     <string name="app_005_addMultipleElementsButton">Add 5 Elements</string>
     <!-- App 006 -->
-    <string name="app_006_title">Simple Camera</string>    
+    <string name="app_006_title">Simple Camera</string>
 
 </resources>

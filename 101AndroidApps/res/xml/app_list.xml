@@ -38,7 +38,7 @@
         <app
             id="5"
             name="Simple Camera"
-            class="com.hulzenga.ioi_apps.app_006.SimpleCamActivity"
+            class="com.hulzenga.ioi_apps.app_006.SimpleCameraActivity"
             description="A simple camera app"
             icon="R.drawable.ic_launcher" />
     </apps>
