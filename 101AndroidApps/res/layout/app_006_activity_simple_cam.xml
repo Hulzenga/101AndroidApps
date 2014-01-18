@@ -35,7 +35,7 @@
         android:onClick="toggleFilterFragment"
         android:src="@android:drawable/ic_menu_week" />
 
-    <FrameLayout
+    <com.hulzenga.ioi_apps.app_006.SimpleCameraPreview
         android:id="@+id/app_006_cameraPreview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -43,7 +43,7 @@
         android:layout_toRightOf="@+id/app_006_cameraSelectButton" 
         android:layout_toLeftOf="@+id/app_006_vidPicToggle" >
 
-    </FrameLayout>
+    </com.hulzenga.ioi_apps.app_006.SimpleCameraPreview>
 
     <ImageButton
         android:id="@+id/app_006_captureButton"
@@ -63,30 +63,23 @@
         android:src="@android:drawable/ic_lock_power_off" />
 
     <FrameLayout
-        android:id="@+id/app_006_intensityFragmentContainer"
+        android:id="@+id/app_006_bottomFragmentContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/app_006_cameraSelectButton" 
-        android:layout_toLeftOf="@+id/app_006_vidPicToggle" >
+        android:layout_toLeftOf="@+id/app_006_vidPicToggle"
+        android:layout_margin="16dp" >
 
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/app_006_cameraFragmentContainer"
+        android:id="@+id/app_006_sideFragmentContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/app_006_vidPicToggle"
-        android:layout_toRightOf="@+id/app_006_cameraSelectButton" >
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/app_006_filterFragmentContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/app_006_filterButton"
-        android:layout_toRightOf="@+id/app_006_filterButton" >
+        android:layout_toRightOf="@+id/app_006_cameraSelectButton" 
+        android:layout_margin="16dp">
 
     </FrameLayout>
 
