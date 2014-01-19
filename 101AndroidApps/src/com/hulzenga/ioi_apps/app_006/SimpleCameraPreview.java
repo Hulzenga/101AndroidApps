@@ -46,7 +46,15 @@ public class SimpleCameraPreview extends SurfaceView implements SurfaceHolder.Ca
                 Log.e(TAG, "Error setting camera preview: " + e.getMessage());
             }
         } else {
-            Log.d(TAG, "Camera not loaded");
+            Log.d(TAG, "No camera loaded");
+        }
+    }
+    
+    public void stopPreview() {
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        } else {
+            Log.d(TAG, "No camera to stop");
         }
     }
 
@@ -69,7 +77,6 @@ public class SimpleCameraPreview extends SurfaceView implements SurfaceHolder.Ca
             Log.e(TAG, "Failed to stop camera preview: " + e.getMessage());
         }
 
-        // this.setX(300.0f);
         try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();

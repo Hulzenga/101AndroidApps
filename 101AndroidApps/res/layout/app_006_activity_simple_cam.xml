@@ -69,7 +69,7 @@
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/app_006_cameraSelectButton" 
         android:layout_toLeftOf="@+id/app_006_vidPicToggle"
-        android:layout_margin="16dp" >
+        android:layout_margin="8dp" >
 
     </FrameLayout>
 
@@ -79,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/app_006_vidPicToggle"
         android:layout_toRightOf="@+id/app_006_cameraSelectButton" 
-        android:layout_margin="16dp">
+        android:layout_margin="8dp">
 
     </FrameLayout>
 
