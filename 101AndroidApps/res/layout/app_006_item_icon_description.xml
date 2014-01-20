@@ -4,20 +4,18 @@
     android:layout_height="wrap_content" >
 
     <ImageView
-        android:id="@+id/app_006_cameraFacingIcon"
+        android:id="@+id/app_006_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/app_005_air_element" />
+        android:layout_alignParentTop="true"/>
 
     <TextView
-        android:id="@+id/app_006_cameraNumber"
+        android:id="@+id/app_006_iconDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/app_006_cameraFacingIcon"
-        android:layout_alignRight="@+id/app_006_cameraFacingIcon"
-        android:text="1"
+        android:layout_below="@+id/app_006_icon"
+        android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

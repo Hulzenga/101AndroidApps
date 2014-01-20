@@ -7,34 +7,34 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
-import com.hulzenga.ioi_apps.app_006.CameraFragment.CameraSelectionListener;
 
-public class SimpleCameraActivity extends DemoActivity implements CameraSelectionListener {
+public class SimpleCameraActivity extends DemoActivity implements SettingChangeListener {
 
-    private static final String TAG                = "SIMPLE_CAM_ACTIVITY";
+    private static final String  TAG                = "SIMPLE_CAM_ACTIVITY";
 
-    private Camera              mCamera;
-    private SimpleCameraPreview mPreview;
+    private Camera               mCamera;
+    private SimpleCameraPreview  mPreview;
 
-    private Fragment            mActiveFragment;
-    private CameraFragment      mCameraFragment;
-    private FilterFragment      mFilterFragment    = new FilterFragment();
-    private IntensityFragment   mIntensityFragment = new IntensityFragment();
+    private int                  mSelectedCamera    = 0;
+
+    private Fragment             mActiveFragment;
+    private CameraFragment       mCameraFragment;
+    private ColorEffectsFragment mFilterFragment;
+    private IntensityFragment    mIntensityFragment = new IntensityFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Toast.makeText(this, "cameras = " + Camera.getNumberOfCameras(), Toast.LENGTH_LONG).show();
         // App needs the camera feature, if it doesn't exist exit
         if (!hasCameraFeature(this)) {
             // TODO: do something fancier than this
@@ -49,10 +49,13 @@ public class SimpleCameraActivity extends DemoActivity implements CameraSelectio
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.app_006_activity_simple_cam);
+
+        // linkup all views that need to be
+        mPreview = (SimpleCameraPreview) findViewById(R.id.app_006_cameraPreview);
+
+        // discover cameras
         discoverCameras();
 
-        mPreview = (SimpleCameraPreview) findViewById(R.id.app_006_cameraPreview);
-        selectCamera(0);
     }
 
     private boolean hasCameraFeature(Context context) {
@@ -72,22 +75,21 @@ public class SimpleCameraActivity extends DemoActivity implements CameraSelectio
             Camera.getCameraInfo(i, info);
             facing[i] = info.facing;
         }
-        mCameraFragment = CameraFragment.newInstance(facing);
+        mCameraFragment = CameraFragment.newInstance(this, facing);
     }
 
     @Override
     protected void onResume() {
-        super.onResume();        
+        super.onResume();
         selectCamera(mSelectedCamera);
     }
-    
+
     @Override
     protected void onPause() {
         super.onPause();
 
-        
         if (mCamera != null) {
-            mPreview.stopPreview();
+            // mPreview.stopPreview();
             mCamera.release();
             mCamera = null;
         }
@@ -123,20 +125,6 @@ public class SimpleCameraActivity extends DemoActivity implements CameraSelectio
         fragmentTransaction.commit();
     }
 
-    private int mSelectedCamera = -1;
-    
-    public void selectCamera(int camera) {
-        if (mCamera != null) {
-            mCamera.release();
-        }
-        new OpenCameraTask().execute(camera);
-    }
-    
-    private void previewOpenCamera(Camera camera) {
-        mCamera = camera;
-        mPreview.loadCamera(mCamera);
-    }
-
     private class OpenCameraTask extends AsyncTask<Integer, Integer, Camera> {
 
         @Override
@@ -153,8 +141,43 @@ public class SimpleCameraActivity extends DemoActivity implements CameraSelectio
 
         @Override
         protected void onPostExecute(Camera result) {
-            previewOpenCamera(result);
+            mCamera = result;
+
+            /*
+             * create the option fragments based on opened camera parameters
+             */
+            Parameters params = mCamera.getParameters();
+
+            mFilterFragment = ColorEffectsFragment.newInstance(SimpleCameraActivity.this,
+                    params.getSupportedColorEffects());
+            
+            mPreview.loadCamera(mCamera);
         }
 
+    }
+
+    @Override
+    public void selectCamera(int cameraId) {
+        if (mCamera != null) {
+            mCamera.release();
+        }
+        new OpenCameraTask().execute(cameraId);
+
+        CameraInfo cameraInfo = new CameraInfo();
+        Camera.getCameraInfo(cameraId, cameraInfo);
+
+        mIntensityFragment = new IntensityFragment();
+    }
+
+    @Override
+    public void changeSetting(SettingType type, String newSetting) {
+        switch (type) {
+        case COLOR_EFFECT:
+           
+            Parameters params = mCamera.getParameters();
+            params.setColorEffect(newSetting);
+            mCamera.setParameters(params);
+            break;
+        }
     }
 }
