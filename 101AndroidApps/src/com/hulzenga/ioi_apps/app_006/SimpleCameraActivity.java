@@ -1,5 +1,8 @@
 package com.hulzenga.ioi_apps.app_006;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -16,20 +19,22 @@ import android.view.WindowManager;
 
 import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
+import com.hulzenga.ioi_apps.app_006.SettingIconFragment.ParameterGroup;
 
 public class SimpleCameraActivity extends DemoActivity implements SettingChangeListener {
 
-    private static final String  TAG                = "SIMPLE_CAM_ACTIVITY";
+    private static final String TAG             = "SIMPLE_CAM_ACTIVITY";
 
-    private Camera               mCamera;
-    private SimpleCameraPreview  mPreview;
+    private Camera              mCamera;
+    private SimpleCameraPreview mPreview;
 
-    private int                  mSelectedCamera    = 0;
+    private int                 mSelectedCamera = 0;
 
-    private Fragment             mActiveFragment;
-    private CameraFragment       mCameraFragment;
-    private ColorEffectsFragment mFilterFragment;
-    private IntensityFragment    mIntensityFragment = new IntensityFragment();
+    private Fragment            mActiveFragment;
+    private SettingIconFragment mCameraFragment;
+    private SettingIconFragment mFlashFragment;
+    private SettingIconFragment mColorEffectFragment;
+    private ExposureFragment    mExposureFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +73,23 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
     }
 
     private void discoverCameras() {
-        int[] facing = new int[Camera.getNumberOfCameras()];
+        List<String> cameraFacings = new ArrayList<String>();
         CameraInfo info = new CameraInfo();
 
-        for (int i = 0; i < facing.length; i++) {
+        for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
             Camera.getCameraInfo(i, info);
-            facing[i] = info.facing;
+            cameraFacings.add(String.valueOf(info.facing));
         }
-        mCameraFragment = CameraFragment.newInstance(this, facing);
+
+        mCameraFragment = SettingIconFragment.newInstance(this, cameraFacings, ParameterGroup.CAMERA);
+    }
+
+    private void lock() {
+
+    }
+
+    private void release() {
+
     }
 
     @Override
@@ -96,16 +110,23 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
     }
 
     public void toggleCameraFragment(View view) {
+        toggleActiveFragment(mCameraFragment, R.id.app_006_centerFragmentContainer);
+    }
 
-        toggleActiveFragment(mCameraFragment, R.id.app_006_sideFragmentContainer);
+    public void toggleFlashFragment(View view) {
+        toggleActiveFragment(mFlashFragment, R.id.app_006_centerFragmentContainer);
     }
 
     public void toggleFilterFragment(View view) {
-        toggleActiveFragment(mFilterFragment, R.id.app_006_sideFragmentContainer);
+        toggleActiveFragment(mColorEffectFragment, R.id.app_006_centerFragmentContainer);
     }
 
     public void toggleIntensityFragment(View view) {
-        toggleActiveFragment(mIntensityFragment, R.id.app_006_bottomFragmentContainer);
+        toggleActiveFragment(mExposureFragment, R.id.app_006_bottomFragmentContainer);
+    }
+
+    public void toggleSettingsFragment(View view) {
+
     }
 
     public void toggleActiveFragment(Fragment fragment, int container) {
@@ -148,35 +169,56 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
              */
             Parameters params = mCamera.getParameters();
 
-            mFilterFragment = ColorEffectsFragment.newInstance(SimpleCameraActivity.this,
-                    params.getSupportedColorEffects());
-            
+            mFlashFragment = SettingIconFragment.newInstance(SimpleCameraActivity.this,
+                    params.getSupportedFlashModes(), ParameterGroup.FLASH);
+            mColorEffectFragment = SettingIconFragment.newInstance(SimpleCameraActivity.this,
+                    params.getSupportedColorEffects(), ParameterGroup.EFFECTS);
+
+            mExposureFragment = ExposureFragment.newInstance(SimpleCameraActivity.this,
+                    params.getMinExposureCompensation(), params.getExposureCompensation(),
+                    params.getMaxExposureCompensation());
+
             mPreview.loadCamera(mCamera);
+
+            // release buttons back to the user
+            release();
         }
 
     }
 
-    @Override
-    public void selectCamera(int cameraId) {
+    private void selectCamera(int cameraId) {
         if (mCamera != null) {
             mCamera.release();
         }
+
+        // no input allowed while opening a new camera
+        lock();
         new OpenCameraTask().execute(cameraId);
 
         CameraInfo cameraInfo = new CameraInfo();
         Camera.getCameraInfo(cameraId, cameraInfo);
-
-        mIntensityFragment = new IntensityFragment();
     }
 
     @Override
-    public void changeSetting(SettingType type, String newSetting) {
+    public void changeSetting(int type, Object newSetting) {
+        Parameters params = mCamera.getParameters();
+
         switch (type) {
+        case CAMERA:
+            selectCamera((Integer) newSetting);
+            break;
         case COLOR_EFFECT:
-           
-            Parameters params = mCamera.getParameters();
-            params.setColorEffect(newSetting);
+            mPreview.stopPreview();
+            params.setColorEffect((String) newSetting);
             mCamera.setParameters(params);
+            String effect = mCamera.getParameters().getColorEffect();
+            mPreview.startPreview();
+            break;
+        case EXPOSURE:
+            mPreview.stopPreview();
+            params.setExposureCompensation((Integer) newSetting);
+            mCamera.setParameters(params);
+            mPreview.startPreview();
             break;
         }
     }

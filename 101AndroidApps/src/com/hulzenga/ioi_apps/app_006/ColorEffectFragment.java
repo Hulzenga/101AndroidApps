@@ -18,9 +18,8 @@ import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 import com.hulzenga.ioi_apps.R;
-import com.hulzenga.ioi_apps.app_006.SettingChangeListener.SettingType;
 
-public class ColorEffectsFragment extends Fragment {
+public class ColorEffectFragment extends Fragment {
 
     private static final String               TAG                = "COLOR_EFFECTS_FRAGMENT";
 
@@ -57,14 +56,14 @@ public class ColorEffectsFragment extends Fragment {
     // ArrayList<Map<String, Integer>>();
 
     private List<Map<String, Object>>         mGridViewData      = new ArrayList<Map<String, Object>>();
-    private List<String>                      mAvailableEffects  = new ArrayList<String>();
+    private List<Object>                      mAvailableEffects  = new ArrayList<Object>();
     private static final String               EFFECT_ICON        = "EFFECT_ICON";
     private static final String               EFFECT_DESCRIPTION = "EFFECT_DESCRIPTION";
 
-    public static ColorEffectsFragment newInstance(SettingChangeListener settingChangeListener,
-            List<String> availableEffects) {
+    public static ColorEffectFragment newInstance(SettingChangeListener settingChangeListener,
+            List<Object> availableEffects) {
 
-        ColorEffectsFragment fragment = new ColorEffectsFragment();
+        ColorEffectFragment fragment = new ColorEffectFragment();
         fragment.mSettingChangeListener = settingChangeListener;
 
         // Sort the effects to achieve desired display order
@@ -75,7 +74,7 @@ public class ColorEffectsFragment extends Fragment {
         }
 
         // put the available effects into the Hashmap List for display
-        for (String effect : fragment.mAvailableEffects) {
+        for (Object effect : fragment.mAvailableEffects) {
             HashMap<String, Object> map = new HashMap<String, Object>();
 
             map.put(EFFECT_ICON, mEffectIconMap.get(effect));
@@ -89,6 +88,7 @@ public class ColorEffectsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mColorEffectsGridView = new GridView(getActivity());
         mColorEffectsGridView.setNumColumns(mGridViewData.size());
+        
 
         mAdapter = new SimpleAdapter(getActivity(), mGridViewData, R.layout.app_006_item_icon_description,
                 new String[] { EFFECT_ICON, EFFECT_DESCRIPTION }, new int[] { R.id.app_006_icon,
@@ -99,7 +99,7 @@ public class ColorEffectsFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mSettingChangeListener.changeSetting(SettingType.COLOR_EFFECT, mAvailableEffects.get(position));
+                mSettingChangeListener.changeSetting(SettingChangeListener.COLOR_EFFECT, mAvailableEffects.get(position));
             }
         });
         return mColorEffectsGridView;

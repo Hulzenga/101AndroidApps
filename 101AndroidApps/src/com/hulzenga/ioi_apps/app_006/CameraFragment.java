@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
@@ -13,11 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
@@ -73,7 +70,7 @@ public class CameraFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mSettingChangeListener.selectCamera(position);
+                mSettingChangeListener.changeSetting(SettingChangeListener.CAMERA, position);
             }
         });
         return mCameraGridView;
