@@ -66,23 +66,6 @@ public class SimpleCameraPreview extends SurfaceView implements SurfaceHolder.Ca
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
-        // make sure mHolder exists
-        if (mHolder.getSurface() == null) {
-            return;
-        }
-
-        try {
-            mCamera.stopPreview();
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to stop camera preview: " + e.getMessage());
-        }
-
-        try {
-            mCamera.setPreviewDisplay(mHolder);
-            mCamera.startPreview();
-        } catch (Exception e) {
-            Log.e(TAG, "Error starting camera preview: " + e.getMessage());
-        }
     }
 
     @Override

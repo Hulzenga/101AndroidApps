@@ -3,37 +3,38 @@
     android:id="@+id/app_006_simple_cam_app_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="0dp"
+    android:padding="0dp"    
     tools:context=".SimpleCameraActivity" >
 
     <ToggleButton
-        android:id="@+id/app_006_vidPicToggle"
+        android:id="@+id/app_006_videoOrPictureToggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="8dp"
         android:background="@drawable/app_006_vid_pic"
+        android:onClick="toggleVideoOrPicture"
         android:textOff="@string/generic_empty_string"
         android:textOn="@string/generic_empty_string" />
+
+    <ImageButton
+        android:id="@+id/app_006_captureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/app_006_videoOrPictureToggle"
+        android:layout_alignRight="@+id/app_006_videoOrPictureToggle"
+        android:layout_centerVertical="true"
+        android:onClick="takeCapture"
+        android:src="@android:drawable/ic_media_play" />
 
     <com.hulzenga.ioi_apps.app_006.SimpleCameraPreview
         android:id="@+id/app_006_cameraPreview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/app_006_vidPicToggle"
-        android:layout_toRightOf="@+id/app_006_left_side_button_container" >
-    </com.hulzenga.ioi_apps.app_006.SimpleCameraPreview>
-
-    <ImageButton
-        android:id="@+id/app_006_captureButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/app_006_vidPicToggle"
-        android:layout_alignRight="@+id/app_006_vidPicToggle"
-        android:layout_centerVertical="true"
-        android:src="@android:drawable/ic_media_play" />
+        android:layout_toLeftOf="@+id/app_006_videoOrPictureToggle"
+        android:layout_toRightOf="@+id/app_006_left_side_button_container" />
 
     <LinearLayout
         android:id="@+id/app_006_left_side_button_container"
@@ -42,54 +43,47 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="8dp"
         android:orientation="vertical" >
 
-        <Button
+        <ImageButton
             android:id="@+id/app_006_cameraSelectButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
             android:layout_weight="1.0"
             android:onClick="toggleCameraFragment"
-            android:text="Camera" />
+            android:src="@drawable/app_006_camera_select" />
 
-        <Button
+        <ImageButton
             android:id="@+id/app_006_flashButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
             android:layout_weight="1.0"
             android:onClick="toggleFlashFragment"
-            android:text="Flash" />
-"
+            android:src="@drawable/app_006_flash" />
 
-        <Button
+        <ImageButton
             android:id="@+id/app_006_colorEffectButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
             android:layout_weight="1.0"
             android:onClick="toggleFilterFragment"
-            android:text="color" />
+            android:src="@drawable/app_006_color_effect" />
 
-        <Button
+        <ImageButton
             android:id="@+id/app_006_exposureButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
             android:layout_weight="1.0"
             android:onClick="toggleIntensityFragment"
-            android:text="exposure" />
+            android:src="@drawable/app_006_exposure" />
 
-        <Button
+        <ImageButton
             android:id="@+id/app_006_settingsButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
             android:layout_weight="1.0"
             android:onClick="toggleSettingsFragment"
-            android:text="Settings" />
+            android:src="@drawable/app_006_settings" />
     </LinearLayout>
 
     <FrameLayout
@@ -110,8 +104,21 @@
         android:layout_alignLeft="@+id/app_006_bottomFragmentContainer"
         android:layout_alignRight="@+id/app_006_bottomFragmentContainer"
         android:layout_centerVertical="true"
-        android:layout_margin="8dp" >
-
+        android:layout_margin="8dp" 
+        >
     </FrameLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/app_006_settingMenuContainer1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@id/app_006_cameraPreview"
+        
+        
+        android:padding="8dp" >
+    </LinearLayout>
+    
 
 </RelativeLayout>
