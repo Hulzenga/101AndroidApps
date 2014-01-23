@@ -1,6 +1,5 @@
 package com.hulzenga.ioi_apps.app_006;
 
-import android.hardware.Camera;
 
 public interface SettingChangeListener {
     

@@ -21,11 +21,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
 import com.hulzenga.ioi_apps.app_006.PickIconFragment.ParameterGroup;
+import com.hulzenga.ioi_apps.util.DeveloperTools;
+import com.hulzenga.ioi_apps.util.DeveloperTools.Statefulness;
 import com.hulzenga.ioi_apps.util.FileManager;
 
 public class SimpleCameraActivity extends DemoActivity implements SettingChangeListener {
@@ -36,6 +39,13 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
     private PictureCallback     mPicture;
 
     private SimpleCameraPreview mPreview;
+
+    private List<ImageButton>   mImageButtons;
+    private ImageButton         mCameraSelectButton;
+    private ImageButton         mFlashButton;
+    private ImageButton         mColorEffectButton;
+    private ImageButton         mExposureButton;
+    private ImageButton         mSettingButton;
 
     private int                 mSelectedCamera = 0;
 
@@ -63,7 +73,7 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
         // hide the status bar
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        //setup camera callbacks
+        // setup camera callbacks
         mPicture = new PictureCallback() {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
@@ -83,17 +93,36 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
                 } catch (IOException e) {
                     Log.d(TAG, "Error accessing file: " + e.getMessage());
                 }
-                
+
                 mPreview.startPreview();
             }
         };
 
-        //inflate main activity view
+        // inflate main activity view
         setContentView(R.layout.app_006_activity_simple_cam);
 
         // acquire required view references
         mPreview = (SimpleCameraPreview) findViewById(R.id.app_006_cameraPreview);
 
+        mCameraSelectButton = (ImageButton) findViewById(R.id.app_006_cameraSelectButton);
+        mFlashButton = (ImageButton) findViewById(R.id.app_006_flashButton);
+        mColorEffectButton = (ImageButton) findViewById(R.id.app_006_colorEffectButton);
+        mExposureButton = (ImageButton) findViewById(R.id.app_006_exposureButton);
+        mSettingButton = (ImageButton) findViewById(R.id.app_006_settingsButton);
+        
+        //add all image buttons together in a list for easy access
+        mImageButtons = new ArrayList<ImageButton>();
+        mImageButtons.add(mCameraSelectButton);
+        mImageButtons.add(mFlashButton);
+        mImageButtons.add(mColorEffectButton);
+        mImageButtons.add(mExposureButton);
+        mImageButtons.add(mSettingButton);
+        
+        //make image buttons stateful for a clearer user experience
+        for (ImageButton imageButton: mImageButtons) {
+            DeveloperTools.makeImageButtonStateful(imageButton, Statefulness.greyWhenDisabled);
+        }
+        
         // discover cameras
         discoverCameras();
     }
@@ -119,12 +148,35 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
         mCameraFragment = PickIconFragment.newInstance(this, cameraFacings, ParameterGroup.CAMERA);
     }
 
+    /**
+     * lock all buttons to ensure there is no input during critical operations
+     * such as opening a camera or taking a picture
+     */
     private void lock() {
-
+       for (ImageButton imageButton: mImageButtons) {
+           imageButton.setEnabled(false);
+       }
     }
 
+    /**
+     * releases those buttons which can be used by the current camera
+     */
     private void release() {
+        mCameraSelectButton.setEnabled(true);
+        Parameters params = mCamera.getParameters();
+        if (params.getSupportedFlashModes() != null) {
+            mFlashButton.setEnabled(true);
+        }
 
+        if (params.getSupportedColorEffects() != null) {
+            mColorEffectButton.setEnabled(true);
+        }
+
+        if (params.getMinExposureCompensation() != params.getMaxExposureCompensation()) {
+            mExposureButton.setEnabled(true);
+        }
+
+        mSettingButton.setEnabled(true);
     }
 
     @Override
@@ -169,18 +221,28 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if (mActiveFragment == fragment) {
+            fragmentManager.popBackStack("app_006.level1", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fragmentTransaction.remove(fragment);
             mActiveFragment = null;
         } else {
             if (mActiveFragment != null) {
                 fragmentTransaction.remove(mActiveFragment);
+                fragmentManager.popBackStack("app_006.level1", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
             fragmentTransaction.add(container, fragment);
+            fragmentTransaction.addToBackStack("app_006.level1");
             mActiveFragment = fragment;
         }
+
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onBackPressed() {        
+        super.onBackPressed();        
+        mActiveFragment = null;
+    }
+    
     private boolean mVideoMode = false;
 
     public void toggleVideoOrPicture(View view) {
@@ -254,9 +316,16 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
     public void changeSetting(int type, Object newSetting) {
         Parameters params = mCamera.getParameters();
 
+        Log.d(TAG, "Setting Change requested: " + String.valueOf(newSetting));
         switch (type) {
         case CAMERA:
             selectCamera((Integer) newSetting);
+            break;
+        case FLASH:
+            mPreview.stopPreview();
+            params.setFlashMode((String) newSetting);
+            mCamera.setParameters(params);
+            mPreview.startPreview();
             break;
         case COLOR_EFFECT:
             mPreview.stopPreview();
@@ -269,6 +338,11 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             params.setExposureCompensation((Integer) newSetting);
             mCamera.setParameters(params);
             mPreview.startPreview();
+            break;
+        default:
+            Log.w(TAG,
+                    "changeSeting was called with an unknown type: " + String.valueOf(type) + ", "
+                            + String.valueOf(newSetting));
             break;
         }
     }
