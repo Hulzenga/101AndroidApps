@@ -3,11 +3,11 @@ package com.hulzenga.ioi_apps.app_006;
 
 public interface SettingChangeListener {
     
-    public static final int CAMERA = 0;
-    public static final int FLASH = 1;
-    public static final int COLOR_EFFECT = 2;
-    public static final int EXPOSURE = 3;
+    public enum ChangeType {
+        CAMERA, FLASH, COLOR_EFFECT,EXPOSURE ,IMAGE_SIZE ,FOCUS ,SCENE_MODE ,ISO, WHITE_BALANCE
+    }
         
-        
-    public void changeSetting(int type, Object newSetting);
+    public void changeSetting(ChangeType type, Object newSetting);
+    public void open2ndLevelSetting(ChangeType type);
+    
 }

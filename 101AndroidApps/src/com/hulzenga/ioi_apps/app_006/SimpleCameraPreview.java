@@ -33,7 +33,7 @@ public class SimpleCameraPreview extends SurfaceView implements SurfaceHolder.Ca
     }
     
     public void loadCamera(Camera camera) {
-        mCamera = camera;  
+        mCamera = camera;        
         startPreview();
     }
     
@@ -44,6 +44,8 @@ public class SimpleCameraPreview extends SurfaceView implements SurfaceHolder.Ca
                 mCamera.startPreview();
             } catch (IOException e) {
                 Log.e(TAG, "Error setting camera preview: " + e.getMessage());
+            } catch (RuntimeException e) {
+                Log.e(TAG, "Runtime exception");
             }
         } else {
             Log.d(TAG, "No camera loaded");

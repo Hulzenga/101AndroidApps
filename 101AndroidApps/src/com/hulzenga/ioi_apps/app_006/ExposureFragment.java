@@ -9,6 +9,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.hulzenga.ioi_apps.R;
+import com.hulzenga.ioi_apps.app_006.SettingChangeListener.ChangeType;
 
 public class ExposureFragment extends Fragment {
 
@@ -54,7 +55,7 @@ public class ExposureFragment extends Fragment {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mSettingChangeListener.changeSetting(SettingChangeListener.EXPOSURE, progress + mMinExposure);
+                mSettingChangeListener.changeSetting(ChangeType.EXPOSURE, progress + mMinExposure);
             }
         });
         return view;

@@ -26,7 +26,7 @@
         android:layout_alignRight="@+id/app_006_videoOrPictureToggle"
         android:layout_centerVertical="true"
         android:onClick="takeCapture"
-        android:src="@android:drawable/ic_media_play" />
+        android:src="@drawable/app_006_start_capture" />
 
     <com.hulzenga.ioi_apps.app_006.SimpleCameraPreview
         android:id="@+id/app_006_cameraPreview"
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.0"
-            android:onClick="toggleFilterFragment"
+            android:onClick="toggleColorEffectFragment"
             android:src="@drawable/app_006_color_effect" />
 
         <ImageButton
@@ -74,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.0"
-            android:onClick="toggleIntensityFragment"
+            android:onClick="toggleExposureFragment"
             android:src="@drawable/app_006_exposure" />
 
         <ImageButton
@@ -109,15 +109,15 @@
     </FrameLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:id="@+id/app_006_settingMenuContainer1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignLeft="@id/app_006_cameraPreview"
-        
-        
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/app_006_videoOrPictureToggle"
+        android:orientation="horizontal"
         android:padding="8dp" >
+
     </LinearLayout>
     
 
