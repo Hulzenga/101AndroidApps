@@ -12,15 +12,18 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.Size;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -35,34 +38,54 @@ import com.hulzenga.ioi_apps.util.FileManager;
 
 public class SimpleCameraActivity extends DemoActivity implements SettingChangeListener {
 
-    private static final String TAG             = "SIMPLE_CAM_ACTIVITY";
+    private static final String       TAG                   = "SIMPLE_CAM_ACTIVITY";
 
-    private Camera              mCamera;
-    private PictureCallback     mPicture;
+    private Camera                    mCamera;
+    private PictureCallback           mPicture;
 
-    private SimpleCameraPreview mPreview;
+    private SimpleCameraPreview       mPreview;
+    private boolean                   mVideoMode            = false;
+    private boolean                   mFilming              = false;
 
-    private List<ImageButton>   mImageButtons;
-    private ImageButton         mCameraSelectButton;
-    private ImageButton         mFlashButton;
-    private ImageButton         mColorEffectButton;
-    private ImageButton         mExposureButton;
-    private ImageButton         mSettingButton;
-    private ImageButton         mCaptureButton;
+    private List<ImageButton>         mImageButtons;
+    private ImageButton               mCameraSelectButton;
+    private ImageButton               mFlashButton;
+    private ImageButton               mColorEffectButton;
+    private ImageButton               mExposureButton;
+    private ImageButton               mSettingButton;
+    private ImageButton               mCaptureButton;
 
-    private Drawable            mCaptureButtonStart;
-    private Drawable            mCaptureButtonPause;
+    private Drawable                  mCaptureButtonStart;
+    private Drawable                  mCaptureButtonPause;
 
-    private int                 mSelectedCamera = 0;
+    private int                       mSelectedCamera       = 0;
 
-    private Fragment            mActiveFragment;
-    private Fragment            mActiveLevel2MenuFragment;
-    private PickIconFragment    mCameraFragment;
-    private PickIconFragment    mFlashFragment;
-    private PickIconFragment    mColorEffectFragment;
-    private ExposureFragment    mExposureFragment;
-    private SettingMenuFragment mSettingMenuFragment;
-    private EmptyFragment       mEmptyFragment  = EmptyFragment.newInstance();
+    private Fragment                  mActiveFragment;
+    private Fragment                  mActiveLevel2MenuFragment;
+    private PickIconFragment          mCameraFragment;
+    private PickIconFragment          mFlashFragment;
+    private PickIconFragment          mColorEffectFragment;
+    private ExposureFragment          mExposureFragment;
+    private SettingMenuFragment       mSettingMenuFragment;
+    private EmptyFragment             mEmptyFragment        = EmptyFragment.newInstance();
+
+    private ChangeType                mOpenSubMenu;
+
+    /*
+     * As far as I can tell the ISO setting cannot be retrieved using the normal
+     * API. However, depending on if the device allows them, setting these
+     * values might work.
+     */
+    private String                    mCurrentISO           = "400";
+    private static final List<String> POSSIBLE_ISO_SETTINGS = new ArrayList<String>();
+    static {
+        POSSIBLE_ISO_SETTINGS.add("auto");
+        POSSIBLE_ISO_SETTINGS.add("100");
+        POSSIBLE_ISO_SETTINGS.add("200");
+        POSSIBLE_ISO_SETTINGS.add("400");
+        POSSIBLE_ISO_SETTINGS.add("800");
+        POSSIBLE_ISO_SETTINGS.add("1600");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,16 +191,16 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
      * lock all buttons to ensure there is no input during critical operations
      * such as opening a camera or taking a picture
      */
-    private void lock() {
+    private void disableButtons() {
         for (ImageButton imageButton : mImageButtons) {
             imageButton.setEnabled(false);
         }
     }
 
     /**
-     * releases those buttons which can be used by the current camera
+     * releases those buttons which can be used by the mCurrentISO camera
      */
-    private void release() {
+    private void enableButtons() {
         mCameraSelectButton.setEnabled(true);
         Parameters params = mCamera.getParameters();
         if (params.getSupportedFlashModes() != null) {
@@ -207,7 +230,16 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
         super.onPause();
 
         if (mCamera != null) {
-            // mPreview.stopPreview();
+            // if we are filming stop doing so
+            if (mFilming) {
+                stopFilming();
+            } else {
+                // if somehow there is a prepared media recorder, but filming
+                // has not starter, release it
+                releaseMediaRecorder();
+            }
+
+            // release the camera
             mCamera.release();
             mCamera = null;
         }
@@ -234,8 +266,6 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
         if (mActiveFragment == fragment) {
-            // fragmentManager.popBackStack("app_006.level1",
-            // FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.remove(fragment);
             mActiveFragment = null;
         } else {
@@ -279,8 +309,8 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             if (mActiveFragment != null) {
                 fm.beginTransaction().remove(mActiveFragment).commit();
             }
-            fm.beginTransaction().add(R.id.app_006_settingMenuContainer1, mSettingMenuFragment)
-                    .add(R.id.app_006_settingMenuContainer1, mEmptyFragment).commit();
+            fm.beginTransaction().add(R.id.app_006_settingMenuContainer, mSettingMenuFragment)
+                    .add(R.id.app_006_settingMenuContainer, mEmptyFragment).commit();
             mActiveFragment = mSettingMenuFragment;
         }
     }
@@ -291,15 +321,23 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
         // mActiveFragment = null;
     }
 
-    private boolean mVideoMode = false;
-
     public void toggleVideoOrPicture(View view) {
 
         // toggle videoMode
         mVideoMode = !mVideoMode;
     }
 
-    private boolean mFilming = false;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            takeCapture(null);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            // do nothing
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     public void takeCapture(View view) {
 
@@ -307,12 +345,74 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             mCamera.takePicture(null, null, mPicture);
         } else {
             if (!mFilming) {
-                mFilming = true;
-                mCaptureButton.setImageDrawable(mCaptureButtonPause);
+
+                if (prepareMediaRecorder()) {
+                    // Lock all buttons except the capture button
+                    disableButtons();
+                    mCaptureButton.setEnabled(true);
+
+                    mFilming = true;
+                    mCaptureButton.setImageDrawable(mCaptureButtonPause);
+                    mMediaRecorder.start();
+                } else {
+                    releaseMediaRecorder();
+                }
+
             } else {
-                mFilming = false;
-                mCaptureButton.setImageDrawable(mCaptureButtonStart);
+                stopFilming();
             }
+        }
+    }
+
+    private MediaRecorder mMediaRecorder;
+
+    /**
+     * prepares media recorder, must be called before the star of filming
+     * 
+     * @return true if the media recorder was successfully prepared, false if
+     *         otherwise
+     * 
+     */
+    private boolean prepareMediaRecorder() {
+        // setup media recording, following the API guide
+
+        mMediaRecorder = new MediaRecorder();
+        mCamera.unlock();
+        mMediaRecorder.setCamera(mCamera);
+
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+
+        mMediaRecorder.setOutputFile(FileManager.GetOutputMediaFile(FileManager.MEDIA_TYPE_VIDEO).toString());
+        mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
+
+        try {
+            mMediaRecorder.prepare();
+        } catch (IllegalStateException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void stopFilming() {
+        releaseMediaRecorder();
+        enableButtons();
+
+        mFilming = false;
+        mCaptureButton.setImageDrawable(mCaptureButtonStart);
+    }
+
+    private void releaseMediaRecorder() {
+        if (mMediaRecorder != null) {
+            mMediaRecorder.reset();
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+            mCamera.lock();
         }
     }
 
@@ -352,7 +452,7 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             mPreview.loadCamera(mCamera);
 
             // release buttons back to the user
-            release();
+            enableButtons();
         }
     }
 
@@ -362,7 +462,7 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
         }
 
         // no input allowed while opening a new camera
-        lock();
+        disableButtons();
         new OpenCameraTask().execute(cameraId);
 
         CameraInfo cameraInfo = new CameraInfo();
@@ -399,6 +499,22 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             mCamera.setParameters(params);
             mPreview.startPreview();
             break;
+        case IMAGE_SIZE:
+            mPreview.stopPreview();
+            List<Size> possibleSizes = params.getSupportedPictureSizes();
+            Size newSize = mCamera.new Size(0, 0);
+
+            for (Size size : possibleSizes) {
+                if (((String) newSetting).equals(size.width + "x" + size.height)) {
+                    newSize = size;
+                    break;
+                }
+            }
+
+            params.setPictureSize(newSize.width, newSize.height);
+            mCamera.setParameters(params);
+            mPreview.startPreview();
+            break;
         case FOCUS:
             mPreview.stopPreview();
             params.setFocusMode((String) newSetting);
@@ -412,14 +528,17 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             mPreview.startPreview();
             break;
         case ISO:
+            // because ISO is not an accessible setting we must cache it in the
+            // activity
+            mCurrentISO = (String) newSetting;
             mPreview.stopPreview();
-            params.set("iso", (String) newSetting);
+            params.set("POSSIBLE_ISO_SETTINGS", (String) newSetting);
             mCamera.setParameters(params);
             mPreview.startPreview();
             break;
         case WHITE_BALANCE:
             mPreview.stopPreview();
-            params.setSceneMode((String) newSetting);
+            params.setWhiteBalance((String) newSetting);
             mCamera.setParameters(params);
             mPreview.startPreview();
             break;
@@ -430,8 +549,6 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             break;
         }
     }
-
-    private ChangeType mOpenSubMenu;
 
     @Override
     public void open2ndLevelSetting(ChangeType type) {
@@ -452,15 +569,19 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
             // close the opened sub menu
             mActiveLevel2MenuFragment = null;
             mOpenSubMenu = null;
-            ft.add(R.id.app_006_settingMenuContainer1, mEmptyFragment);
+            ft.add(R.id.app_006_settingMenuContainer, mEmptyFragment);
         } else {
             // open a new sub menu
             switch (type) {
             case IMAGE_SIZE:
-                // mActiveLevel2MenuFragment =
-                // SettingMenuLvl2Fragment.newInstance(ChangeType.IMAGE_SIZE,
-                // params.getPictureSize(),
-                // params.getSupportedPictureSizes());
+
+                Size currentSize = params.getPictureSize();
+                List<String> pictureSizes = new ArrayList<String>();
+                for (Size size : params.getSupportedPictureSizes()) {
+                    pictureSizes.add(size.width + "x" + size.height);
+                }
+                mActiveLevel2MenuFragment = SettingMenuLvl2Fragment.newInstance(ChangeType.IMAGE_SIZE,
+                        currentSize.width + "x" + currentSize.height, pictureSizes);
                 break;
             case FOCUS:
                 mActiveLevel2MenuFragment = SettingMenuLvl2Fragment.newInstance(ChangeType.FOCUS,
@@ -471,15 +592,8 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
                         params.getSceneMode(), params.getSupportedSceneModes());
                 break;
             case ISO:
-                String current = "100";
-                List<String> iso = new ArrayList<String>();
-                iso.add("auto");
-                iso.add("100");
-                iso.add("200");
-                iso.add("400");
-                iso.add("800");
-                iso.add("1600");
-                mActiveLevel2MenuFragment = SettingMenuLvl2Fragment.newInstance(ChangeType.ISO, current, iso);
+                mActiveLevel2MenuFragment = SettingMenuLvl2Fragment.newInstance(ChangeType.ISO, mCurrentISO,
+                        POSSIBLE_ISO_SETTINGS);
                 break;
             case WHITE_BALANCE:
                 mActiveLevel2MenuFragment = SettingMenuLvl2Fragment.newInstance(ChangeType.WHITE_BALANCE,
@@ -491,7 +605,7 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
                 break;
             }
             mOpenSubMenu = type;
-            ft.add(R.id.app_006_settingMenuContainer1, mActiveLevel2MenuFragment);
+            ft.add(R.id.app_006_settingMenuContainer, mActiveLevel2MenuFragment);
         }
 
         ft.commit();

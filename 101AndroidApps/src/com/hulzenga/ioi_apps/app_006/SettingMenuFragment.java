@@ -33,7 +33,7 @@ public class SettingMenuFragment extends Fragment {
     private static final String SCENE_MODE = "Scene mode";
     private static final String ISO = "ISO";
     private static final String WHITE_BALANCE = "White balance";
-    private static final String TIMER = "Timer";
+    //private static final String TIMER = "Timer";
     
     public static final List<String> SETTINGS = new ArrayList<String>();
     static {
@@ -42,17 +42,19 @@ public class SettingMenuFragment extends Fragment {
         SETTINGS.add(SCENE_MODE);
         SETTINGS.add(ISO);
         SETTINGS.add("White balance");
-        SETTINGS.add("Timer");
+        //SETTINGS.add("Timer");
     }
     
     private boolean[] availableSettings = new boolean[SETTINGS.size()];
     
     public static final Map<Integer, ChangeType> SETTING_CHANGE_MAP = new HashMap<Integer, ChangeType>();
     static {
+        SETTING_CHANGE_MAP.put(SETTINGS.indexOf(IMAGE_SIZE), ChangeType.IMAGE_SIZE);
         SETTING_CHANGE_MAP.put(SETTINGS.indexOf(FOCUS), ChangeType.FOCUS);
         SETTING_CHANGE_MAP.put(SETTINGS.indexOf(SCENE_MODE), ChangeType.SCENE_MODE);
         SETTING_CHANGE_MAP.put(SETTINGS.indexOf(ISO), ChangeType.ISO);
         SETTING_CHANGE_MAP.put(SETTINGS.indexOf(WHITE_BALANCE), ChangeType.WHITE_BALANCE);
+        //SETTING_CHANGE_MAP.put(SETTINGS.indexOf(TIMER), ChangeType.TIMER);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class SettingMenuFragment extends Fragment {
 
         //go through the camera parameters to see which menu options should be enabled
         
-        fragment.availableSettings[SETTINGS.indexOf(IMAGE_SIZE)] = false;
+        fragment.availableSettings[SETTINGS.indexOf(IMAGE_SIZE)] = true;
         
         if (params.getSupportedFocusModes() != null) {
             fragment.availableSettings[SETTINGS.indexOf(FOCUS)] = true;
@@ -81,7 +83,7 @@ public class SettingMenuFragment extends Fragment {
             fragment.availableSettings[SETTINGS.indexOf(WHITE_BALANCE)] = true;
         }
         
-        fragment.availableSettings[SETTINGS.indexOf(TIMER)] = true;
+        //fragment.availableSettings[SETTINGS.indexOf(TIMER)] = true;
         
         return fragment;
     }

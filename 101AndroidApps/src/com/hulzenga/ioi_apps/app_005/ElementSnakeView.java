@@ -31,6 +31,8 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
     private ElementAdapter           mElementAdapter;
 
     private int                      mRemovedItemPosition;
+    
+    //TODO: This needs to be changed to be pixel density dependent
     private static final int         ELEMENT_SIZE                       = 100;
     private static final int         MIN_PADDING                        = 15;
 

@@ -34,7 +34,7 @@ public class ExposureFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.app_006_fragment_intensity, container, false);
+        View view = inflater.inflate(R.layout.app_006_fragment_exposure, container, false);
         SeekBar exposure = (SeekBar) view.findViewById(R.id.app_006_exposure_slider);
         exposure.setMax(mMaxExposure - mMinExposure);
         exposure.setProgress(mCurrentExposure - mMinExposure);

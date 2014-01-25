@@ -58,11 +58,11 @@ public class PickIconFragment extends Fragment {
 
     private static final Map<Object, Integer> FLASH_ICON_MAP    = new HashMap<Object, Integer>();
     static {
-        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_OFF, R.drawable.app_005_water_element);
-        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_ON, R.drawable.app_005_fire_element);
-        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_AUTO, R.drawable.app_005_fire_element);
-        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_RED_EYE, R.drawable.app_005_fire_element);
-        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_TORCH, R.drawable.app_005_fire_element);
+        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_OFF, R.drawable.app_006_flash_no);
+        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_ON, R.drawable.app_006_flash);
+        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_AUTO, R.drawable.app_006_flash_automatic);
+        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_RED_EYE, R.drawable.app_006_flash_red_eye);
+        FLASH_ICON_MAP.put(Parameters.FLASH_MODE_TORCH, R.drawable.app_006_flash_torch);
     }
 
     public static final List<Object>          EFFECT_ORDER      = new ArrayList<Object>();
@@ -76,19 +76,20 @@ public class PickIconFragment extends Fragment {
         EFFECT_ORDER.add(Parameters.EFFECT_AQUA);
         EFFECT_ORDER.add(Parameters.EFFECT_BLACKBOARD);
         EFFECT_ORDER.add(Parameters.EFFECT_WHITEBOARD);
+        
     }
 
     private static final Map<Object, Integer> EFFECT_ICON_MAP   = new HashMap<Object, Integer>();
     static {
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_NONE, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_MONO, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_NEGATIVE, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_SEPIA, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_SOLARIZE, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_POSTERIZE, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_AQUA, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_BLACKBOARD, R.drawable.app_005_earth_element);
-        EFFECT_ICON_MAP.put(Parameters.EFFECT_WHITEBOARD, R.drawable.app_005_earth_element);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_NONE, R.drawable.app_006_color_effect_none);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_MONO, R.drawable.app_006_color_effect_mono);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_NEGATIVE, R.drawable.app_006_color_effect_negative);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_SEPIA, R.drawable.app_006_color_effect_sepia);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_SOLARIZE, R.drawable.app_006_color_effect_solarize);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_POSTERIZE, R.drawable.app_006_color_effect_posterize);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_AQUA, R.drawable.app_006_color_effect_aqua);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_BLACKBOARD, R.drawable.app_006_color_effect_blackboard);
+        EFFECT_ICON_MAP.put(Parameters.EFFECT_WHITEBOARD, R.drawable.app_006_color_effect_whiteboard);
     }
 
     public enum ParameterGroup {

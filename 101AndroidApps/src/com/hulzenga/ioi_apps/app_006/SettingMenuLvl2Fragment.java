@@ -46,33 +46,31 @@ public class SettingMenuLvl2Fragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ListView view = new ListView(getActivity());
-        view.setBackgroundResource(R.drawable.app_006_item_background);
-        view.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
-
-        ListAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
-                mAvailableSettings) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View item = super.getView(position, convertView, parent);
-                if (mAvailableSettings.get(position).equals(mSelected)) {
-                    item.setBackgroundColor(Color.CYAN);
-                } else {
-                    item.setBackgroundColor(Color.TRANSPARENT);
-                }
-                return item;                
-            }
-        };
+        ListView listView = new ListView(getActivity());
+        listView.setBackgroundResource(R.drawable.app_006_item_background);
+        listView.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         
-        view.setAdapter(adapter);
-        view.setOnItemClickListener(new OnItemClickListener() {
+        ListAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_checked,
+                mAvailableSettings);
+        listView.setAdapter(adapter);
+        
+        listView.setItemChecked(mAvailableSettings.indexOf(mSelected), true);
+        
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ListView listView = (ListView) parent;
+                listView.setItemChecked(mAvailableSettings.indexOf(mSelected), false);
+                
+                mSelected = mAvailableSettings.get(position);
+                listView.setItemChecked(position, true);
+                
                 mSettingChangeListener.changeSetting(mChangeType, mAvailableSettings.get(position));
 
             }
         });
-        return view;
+        return listView;
     }
 
 }
