@@ -93,6 +93,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
+        <activity
+            android:name="com.hulzenga.ioi_apps.app_007.YAWG"
+            android:label="@string/app_007_title"
+            android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+        </activity>
     </application>
 
 </manifest>

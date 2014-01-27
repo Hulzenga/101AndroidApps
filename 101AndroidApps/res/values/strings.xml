@@ -29,5 +29,8 @@
     <string name="app_005_addMultipleElementsButton">Add 5 Elements</string>
     <!-- App 006 -->
     <string name="app_006_title">Simple Camera</string>
+    
+    <!-- App 007 -->
+    <string name="app_007_title">Yet Another Wikipedia Game</string>
 
 </resources>
