@@ -8,82 +8,31 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".YAWG" >
 
-    <LinearLayout
-        android:id="@+id/buttonContainer"
+    <fragment
+        android:id="@+id/app_007_fragmentButtons"
+        android:name="com.hulzenga.ioi_apps.app_007.FragmentButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:layout_alignParentRight="true"/>
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:onClick="selectOption1" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:onClick="selectOption2" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:onClick="selectOption3" />
-    </LinearLayout>
-
-    <RelativeLayout
+    <fragment
+        android:id="@+id/app_007_fragmentStatus"
+        android:name="com.hulzenga.ioi_apps.app_007.FragmentStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonContainer"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:gravity="center_vertical" >
+        tools:layout="@layout/app_007_fragment_status" />
 
-        <ProgressBar
-            android:id="@+id/app_007_downloadProgressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/app_007_downloadProgressText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/app_007_downloadProgressBar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp" />
-    </RelativeLayout>
-
-    <ScrollView
-        android:id="@+id/scrollView1"
+    <fragment
+        android:id="@+id/app_007_fragmentLinks"
+        android:name="com.hulzenga.ioi_apps.app_007.FragmentLinks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonContainer"
-        android:layout_alignParentTop="true" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/app_007_linkListText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text=""
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </LinearLayout>
-    </ScrollView>
+        android:layout_above="@+id/app_007_fragmentButtons"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/app_007_fragmentStatus"/>
 
 </RelativeLayout>

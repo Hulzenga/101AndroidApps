@@ -32,5 +32,8 @@
     
     <!-- App 007 -->
     <string name="app_007_title">Yet Another Wikipedia Game</string>
+    <string name="app_007_easy">Easy</string>
+    <string name="app_007_normal">Normal</string>
+    <string name="app_007_hard">Hard</string>
 
 </resources>

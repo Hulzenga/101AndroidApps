@@ -13,6 +13,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import android.app.Activity;
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -25,143 +28,176 @@ import android.widget.Toast;
 
 import com.hulzenga.ioi_apps.R;
 
-public class YAWG extends Activity {
+public class YAWG extends Activity implements FragmentButtons.OptionSelectionListener {
 
     private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
-    private static final int    DESIRED_GAME_OPTION_BUFFER = 9;
+    private static final int    DESIRED_GAME_OPTION_BUFFER = 4;
     private static final int    MAX_PARALLEL_DOWNLOADS     = 3;
     private static final int    MIN_LINK_LENGTH            = 4;
     private static final int    MAX_NUMBER_OF_LINKS        = 6;
 
-    private TextView            mTextView;
-    private TextView            mProgressBarTextView;
-    private Button              mOptionButton1;
-    private Button              mOptionButton2;
-    private Button              mOptionButton3;
-    private ProgressBar         mProgressBar;
+    private enum Difficulty {
+
+        EASY(R.string.app_007_easy, 3, 10),
+        NORMAL(R.string.app_007_normal, 3, 6),
+        HARD(R.string.app_007_hard, 4, 5);
+
+        public final int label;
+        public final int numberOfOptions;
+        public final int numberOfLinks;
+
+        private Difficulty(int label, int numberOfOptions, int numberOfLinks) {
+            this.label = label;
+            this.numberOfOptions = numberOfOptions;
+            this.numberOfLinks = numberOfLinks;
+        }
+    }
+
+    private TextView         mLinkText;
+    private TextView         mProgressBarTextView;
+
+    private FragmentButtons  mFragmentButtons;
+    private FragmentLinks    mFragmentLinks;
+    private FragmentStatus   mFragmentStatus;
+
+    private List<Button>     mOptionButtons      = new ArrayList<Button>();
+    private ProgressBar      mProgressBar;
 
     // handy to keep around
-    private Random              mRandom                    = new Random();
+    private Random           mRandom             = new Random();
 
-    private List<GameOption>    mGameOptions               = new LinkedList<GameOption>();
-    private boolean             mLaunchWhenReady           = true;
-    private int                 mCorrectChoice             = -1;
-    private String              mCorrectName;
+    private List<GameOption> mGameOptionBuffer   = new LinkedList<GameOption>();
+    private List<GameOption> mGameOptionsInPlay  = new LinkedList<GameOption>();
+    private boolean          mLaunchWhenReady    = true;
+    private int              mCorrectChoice      = -1;
+    private String           mCorrectName;
 
-    private int                 mActiveDownloadersCount    = 0;
+    private int              mFetchWikiPageCount = 0;
+    private Difficulty       mGameDifficulty;
+    private TextView         mDifficultyLabelTextView;
+    private SoundPool mSoundPool;
+    private int mSoundWrong;
+    private int mSoundCorrect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.app_007_activity_yawg);
 
-        mTextView = (TextView) findViewById(R.id.app_007_linkListText);
-        mProgressBar = (ProgressBar) findViewById(R.id.app_007_downloadProgressBar);
-        mProgressBar.setMax(3);
-        mProgressBarTextView = (TextView) findViewById(R.id.app_007_downloadProgressText);
-        mOptionButton1 = (Button) findViewById(R.id.button1);
-        mOptionButton2 = (Button) findViewById(R.id.button2);
-        mOptionButton3 = (Button) findViewById(R.id.button3);
+        mFragmentButtons = (FragmentButtons) getFragmentManager().findFragmentById(R.id.app_007_fragmentButtons);
+        mFragmentLinks = (FragmentLinks) getFragmentManager().findFragmentById(R.id.app_007_fragmentLinks);
+        mFragmentStatus = (FragmentStatus) getFragmentManager().findFragmentById(R.id.app_007_fragmentStatus);
 
-        startGame();
+        mLinkText = (TextView) findViewById(R.id.app_007_linkListText);
+        mProgressBar = (ProgressBar) findViewById(R.id.app_007_downloadProgressBar);
+        mProgressBarTextView = (TextView) findViewById(R.id.app_007_downloadProgressText);
+
+        mDifficultyLabelTextView = (TextView) findViewById(R.id.app_007_difficultyTextView);
+
+        setDifficulty(Difficulty.HARD);
+
+        startNewGame();
+    }
+    
+    @Override
+    protected void onResume() {    
+        super.onResume();
+        mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+        mSoundCorrect = mSoundPool.load(this, R.raw.app_007_correct, 1);
+        mSoundWrong = mSoundPool.load(this, R.raw.app_007_wrong, 1);
     }
 
-    public void startGame() {
-        lockButtons();
-        clearScreen();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSoundPool.release();
+    }
+    
 
-        if (mGameOptions.size() < 3) {
+    public void setDifficulty(Difficulty gameDifficulty) {
+        mGameDifficulty = gameDifficulty;
+
+        mDifficultyLabelTextView.setText(getResources().getString(mGameDifficulty.label));
+        mProgressBar.setMax(mGameDifficulty.numberOfOptions);
+        mOptionButtons = mFragmentButtons.setNumberOfButtons(mGameDifficulty.numberOfOptions);
+    }
+
+    public void startNewGame() {
+        lockButtons();
+        clearText();
+
+        if (mGameOptionBuffer.size() < mGameDifficulty.numberOfOptions) {
             mLaunchWhenReady = true;
             publishProgress();
-            showProgress();
+            showProgressBar();
 
-            for (int i = 0; i < MAX_PARALLEL_DOWNLOADS; i++) {
+            // start up to MAX_PARALLEL_DOWNLOADS of FetchWikiPageTask
+            while (mFetchWikiPageCount < MAX_PARALLEL_DOWNLOADS) {
                 new FetchWikiPageTask().execute();
-                mActiveDownloadersCount++;
             }
         } else {
             launchGame();
-
-            // start up to 2 new downloading tasks to replace discarded game
-            // options
-            while (mActiveDownloadersCount < 2) {
-                new FetchWikiPageTask().execute();
-                mActiveDownloadersCount++;
-            }
         }
     }
 
     public void launchGame() {
         mLaunchWhenReady = false;
+        bringOptionsIntoPlay();
+        
+        mCorrectChoice = mRandom.nextInt(mGameDifficulty.numberOfOptions);
+        showOption(mGameOptionsInPlay.get(mCorrectChoice));
 
-        GameOption correctOption = pickAndPopOption();
-        mCorrectName = correctOption.getName();
-        showOption(correctOption);
-
-        mCorrectChoice = mRandom.nextInt(3) + 1;
-        switch (mCorrectChoice) {
-        case 1:
-            mOptionButton1.setText(mCorrectName);
-            mOptionButton2.setText(pickAndPopOption().getName());
-            mOptionButton3.setText(randomOption().getName());
-            break;
-        case 2:
-            mOptionButton2.setText(mCorrectName);
-            mOptionButton3.setText(pickAndPopOption().getName());
-            mOptionButton1.setText(randomOption().getName());
-            break;
-        case 3:
-            mOptionButton3.setText(mCorrectName);
-            mOptionButton1.setText(pickAndPopOption().getName());
-            mOptionButton2.setText(randomOption().getName());
-            break;
-
+        for (int i = 0; i < mGameDifficulty.numberOfOptions; i++) {
+            mOptionButtons.get(i).setText(mGameOptionsInPlay.get(i).mName);            
         }
         releaseButtons();
     }
 
     public void addGameOption(GameOption option) {
-        mGameOptions.add(option);
+        mGameOptionBuffer.add(option);
         if (mLaunchWhenReady) {
             publishProgress();
 
-            if (mGameOptions.size() >= 3) {
-                hideProgress();
+            if (mGameOptionBuffer.size() >= mGameDifficulty.numberOfOptions) {
+                hideProgressBar();
                 launchGame();
             }
         }
 
-        if (mGameOptions.size() < DESIRED_GAME_OPTION_BUFFER) {
-            // add a new game option to the buffer
+        if (mGameOptionBuffer.size() < DESIRED_GAME_OPTION_BUFFER - mFetchWikiPageCount) {
+            // launch a new FetchWikiPage task
             new FetchWikiPageTask().execute();
-        } else {
-            mActiveDownloadersCount--;
         }
     }
 
     private void publishProgress() {
-        int i = mGameOptions.size();
+        int i = mGameOptionBuffer.size();
 
         mProgressBar.setProgress(i);
-        mTextView.setText("downloads remaining (" + ((3 - i) >= 0 ? (3 - i) : 0) + "/3)");
+        mLinkText.setText("downloads remaining (" + ((3 - i) >= 0 ? (3 - i) : 0) + "/3)");
     }
 
-    private void showProgress() {
+    private void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBarTextView.setVisibility(View.VISIBLE);
     }
 
-    private void hideProgress() {
+    private void hideProgressBar() {
         mProgressBar.setVisibility(View.INVISIBLE);
         mProgressBarTextView.setVisibility(View.INVISIBLE);
     }
 
-    private GameOption randomOption() {
-        return mGameOptions.get(mRandom.nextInt(mGameOptions.size()));
+    private void bringBackToBuffer() {
+        while (mGameOptionsInPlay.size() > 0) {
+            mGameOptionBuffer.add(mGameOptionsInPlay.remove(0));
+        }
     }
 
-    private GameOption pickAndPopOption() {
-        return mGameOptions.remove(mRandom.nextInt(mGameOptions.size()));
+    private void bringOptionsIntoPlay() {        
+        while (mGameOptionsInPlay.size() < mGameDifficulty.numberOfOptions) {
+            mGameOptionsInPlay.add(mGameOptionBuffer.remove(0));
+        }
     }
 
     private void showOption(GameOption option) {
@@ -173,54 +209,49 @@ public class YAWG extends Activity {
         }
         sb.append("</ol>");
 
-        mTextView.setText(Html.fromHtml(sb.toString()));
+        mLinkText.setText(Html.fromHtml(sb.toString()));
     }
 
-    private void clearScreen() {
-        mTextView.setText("");
-        mOptionButton1.setEnabled(false);
-        mOptionButton2.setEnabled(false);
-        mOptionButton3.setEnabled(false);
+    private void clearText() {
+        mLinkText.setText("");
     }
-
+    
     private void lockButtons() {
-        mOptionButton1.setText("");
-        mOptionButton2.setText("");
-        mOptionButton3.setText("");
+        for (Button button : mOptionButtons) {
+            button.setClickable(false);
+        }
     }
 
     private void releaseButtons() {
-        mOptionButton1.setEnabled(true);
-        mOptionButton2.setEnabled(true);
-        mOptionButton3.setEnabled(true);
-    }
-
-    public void selectOption1(View view) {
-        checkSelection(1);
-    }
-
-    public void selectOption2(View view) {
-        checkSelection(2);
-    }
-
-    public void selectOption3(View view) {
-        checkSelection(3);
-    }
-
-    public void checkSelection(int selection) {
-        if (selection == mCorrectChoice) {
-            Toast.makeText(this, "Correct", Toast.LENGTH_SHORT).show();
-            
-        } else {
-            Toast.makeText(this, "Wrong", Toast.LENGTH_SHORT).show();
+        for (Button button : mOptionButtons) {
+            button.setClickable(true);
         }
-        startGame();
+    }
+
+    public void selectOption(int selection) {
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        float volume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        if (selection == mCorrectChoice) {
+            mSoundPool.play(mSoundCorrect, volume, volume, 0, 0, 1);
+        } else {
+            mSoundPool.play(mSoundWrong, volume, volume, 0, 0, 1);
+        }
+                
+        mGameOptionsInPlay.remove(mCorrectChoice);
+        mGameOptionsInPlay.add(mCorrectChoice, mGameOptionBuffer.remove(0));
+        startNewGame();
     }
 
     private class FetchWikiPageTask extends AsyncTask<ProgressBar, Integer, GameOption> {
 
         private static final String RANDOM_WIKI_PAGE_URL = "http://en.m.wikipedia.org/wiki/Special:Random";
 
+        @Override
+        protected void onPreExecute() {            
+            super.onPreExecute();
+            mFetchWikiPageCount++;
+        }
+        
         @Override
         protected GameOption doInBackground(ProgressBar... params) {
 
@@ -284,23 +315,25 @@ public class YAWG extends Activity {
 
         @Override
         protected void onPostExecute(GameOption result) {
+            mFetchWikiPageCount--;
+            
             if (result.getName() != null && result.getAssociatedLinks().size() > 0) {
                 addGameOption(result);
             } else {
 
                 // try again TODO: add user feedback
-                new FetchWikiPageTask().execute();
+                new FetchWikiPageTask().execute();                
             }
         }
     }
 
     private class GameOption {
         private String       mName;
-        private List<String> mAssociatedLinks;
+        private List<String> mLinks;
 
-        public GameOption(String name, List<String> associatedLinks) {
+        public GameOption(String name, List<String> links) {
             mName = name;
-            mAssociatedLinks = associatedLinks;
+            mLinks = links;
         }
 
         public String getName() {
@@ -308,7 +341,7 @@ public class YAWG extends Activity {
         }
 
         public List<String> getAssociatedLinks() {
-            return mAssociatedLinks;
+            return mLinks;
         }
     }
 }
