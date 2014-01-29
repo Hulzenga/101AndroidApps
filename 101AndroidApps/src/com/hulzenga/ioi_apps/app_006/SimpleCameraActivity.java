@@ -91,7 +91,7 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // App needs the camera feature, if it doesn't exist exit
+        // AppId needs the camera feature, if it doesn't exist exit
         if (!hasCameraFeature(this)) {
             Toast.makeText(this, "No camera available", Toast.LENGTH_LONG).show();
             Log.d(TAG, "does not have camera feature");

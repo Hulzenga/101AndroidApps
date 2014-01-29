@@ -26,7 +26,7 @@ public class FragmentButtons extends Fragment {
     private OptionSelectionListener mOptionSelectionListener;
 
     public interface OptionSelectionListener {
-        public void selectOption(int selection);
+        public void selectWiki(int selection);
     }
 
     public List<Button> setNumberOfButtons(int numberOfButtons) {
@@ -50,7 +50,7 @@ public class FragmentButtons extends Fragment {
                 @Override
                 public void onClick(View v) {
                     
-                    mOptionSelectionListener.selectOption(index);                    
+                    mOptionSelectionListener.selectWiki(index);                    
                 }
             });
 

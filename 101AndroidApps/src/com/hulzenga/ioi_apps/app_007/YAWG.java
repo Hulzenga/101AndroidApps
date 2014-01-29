@@ -1,19 +1,20 @@
 package com.hulzenga.ioi_apps.app_007;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.AsyncTask;
@@ -26,15 +27,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
+import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
 
-public class YAWG extends Activity implements FragmentButtons.OptionSelectionListener {
+public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectionListener {
 
     private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
-    private static final int    DESIRED_GAME_OPTION_BUFFER = 4;
+    private static final int    DESIRED_GAME_OPTION_BUFFER = 6;
     private static final int    MAX_PARALLEL_DOWNLOADS     = 3;
     private static final int    MIN_LINK_LENGTH            = 4;
     private static final int    MAX_NUMBER_OF_LINKS        = 6;
+
+    private static final int    MAX_DOWNLOAD_RETRIES       = 3;
+    private static int          mRetriesLeft               = MAX_DOWNLOAD_RETRIES;
 
     private enum Difficulty {
 
@@ -53,37 +59,43 @@ public class YAWG extends Activity implements FragmentButtons.OptionSelectionLis
         }
     }
 
-    private TextView         mLinkText;
-    private TextView         mProgressBarTextView;
+    private TextView           mLinkText;
+    private TextView           mProgressBarTextView;
 
-    private FragmentButtons  mFragmentButtons;
-    private FragmentLinks    mFragmentLinks;
-    private FragmentStatus   mFragmentStatus;
+    private FragmentButtons    mFragmentButtons;
+    private FragmentLinks      mFragmentLinks;
+    private FragmentStatus     mFragmentStatus;
 
-    private List<Button>     mOptionButtons      = new ArrayList<Button>();
-    private ProgressBar      mProgressBar;
+    private List<Button>       mButtons            = new ArrayList<Button>();
+    private ProgressBar        mProgressBar;
 
     // handy to keep around
-    private Random           mRandom             = new Random();
+    private Random             mRandom             = new Random();
 
-    private List<GameOption> mGameOptionBuffer   = new LinkedList<GameOption>();
-    private List<GameOption> mGameOptionsInPlay  = new LinkedList<GameOption>();
-    private boolean          mLaunchWhenReady    = true;
-    private int              mCorrectChoice      = -1;
-    private String           mCorrectName;
+    private List<Wiki>         mWikiBuffer         = new LinkedList<Wiki>();
 
-    private int              mFetchWikiPageCount = 0;
-    private Difficulty       mGameDifficulty;
-    private TextView         mDifficultyLabelTextView;
-    private SoundPool mSoundPool;
-    private int mSoundWrong;
-    private int mSoundCorrect;
+    // this should really be an array, but a map just looks nicer
+    private Map<Integer, Wiki> mWikisInPlay        = new HashMap<Integer, Wiki>();
+    private boolean            mPlayWhenReady      = true;
+    private int                mCorrectChoice      = -1;
+
+    private int                mFetchWikiTastCount = 0;
+    private Difficulty         mGameDifficulty;
+    private TextView           mDifficultyLabelTextView;
+    private SoundPool          mSoundPool;
+    private int                mSoundWrong;
+    private int                mSoundCorrect;
+    private SharedPreferences  mSharedPreferences;
+    private AudioManager       mAudioManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.app_007_activity_yawg);
+
+        mSharedPreferences = getSharedPreferences("com.hulzenga.ioi_apps.app_007", Context.MODE_PRIVATE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         mFragmentButtons = (FragmentButtons) getFragmentManager().findFragmentById(R.id.app_007_fragmentButtons);
         mFragmentLinks = (FragmentLinks) getFragmentManager().findFragmentById(R.id.app_007_fragmentLinks);
@@ -97,12 +109,14 @@ public class YAWG extends Activity implements FragmentButtons.OptionSelectionLis
 
         setDifficulty(Difficulty.HARD);
 
-        startNewGame();
+        nextQuestion();
     }
-    
+
     @Override
-    protected void onResume() {    
+    protected void onResume() {
         super.onResume();
+
+        // setup the SoundPool
         mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
         mSoundCorrect = mSoundPool.load(this, R.raw.app_007_correct, 1);
         mSoundWrong = mSoundPool.load(this, R.raw.app_007_wrong, 1);
@@ -111,100 +125,132 @@ public class YAWG extends Activity implements FragmentButtons.OptionSelectionLis
     @Override
     protected void onPause() {
         super.onPause();
+
+        // release SoundPoolresources
         mSoundPool.release();
     }
-    
 
-    public void setDifficulty(Difficulty gameDifficulty) {
+    private void setDifficulty(Difficulty gameDifficulty) {
         mGameDifficulty = gameDifficulty;
 
         mDifficultyLabelTextView.setText(getResources().getString(mGameDifficulty.label));
         mProgressBar.setMax(mGameDifficulty.numberOfOptions);
-        mOptionButtons = mFragmentButtons.setNumberOfButtons(mGameDifficulty.numberOfOptions);
+        mButtons = mFragmentButtons.setNumberOfButtons(mGameDifficulty.numberOfOptions);
     }
 
-    public void startNewGame() {
-        lockButtons();
-        clearText();
+    private int bufferSpaceRemaining() {
+        return DESIRED_GAME_OPTION_BUFFER - (mWikiBuffer.size() + mWikisInPlay.size() + mFetchWikiTastCount);
+    }
 
-        if (mGameOptionBuffer.size() < mGameDifficulty.numberOfOptions) {
-            mLaunchWhenReady = true;
+    private boolean isBufferBigEnough() {
+        return mWikiBuffer.size() + mWikisInPlay.size() >= mGameDifficulty.numberOfOptions;
+    }
+
+    private void nextQuestion() {
+
+        // calculate the difference between (the desired buffer size) and
+        // (all currently allocated buffers plus running fetch tasks)
+        int diff = bufferSpaceRemaining();
+
+        // spawn new FetchWikiTask until either max parallel download count or
+        // desired future buffer size is reached
+        while (diff > 0 && mFetchWikiTastCount < MAX_PARALLEL_DOWNLOADS) {
+            new FetchWikiTask().execute();
+            diff--;
+        }
+
+        if (!isBufferBigEnough()) {
+            // Not enough Wikis in the buffers, so lock up the UI and download
+            // more
+            lockButtons();
+            clearText();
+            mPlayWhenReady = true;
             publishProgress();
             showProgressBar();
 
-            // start up to MAX_PARALLEL_DOWNLOADS of FetchWikiPageTask
-            while (mFetchWikiPageCount < MAX_PARALLEL_DOWNLOADS) {
-                new FetchWikiPageTask().execute();
-            }
         } else {
-            launchGame();
+            ShowNextQuestion();
         }
     }
 
-    public void launchGame() {
-        mLaunchWhenReady = false;
-        bringOptionsIntoPlay();
-        
+    private void ShowNextQuestion() {
+        mPlayWhenReady = false;
+        bringWikisInPlay();
+
         mCorrectChoice = mRandom.nextInt(mGameDifficulty.numberOfOptions);
-        showOption(mGameOptionsInPlay.get(mCorrectChoice));
+        showWikiLinks(mWikisInPlay.get(mCorrectChoice));
 
         for (int i = 0; i < mGameDifficulty.numberOfOptions; i++) {
-            mOptionButtons.get(i).setText(mGameOptionsInPlay.get(i).mName);            
+            mButtons.get(i).setText(mWikisInPlay.get(i).mName);
         }
         releaseButtons();
     }
 
-    public void addGameOption(GameOption option) {
-        mGameOptionBuffer.add(option);
-        if (mLaunchWhenReady) {
+    private void addWikiToBuffer(Wiki option) {
+        mWikiBuffer.add(option);
+        if (mPlayWhenReady) {
             publishProgress();
 
-            if (mGameOptionBuffer.size() >= mGameDifficulty.numberOfOptions) {
+            if (isBufferBigEnough()) {
                 hideProgressBar();
-                launchGame();
+                ShowNextQuestion();
             }
         }
 
-        if (mGameOptionBuffer.size() < DESIRED_GAME_OPTION_BUFFER - mFetchWikiPageCount) {
+        if (bufferSpaceRemaining() > 0) {
             // launch a new FetchWikiPage task
-            new FetchWikiPageTask().execute();
+            new FetchWikiTask().execute();
         }
     }
 
+    /**
+     * show the download progress by setting the Progressbar and ProgressbarText
+     * accordingly
+     */
     private void publishProgress() {
-        int i = mGameOptionBuffer.size();
+        int i = mWikiBuffer.size();
 
         mProgressBar.setProgress(i);
-        mLinkText.setText("downloads remaining (" + ((3 - i) >= 0 ? (3 - i) : 0) + "/3)");
+        mLinkText.setText("downloads remaining (" + ConstraintEnforcer.lowerBound(0, i) + "/"
+                + mGameDifficulty.numberOfOptions + ")");
     }
 
+    /**
+     * Make the ProgressBar and ProgressBarTextView visible
+     */
     private void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBarTextView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Hide the ProgressBar and ProgressBarTextView by making them invisible
+     */
     private void hideProgressBar() {
         mProgressBar.setVisibility(View.INVISIBLE);
         mProgressBarTextView.setVisibility(View.INVISIBLE);
     }
 
-    private void bringBackToBuffer() {
-        while (mGameOptionsInPlay.size() > 0) {
-            mGameOptionBuffer.add(mGameOptionsInPlay.remove(0));
+    private void bringWikisBackToBuffer() {
+
+        for (Integer key : mWikisInPlay.keySet()) {
+            mWikiBuffer.add(mWikisInPlay.get(key));
         }
     }
 
-    private void bringOptionsIntoPlay() {        
-        while (mGameOptionsInPlay.size() < mGameDifficulty.numberOfOptions) {
-            mGameOptionsInPlay.add(mGameOptionBuffer.remove(0));
+    private void bringWikisInPlay() {
+        for (int i = 0; i < mGameDifficulty.numberOfOptions; i++) {
+            if (!mWikisInPlay.containsKey(i)) {
+                mWikisInPlay.put(i, mWikiBuffer.remove(0));
+            }
         }
     }
 
-    private void showOption(GameOption option) {
+    private void showWikiLinks(Wiki wiki) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("<ol>");
-        for (String link : option.getAssociatedLinks()) {
+        for (String link : wiki.getAssociatedLinks()) {
             sb.append("&#8226;" + link + "<br/>");
         }
         sb.append("</ol>");
@@ -215,53 +261,56 @@ public class YAWG extends Activity implements FragmentButtons.OptionSelectionLis
     private void clearText() {
         mLinkText.setText("");
     }
-    
+
     private void lockButtons() {
-        for (Button button : mOptionButtons) {
+        for (Button button : mButtons) {
             button.setClickable(false);
         }
     }
 
     private void releaseButtons() {
-        for (Button button : mOptionButtons) {
+        for (Button button : mButtons) {
             button.setClickable(true);
         }
     }
 
-    public void selectOption(int selection) {
-        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        float volume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+    public void selectWiki(int selection) {
+        // lock buttons to avoid simultaneous input
+        lockButtons();
+
+        float volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
         if (selection == mCorrectChoice) {
+            // correct guess
             mSoundPool.play(mSoundCorrect, volume, volume, 0, 0, 1);
         } else {
+            // wrong guess
             mSoundPool.play(mSoundWrong, volume, volume, 0, 0, 1);
         }
-                
-        mGameOptionsInPlay.remove(mCorrectChoice);
-        mGameOptionsInPlay.add(mCorrectChoice, mGameOptionBuffer.remove(0));
-        startNewGame();
+
+        // TODO: update score
+
+        // replace the correct choice with a new wiki from the buffer
+        mWikisInPlay.remove(mCorrectChoice);
+
+        nextQuestion();
     }
 
-    private class FetchWikiPageTask extends AsyncTask<ProgressBar, Integer, GameOption> {
+    private class FetchWikiTask extends AsyncTask<ProgressBar, Integer, Wiki> {
 
         private static final String RANDOM_WIKI_PAGE_URL = "http://en.m.wikipedia.org/wiki/Special:Random";
 
         @Override
-        protected void onPreExecute() {            
+        protected void onPreExecute() {
             super.onPreExecute();
-            mFetchWikiPageCount++;
+            mFetchWikiTastCount++;
         }
-        
-        @Override
-        protected GameOption doInBackground(ProgressBar... params) {
 
-            // the to be returned string builder
+        @Override
+        protected Wiki doInBackground(ProgressBar... params) {
+
             String name = null;
             List<String> links = new ArrayList<String>(MAX_NUMBER_OF_LINKS);
-
-            // make reference to the urlConnection here so it can be referenced
-            // in the finally block below
-            HttpURLConnection urlConnection = null;
 
             try {
 
@@ -298,14 +347,12 @@ public class YAWG extends Activity implements FragmentButtons.OptionSelectionLis
             } catch (MalformedURLException e) {
                 Log.e(TAG, "malformed URL, this should not be possible");
             } catch (IOException e) {
-                Log.e(TAG, "IO Exception");
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
+                Log.e(TAG, "IO Exception: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception while trying to download/parse random wiki page: " + e.getMessage());
             }
 
-            return new GameOption(name, links);
+            return new Wiki(name, links);
         }
 
         @Override
@@ -314,24 +361,33 @@ public class YAWG extends Activity implements FragmentButtons.OptionSelectionLis
         }
 
         @Override
-        protected void onPostExecute(GameOption result) {
-            mFetchWikiPageCount--;
-            
-            if (result.getName() != null && result.getAssociatedLinks().size() > 0) {
-                addGameOption(result);
-            } else {
+        protected void onPostExecute(Wiki result) {
+            mFetchWikiTastCount--;
 
-                // try again TODO: add user feedback
-                new FetchWikiPageTask().execute();                
+            if (result.getName() != null && result.getAssociatedLinks().size() > 0) {
+                mRetriesLeft = MAX_DOWNLOAD_RETRIES;
+                addWikiToBuffer(result);
+            } else {
+                mRetriesLeft--;
+
+                // if there are no retries left and there are not enough Wikis
+                // in the buffer to play a new round the app finishes
+                if (mRetriesLeft <= 0 && !isBufferBigEnough()) {
+                    Toast.makeText(YAWG.this, getResources().getString(R.string.app_007_downloadFailure),
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                } else {
+                    new FetchWikiTask().execute();
+                }
             }
         }
     }
 
-    private class GameOption {
+    private class Wiki {
         private String       mName;
         private List<String> mLinks;
 
-        public GameOption(String name, List<String> links) {
+        public Wiki(String name, List<String> links) {
             mName = name;
             mLinks = links;
         }
