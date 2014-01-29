@@ -1,24 +1,20 @@
 package com.hulzenga.ioi_apps;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+
+import com.hulzenga.ioi_apps.AppRepository.AppSummary;
 
 public class TableOfContents extends Activity {
 
@@ -34,59 +30,20 @@ public class TableOfContents extends Activity {
         setContentView(R.layout.root_activity_table_of_contents);
 
         ListView appList = (ListView) findViewById(R.id.appList);
-
+        
         final List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-        final SparseArray<Class<? extends Activity>> activityMapping = new SparseArray<Class<? extends Activity>>();
-
-        XmlPullParser xpp = getResources().getXml(R.xml.app_list);
-
-        try {
-            int eventType = xpp.getEventType();
-            Map<String, Object> item;
-
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-
-                switch (eventType) {
-                case XmlPullParser.START_DOCUMENT:
-                    break;
-                case XmlPullParser.START_TAG:
-                    if (xpp.getName().equals("app")) {
-                        item = new HashMap<String, Object>();
-                        item.put(ACTIVITY_NAME, xpp.getAttributeValue(null, "name"));
-                        item.put(ACTIVITY_DESCRIPTION, xpp.getAttributeValue(null, "description"));
-
-                        String iconIdName = xpp.getAttributeValue(null, "icon");
-                        int iconId = getResources().getIdentifier(iconIdName, "drawable", getPackageName());
-
-                        item.put(ACTIVITY_ICON, iconId);
-                        data.add(item);
-
-                        int index = Integer.parseInt(xpp.getAttributeValue(null, "id"));
-                        Class app = null;
-
-                        try {
-                            app = Class.forName(xpp.getAttributeValue(null, "class"));
-                        } catch (ClassNotFoundException e) {
-                            Log.e(TAG,
-                                    "ClassNotFoundException: the class referenced to in the xml app list is incorrect");
-                        }
-
-                        activityMapping.put(index, app);
-                    }
-
-                    break;
-                case XmlPullParser.END_TAG:
-                    break;
-                }
-                eventType = xpp.next();
-            }
-
-        } catch (XmlPullParserException e) {
-            Log.e(TAG, " XmlPullParserException: while parsing the xml app list");
-        } catch (IOException e) {
-            Log.e(TAG, " IOException: while parsing the xml app list");
+        final List<Class<?>> demos = new ArrayList<Class<?>>();
+        
+        for (AppSummary app: AppRepository.getAppSummaries(getResources())) {
+            HashMap<String, Object> item = new HashMap<String, Object>();
+            item.put(ACTIVITY_NAME, app.getTitle());
+            item.put(ACTIVITY_DESCRIPTION, app.getShortDescription());
+            item.put(ACTIVITY_ICON, app.getIcon());
+            data.add(item);
+            
+            demos.add(app.getActivity());
         }
-
+        
         SimpleAdapter adapter = new SimpleAdapter(this, data, R.layout.root_item_table_of_contents, new String[] {
                 ACTIVITY_NAME, ACTIVITY_DESCRIPTION, ACTIVITY_ICON }, new int[] { R.id.app_name, R.id.app_description,
                 R.id.app_icon });
@@ -96,7 +53,7 @@ public class TableOfContents extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Class<? extends Activity> startThisActivity = activityMapping.get(position);
+                final Class startThisActivity = demos.get(position);
 
                 if (startThisActivity != null) {
                     final Intent appIntent = new Intent(TableOfContents.this, startThisActivity);
