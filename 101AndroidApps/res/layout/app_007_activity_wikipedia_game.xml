@@ -6,11 +6,11 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".YAWG" >
+    tools:context=".WikipediaGame" >
 
     <fragment
         android:id="@+id/app_007_fragmentButtons"
-        android:name="com.hulzenga.ioi_apps.app_007.FragmentButtons"
+        android:name="com.hulzenga.ioi_apps.app_007.ButtonsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/app_007_fragmentStatus"
-        android:name="com.hulzenga.ioi_apps.app_007.FragmentStatus"
+        android:name="com.hulzenga.ioi_apps.app_007.StatusFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/app_007_fragmentLinks"
-        android:name="com.hulzenga.ioi_apps.app_007.FragmentLinks"
+        android:name="com.hulzenga.ioi_apps.app_007.LinksFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/app_007_fragmentButtons"

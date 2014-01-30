@@ -13,8 +13,19 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Bitmap.Config;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.AsyncTask;
@@ -31,7 +42,7 @@ import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
 import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
 
-public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectionListener {
+public class WikipediaGame extends DemoActivity implements ButtonsFragment.OptionSelectionListener {
 
     private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
     private static final int    DESIRED_GAME_OPTION_BUFFER = 6;
@@ -62,9 +73,9 @@ public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectio
     private TextView           mLinkText;
     private TextView           mProgressBarTextView;
 
-    private FragmentButtons    mFragmentButtons;
-    private FragmentLinks      mFragmentLinks;
-    private FragmentStatus     mFragmentStatus;
+    private ButtonsFragment    mFragmentButtons;
+    private LinksFragment      mFragmentLinks;
+    private StatusFragment     mFragmentStatus;
 
     private List<Button>       mButtons            = new ArrayList<Button>();
     private ProgressBar        mProgressBar;
@@ -87,19 +98,25 @@ public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectio
     private int                mSoundCorrect;
     private SharedPreferences  mSharedPreferences;
     private AudioManager       mAudioManager;
+    private int                mShortAnimationLength;
+    private int                mMediumAnimationLength;
+    private int                mLongAnimationLength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.app_007_activity_yawg);
+        setContentView(R.layout.app_007_activity_wikipedia_game);
 
         mSharedPreferences = getSharedPreferences("com.hulzenga.ioi_apps.app_007", Context.MODE_PRIVATE);
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mShortAnimationLength = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        mMediumAnimationLength = getResources().getInteger(android.R.integer.config_mediumAnimTime);
+        mLongAnimationLength = getResources().getInteger(android.R.integer.config_longAnimTime);
 
-        mFragmentButtons = (FragmentButtons) getFragmentManager().findFragmentById(R.id.app_007_fragmentButtons);
-        mFragmentLinks = (FragmentLinks) getFragmentManager().findFragmentById(R.id.app_007_fragmentLinks);
-        mFragmentStatus = (FragmentStatus) getFragmentManager().findFragmentById(R.id.app_007_fragmentStatus);
+        mFragmentButtons = (ButtonsFragment) getFragmentManager().findFragmentById(R.id.app_007_fragmentButtons);
+        mFragmentLinks = (LinksFragment) getFragmentManager().findFragmentById(R.id.app_007_fragmentLinks);
+        mFragmentStatus = (StatusFragment) getFragmentManager().findFragmentById(R.id.app_007_fragmentStatus);
 
         mLinkText = (TextView) findViewById(R.id.app_007_linkListText);
         mProgressBar = (ProgressBar) findViewById(R.id.app_007_downloadProgressBar);
@@ -175,15 +192,136 @@ public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectio
 
     private void ShowNextQuestion() {
         mPlayWhenReady = false;
-        bringWikisInPlay();
+
+        List<Animator> animations = new ArrayList<Animator>();
+
+        for (int i = 0; i < mGameDifficulty.numberOfOptions; i++) {
+            if (!mWikisInPlay.containsKey(i)) {
+                mWikisInPlay.put(i, mWikiBuffer.remove(0));
+                mButtons.get(i).setText(mWikisInPlay.get(i).mName);
+                animations.add(ObjectAnimator.ofFloat(mButtons.get(i), View.ALPHA, 0.0f, 1.0f));
+            }
+        }
+
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animations);
+        set.setDuration(mMediumAnimationLength);
+        set.addListener(new AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                releaseButtons();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+        set.start();
 
         mCorrectChoice = mRandom.nextInt(mGameDifficulty.numberOfOptions);
         showWikiLinks(mWikisInPlay.get(mCorrectChoice));
+    }
 
-        for (int i = 0; i < mGameDifficulty.numberOfOptions; i++) {
-            mButtons.get(i).setText(mWikisInPlay.get(i).mName);
+    public void selectWiki(int selection) {
+        // lock buttons to avoid simultaneous input
+        lockButtons();
+
+        float volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        List<Animator> animations = new ArrayList<Animator>();
+
+        final Button correctButton = mButtons.get(mCorrectChoice);
+        final Drawable correctBg = correctButton.getBackground();
+        Bitmap greenBitmap = Bitmap.createBitmap(correctButton.getWidth(), correctButton.getHeight(), Config.ARGB_8888);
+        Canvas greenCanvas = new Canvas(greenBitmap);
+        correctBg.draw(greenCanvas);
+        greenCanvas.drawColor(Color.GREEN, Mode.SRC_IN);
+        
+
+        final Button wrongButton = mButtons.get(selection);
+        ;
+        final Drawable wrongBg = wrongButton.getBackground();
+
+        if (selection == mCorrectChoice) {
+            // correct guess sound
+            mSoundPool.play(mSoundCorrect, volume, volume, 0, 0, 1);
+
+            // fade out corect button
+            animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.ALPHA, 1.0f, 0.0f));
+            correctButton.setBackgroundDrawable(new BitmapDrawable(getResources(), greenBitmap));
+        } else {
+            // wrong guess sound
+            mSoundPool.play(mSoundWrong, volume, volume, 0, 0, 1);
+
+            Bitmap redBitmap = Bitmap.createBitmap(wrongButton.getWidth(), wrongButton.getHeight(), Config.ARGB_8888);
+            Canvas redCanvas = new Canvas(redBitmap);
+            wrongButton.draw(redCanvas);
+            redCanvas.drawColor(Color.RED, Mode.SRC_IN);
+            wrongButton.setBackgroundDrawable(new BitmapDrawable(getResources(), redBitmap));
+            
+            // make wrong button red
+            // rotate the correct button to draw attention to it
+            animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.ROTATION, 0.0f, 1.0f, 0.0f - 1.0f,
+                    0.0f));
+            
+            correctButton.setBackgroundDrawable(new BitmapDrawable(getResources(), greenBitmap));
         }
-        releaseButtons();
+
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animations);
+        set.setDuration(mLongAnimationLength);
+        set.addListener(new AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                // do nothing
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                // do nothing
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // TODO: update score
+
+                // return the buttons background to their original state
+                correctButton.setBackgroundDrawable(correctBg);
+
+                if (wrongButton != null) {
+                    wrongButton.setBackgroundDrawable(wrongBg);
+                }
+
+                // replace the correct choice with a new wiki from the buffer
+                mWikisInPlay.remove(mCorrectChoice);
+
+                nextQuestion();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                // do nothing
+            }
+        });
+
+        set.start();
+
     }
 
     private void addWikiToBuffer(Wiki option) {
@@ -238,14 +376,6 @@ public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectio
         }
     }
 
-    private void bringWikisInPlay() {
-        for (int i = 0; i < mGameDifficulty.numberOfOptions; i++) {
-            if (!mWikisInPlay.containsKey(i)) {
-                mWikisInPlay.put(i, mWikiBuffer.remove(0));
-            }
-        }
-    }
-
     private void showWikiLinks(Wiki wiki) {
         StringBuilder sb = new StringBuilder();
 
@@ -272,28 +402,6 @@ public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectio
         for (Button button : mButtons) {
             button.setClickable(true);
         }
-    }
-
-    public void selectWiki(int selection) {
-        // lock buttons to avoid simultaneous input
-        lockButtons();
-
-        float volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-
-        if (selection == mCorrectChoice) {
-            // correct guess
-            mSoundPool.play(mSoundCorrect, volume, volume, 0, 0, 1);
-        } else {
-            // wrong guess
-            mSoundPool.play(mSoundWrong, volume, volume, 0, 0, 1);
-        }
-
-        // TODO: update score
-
-        // replace the correct choice with a new wiki from the buffer
-        mWikisInPlay.remove(mCorrectChoice);
-
-        nextQuestion();
     }
 
     private class FetchWikiTask extends AsyncTask<ProgressBar, Integer, Wiki> {
@@ -373,7 +481,7 @@ public class YAWG extends DemoActivity implements FragmentButtons.OptionSelectio
                 // if there are no retries left and there are not enough Wikis
                 // in the buffer to play a new round the app finishes
                 if (mRetriesLeft <= 0 && !isBufferBigEnough()) {
-                    Toast.makeText(YAWG.this, getResources().getString(R.string.app_007_downloadFailure),
+                    Toast.makeText(WikipediaGame.this, getResources().getString(R.string.app_007_downloadFailure),
                             Toast.LENGTH_LONG).show();
                     finish();
                 } else {

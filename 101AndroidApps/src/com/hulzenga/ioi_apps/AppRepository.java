@@ -21,7 +21,7 @@ public class AppRepository {
                 R.drawable.app_005_icon, R.string.app_005_shortDescription),
         APP_006(com.hulzenga.ioi_apps.app_006.SimpleCameraActivity.class, R.string.app_006_title,
                 R.drawable.ic_launcher, R.string.app_006_shortDescription),
-        APP_007(com.hulzenga.ioi_apps.app_007.YAWG.class, R.string.app_007_title,
+        APP_007(com.hulzenga.ioi_apps.app_007.WikipediaGame.class, R.string.app_007_title,
                 R.drawable.ic_launcher, R.string.app_007_shortDescription), ;
         /*
          * APP_002, APP_003, APP_004, APP_005, APP_006, APP_007,;

@@ -18,7 +18,7 @@ import android.widget.TableLayout.LayoutParams;
 
 import com.hulzenga.ioi_apps.R;
 
-public class FragmentButtons extends Fragment {
+public class ButtonsFragment extends Fragment {
 
     private static final String     TAG = "FRAGMENT_BUTTONS";
 

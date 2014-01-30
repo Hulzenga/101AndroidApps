@@ -29,16 +29,15 @@
     <string name="app_004_shortDescription">Basic OpenGL ES 2.0 scene, showing a bouncy ball</string>
     <!-- App 005 -->
     <string name="app_005_title">An Elemental Grid</string>
-    <string name="app_005_shortDescription">displays the world famous hello world string</string>
+    <string name="app_005_shortDescription">Elemental fun with a custom AdapterView, animations and drag\'n\'drop</string>
     <string name="app_005_addElementButton">Add Element</string>
     <string name="app_005_addMultipleElementsButton">Add 5 Elements</string>
     <!-- App 006 -->
     <string name="app_006_title">Simple Camera</string>
-    <string name="app_006_shortDescription">displays the world famous hello world string</string>
-
+    <string name="app_006_shortDescription">A simple camera app</string>
     <!-- App 007 -->
     <string name="app_007_title">A Wikipedia Game</string>
-    <string name="app_007_shortDescription">displays the world famous hello world string</string>
+    <string name="app_007_shortDescription">Identify the Wikipedia article by the names of outgoing links on the page</string>
     <string name="app_007_downloadFailure">Repeatedly failed to download Wiki pages!</string>
     <string name="app_007_easy">Easy</string>
     <string name="app_007_normal">Normal</string>
