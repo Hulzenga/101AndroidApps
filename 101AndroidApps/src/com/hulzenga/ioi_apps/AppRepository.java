@@ -20,7 +20,7 @@ public class AppRepository {
         APP_005(com.hulzenga.ioi_apps.app_005.ElementActivity.class, R.string.app_005_title,
                 R.drawable.app_005_icon, R.string.app_005_shortDescription),
         APP_006(com.hulzenga.ioi_apps.app_006.SimpleCameraActivity.class, R.string.app_006_title,
-                R.drawable.ic_launcher, R.string.app_006_shortDescription),
+                R.drawable.app_006_icon, R.string.app_006_shortDescription),
         APP_007(com.hulzenga.ioi_apps.app_007.WikipediaGame.class, R.string.app_007_title,
                 R.drawable.ic_launcher, R.string.app_007_shortDescription), ;
         /*
@@ -30,7 +30,7 @@ public class AppRepository {
         private int   title;
         private Class activity;
         private int   icon;
-        private int   shortDescription;
+        private int   shortDescription;        
 
         private AppId(Class activity, int title, int icon, int shortDescription) {
             this.title = title;

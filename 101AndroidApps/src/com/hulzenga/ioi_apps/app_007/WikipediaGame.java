@@ -41,8 +41,9 @@ import android.widget.Toast;
 import com.hulzenga.ioi_apps.DemoActivity;
 import com.hulzenga.ioi_apps.R;
 import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
+import com.hulzenga.ioi_apps.util.DeveloperTools;
 
-public class WikipediaGame extends DemoActivity implements ButtonsFragment.OptionSelectionListener {
+public class WikipediaGame extends DemoActivity implements ButtonsFragment.OptionSelectionListener, StatusFragment.TimeOutListener {
 
     private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
     private static final int    DESIRED_GAME_OPTION_BUFFER = 6;
@@ -55,27 +56,29 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
     private enum Difficulty {
 
-        EASY(R.string.app_007_easy, 3, 10),
-        NORMAL(R.string.app_007_normal, 3, 6),
-        HARD(R.string.app_007_hard, 4, 5);
+        EASY(R.string.app_007_easy, 3, 10, 0),
+        NORMAL(R.string.app_007_normal, 3, 6, 1),
+        HARD(R.string.app_007_hard, 4, 5, 2);
 
         public final int label;
         public final int numberOfOptions;
         public final int numberOfLinks;
+        public final int penalyPoints;
 
-        private Difficulty(int label, int numberOfOptions, int numberOfLinks) {
+        private Difficulty(int label, int numberOfOptions, int numberOfLinks, int penaltyPoints) {
             this.label = label;
             this.numberOfOptions = numberOfOptions;
             this.numberOfLinks = numberOfLinks;
+            this.penalyPoints = penaltyPoints;
         }
     }
 
     private TextView           mLinkText;
     private TextView           mProgressBarTextView;
 
-    private ButtonsFragment    mFragmentButtons;
-    private LinksFragment      mFragmentLinks;
-    private StatusFragment     mFragmentStatus;
+    private ButtonsFragment    mButtonsFragment;
+    private LinksFragment      mLinksFragment;
+    private StatusFragment     mStatusFragment;
 
     private List<Button>       mButtons            = new ArrayList<Button>();
     private ProgressBar        mProgressBar;
@@ -91,7 +94,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
     private int                mCorrectChoice      = -1;
 
     private int                mFetchWikiTastCount = 0;
-    private Difficulty         mGameDifficulty;
+    private Difficulty         mDifficulty;
     private TextView           mDifficultyLabelTextView;
     private SoundPool          mSoundPool;
     private int                mSoundWrong;
@@ -109,15 +112,16 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
         setContentView(R.layout.app_007_activity_wikipedia_game);
 
         mSharedPreferences = getSharedPreferences("com.hulzenga.ioi_apps.app_007", Context.MODE_PRIVATE);
+        
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mShortAnimationLength = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mMediumAnimationLength = getResources().getInteger(android.R.integer.config_mediumAnimTime);
         mLongAnimationLength = getResources().getInteger(android.R.integer.config_longAnimTime);
 
-        mFragmentButtons = (ButtonsFragment) getFragmentManager().findFragmentById(R.id.app_007_fragmentButtons);
-        mFragmentLinks = (LinksFragment) getFragmentManager().findFragmentById(R.id.app_007_fragmentLinks);
-        mFragmentStatus = (StatusFragment) getFragmentManager().findFragmentById(R.id.app_007_fragmentStatus);
-
+        mButtonsFragment = (ButtonsFragment) getFragmentManager().findFragmentById(R.id.app_007_buttonsFragment);
+        mLinksFragment = (LinksFragment) getFragmentManager().findFragmentById(R.id.app_007_linksFragment);
+        mStatusFragment = (StatusFragment) getFragmentManager().findFragmentById(R.id.app_007_statusFragment);        
+        
         mLinkText = (TextView) findViewById(R.id.app_007_linkListText);
         mProgressBar = (ProgressBar) findViewById(R.id.app_007_downloadProgressBar);
         mProgressBarTextView = (TextView) findViewById(R.id.app_007_downloadProgressText);
@@ -148,11 +152,11 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
     }
 
     private void setDifficulty(Difficulty gameDifficulty) {
-        mGameDifficulty = gameDifficulty;
+        mDifficulty = gameDifficulty;
 
-        mDifficultyLabelTextView.setText(getResources().getString(mGameDifficulty.label));
-        mProgressBar.setMax(mGameDifficulty.numberOfOptions);
-        mButtons = mFragmentButtons.setNumberOfButtons(mGameDifficulty.numberOfOptions);
+        mDifficultyLabelTextView.setText(getResources().getString(mDifficulty.label));
+        mProgressBar.setMax(mDifficulty.numberOfOptions);
+        mButtons = mButtonsFragment.setNumberOfButtons(mDifficulty.numberOfOptions);
     }
 
     private int bufferSpaceRemaining() {
@@ -160,7 +164,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
     }
 
     private boolean isBufferBigEnough() {
-        return mWikiBuffer.size() + mWikisInPlay.size() >= mGameDifficulty.numberOfOptions;
+        return mWikiBuffer.size() + mWikisInPlay.size() >= mDifficulty.numberOfOptions;
     }
 
     private void nextQuestion() {
@@ -195,7 +199,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         List<Animator> animations = new ArrayList<Animator>();
 
-        for (int i = 0; i < mGameDifficulty.numberOfOptions; i++) {
+        for (int i = 0; i < mDifficulty.numberOfOptions; i++) {
             if (!mWikisInPlay.containsKey(i)) {
                 mWikisInPlay.put(i, mWikiBuffer.remove(0));
                 mButtons.get(i).setText(mWikisInPlay.get(i).mName);
@@ -205,19 +209,17 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         AnimatorSet set = new AnimatorSet();
         set.playTogether(animations);
-        set.setDuration(mMediumAnimationLength);
+        set.setDuration(mShortAnimationLength);
         set.addListener(new AnimatorListener() {
 
             @Override
             public void onAnimationStart(Animator animation) {
-                // TODO Auto-generated method stub
-
+                // do nothing
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-                // TODO Auto-generated method stub
-
+                // do nothing
             }
 
             @Override
@@ -227,64 +229,60 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                // TODO Auto-generated method stub
-
+                // do nothing
             }
         });
         set.start();
 
-        mCorrectChoice = mRandom.nextInt(mGameDifficulty.numberOfOptions);
+        mCorrectChoice = mRandom.nextInt(mDifficulty.numberOfOptions);
         showWikiLinks(mWikisInPlay.get(mCorrectChoice));
     }
 
+    public void onTimeOut(int score) {
+        
+    }
+    
     public void selectWiki(int selection) {
         // lock buttons to avoid simultaneous input
         lockButtons();
 
         float volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
+        AnimatorSet set = new AnimatorSet();
         List<Animator> animations = new ArrayList<Animator>();
 
         final Button correctButton = mButtons.get(mCorrectChoice);
-        final Drawable correctBg = correctButton.getBackground();
-        Bitmap greenBitmap = Bitmap.createBitmap(correctButton.getWidth(), correctButton.getHeight(), Config.ARGB_8888);
-        Canvas greenCanvas = new Canvas(greenBitmap);
-        correctBg.draw(greenCanvas);
-        greenCanvas.drawColor(Color.GREEN, Mode.SRC_IN);
-        
-
+        final Drawable correctBg = correctButton.getBackground().mutate();
         final Button wrongButton = mButtons.get(selection);
-        ;
         final Drawable wrongBg = wrongButton.getBackground();
+        
+        DeveloperTools.makeBackgroundColored(correctButton, Color.GREEN);
 
         if (selection == mCorrectChoice) {
+            mStatusFragment.addPoint();
+            
             // correct guess sound
             mSoundPool.play(mSoundCorrect, volume, volume, 0, 0, 1);
 
             // fade out corect button
             animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.ALPHA, 1.0f, 0.0f));
-            correctButton.setBackgroundDrawable(new BitmapDrawable(getResources(), greenBitmap));
+            set.setDuration(mShortAnimationLength);
         } else {
+            mStatusFragment.penaltyPoints(mDifficulty.penalyPoints);
             // wrong guess sound
             mSoundPool.play(mSoundWrong, volume, volume, 0, 0, 1);
 
-            Bitmap redBitmap = Bitmap.createBitmap(wrongButton.getWidth(), wrongButton.getHeight(), Config.ARGB_8888);
-            Canvas redCanvas = new Canvas(redBitmap);
-            wrongButton.draw(redCanvas);
-            redCanvas.drawColor(Color.RED, Mode.SRC_IN);
-            wrongButton.setBackgroundDrawable(new BitmapDrawable(getResources(), redBitmap));
+            DeveloperTools.makeBackgroundColored(wrongButton, Color.RED);
+            animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.ALPHA, 0.7f, 1.0f, 0.7f, 1.0f));
             
-            // make wrong button red
             // rotate the correct button to draw attention to it
-            animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.ROTATION, 0.0f, 1.0f, 0.0f - 1.0f,
-                    0.0f));
-            
-            correctButton.setBackgroundDrawable(new BitmapDrawable(getResources(), greenBitmap));
+            animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_X, 1.0f, 1.15f, 1.0f));
+            animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_Y, 1.0f, 1.15f, 1.0f));
+            set.setDuration(mLongAnimationLength);
         }
-
-        AnimatorSet set = new AnimatorSet();
+        
+        
         set.playTogether(animations);
-        set.setDuration(mLongAnimationLength);
         set.addListener(new AnimatorListener() {
 
             @Override
@@ -303,11 +301,8 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
                 // return the buttons background to their original state
                 correctButton.setBackgroundDrawable(correctBg);
-
-                if (wrongButton != null) {
-                    wrongButton.setBackgroundDrawable(wrongBg);
-                }
-
+                wrongButton.setBackgroundDrawable(wrongBg);
+                
                 // replace the correct choice with a new wiki from the buffer
                 mWikisInPlay.remove(mCorrectChoice);
 
@@ -321,7 +316,6 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
         });
 
         set.start();
-
     }
 
     private void addWikiToBuffer(Wiki option) {
@@ -350,7 +344,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         mProgressBar.setProgress(i);
         mLinkText.setText("downloads remaining (" + ConstraintEnforcer.lowerBound(0, i) + "/"
-                + mGameDifficulty.numberOfOptions + ")");
+                + mDifficulty.numberOfOptions + ")");
     }
 
     /**

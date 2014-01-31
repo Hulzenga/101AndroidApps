@@ -9,7 +9,7 @@
     tools:context=".WikipediaGame" >
 
     <fragment
-        android:id="@+id/app_007_fragmentStatus"
+        android:id="@+id/app_007_statusFragment"
         android:name="com.hulzenga.ioi_apps.app_007.StatusFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,22 +17,26 @@
         android:layout_alignParentTop="true"
         tools:layout="@layout/app_007_fragment_status" />
 
-    <fragment
-        android:id="@+id/app_007_fragmentLinks"
-        android:name="com.hulzenga.ioi_apps.app_007.LinksFragment"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/app_007_fragmentStatus"
-        android:layout_toLeftOf="@+id/app_007_fragmentButtons" />
+        android:layout_alignLeft="@+id/app_007_statusFragment"
+        android:layout_below="@+id/app_007_statusFragment" >
 
-    <fragment
-        android:id="@+id/app_007_fragmentButtons"
-        android:name="com.hulzenga.ioi_apps.app_007.ButtonsFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/app_007_fragmentStatus"/>
+        <fragment
+            android:id="@+id/app_007_linksFragment"
+            android:name="com.hulzenga.ioi_apps.app_007.LinksFragment"
+            android:layout_weight="1.0"            
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        <fragment
+            android:id="@+id/app_007_buttonsFragment"
+            android:name="com.hulzenga.ioi_apps.app_007.ButtonsFragment"
+            android:layout_weight="1.0"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
 </RelativeLayout>

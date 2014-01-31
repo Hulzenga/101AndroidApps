@@ -2,16 +2,15 @@ package com.hulzenga.ioi_apps.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.view.View;
 import android.widget.ImageButton;
 
 /**
@@ -48,5 +47,18 @@ public class DeveloperTools {
         default:
             return;
         }
+    }
+    
+    public static void makeBackgroundColored(View view, int color) {
+        view.setBackgroundDrawable(createColoredBackground(view, color));
+    }
+    
+    public static Drawable createColoredBackground(View view, int color) {            
+        Bitmap colorBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(colorBitmap);
+        view.draw(canvas);        
+        canvas.drawColor(color, Mode.SRC_IN);
+        
+        return new BitmapDrawable(colorBitmap);
     }
 }

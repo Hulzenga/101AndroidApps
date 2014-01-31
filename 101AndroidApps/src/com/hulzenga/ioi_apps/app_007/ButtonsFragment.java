@@ -39,7 +39,7 @@ public class ButtonsFragment extends Fragment {
         }
 
         List<Button> buttons = new ArrayList<Button>();
-        LayoutParams params = new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+        LayoutParams params = new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.0f);
 
         for (int i = 0; i < numberOfButtons; i++) {
             final int index = i;

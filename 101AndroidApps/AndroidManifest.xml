@@ -47,6 +47,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_002.BouncyBallsActivity"
+            android:icon="@drawable/app_002_icon"
             android:label="@string/app_002_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
@@ -54,7 +55,7 @@
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
+            android:name="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"            
             android:label="@string/app_003_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents"
             android:windowSoftInputMode="stateAlwaysHidden" >
@@ -71,6 +72,7 @@
 
         <activity
             android:name="com.hulzenga.ioi_apps.app_004.BouncyBall3dActivity"
+            android:icon="@drawable/app_004_icon"
             android:label="@string/app_004_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
@@ -79,6 +81,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_005.ElementActivity"
+            android:icon="@drawable/app_005_icon"
             android:label="@string/app_005_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
@@ -86,7 +89,7 @@
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_006.SimpleCameraActivity"
+            android:name="com.hulzenga.ioi_apps.app_006.SimpleCameraActivity"            
             android:label="@string/app_006_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" 
             android:screenOrientation="landscape">
@@ -96,6 +99,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_007.WikipediaGame"
+            
             android:label="@string/app_007_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data

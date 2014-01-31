@@ -4,28 +4,28 @@
     android:layout_height="match_parent" >
 
     <TextView
-        android:id="@+id/app_007_scoreTextView"
+        android:id="@+id/app_007_timerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:text="timer" />
 
     <TextView
         android:id="@+id/app_007_difficultyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text=""
+        android:layout_centerVertical="true"
+        android:text="difficulty"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <Chronometer
-        android:id="@+id/app_007_countdownChronometer"
+    <TextView
+        android:id="@+id/app_007_scoreTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="" />
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="score" />
 
 </RelativeLayout>
