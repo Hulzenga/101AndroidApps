@@ -149,6 +149,9 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         // release SoundPoolresources
         mSoundPool.release();
+        
+        //release the timer
+        mStatusFragment.stopTimer();
     }
 
     private void setDifficulty(Difficulty gameDifficulty) {
@@ -239,7 +242,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
     }
 
     public void onTimeOut(int score) {
-        
+        Toast.makeText(this, "Timed out", Toast.LENGTH_SHORT).show();
     }
     
     public void selectWiki(int selection) {
@@ -325,6 +328,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
             if (isBufferBigEnough()) {
                 hideProgressBar();
+                mStatusFragment.startTimer();
                 ShowNextQuestion();
             }
         }
