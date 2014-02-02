@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/app_007_baseMenuContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:visibility="visible" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/app_007_playButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="play"
+                android:onClick="play" />
+
+            <Button
+                android:id="@+id/app_007_reviewButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="review"
+                android:onClick="review" />
+            
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/app_007_difficultyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/app_007_easyButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="pickDifficulty"
+                android:text="easy" />
+
+            <Button
+                android:id="@+id/app_007_mediumButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="pickDifficulty"
+                android:text="medium" />
+
+            <Button
+                android:id="@+id/app_007_hardButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="pickDifficulty"
+                android:text="hard" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

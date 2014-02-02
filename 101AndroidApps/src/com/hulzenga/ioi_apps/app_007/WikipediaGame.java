@@ -43,7 +43,8 @@ import com.hulzenga.ioi_apps.R;
 import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
 import com.hulzenga.ioi_apps.util.DeveloperTools;
 
-public class WikipediaGame extends DemoActivity implements ButtonsFragment.OptionSelectionListener, StatusFragment.TimeOutListener {
+public class WikipediaGame extends DemoActivity implements ButtonsFragment.OptionSelectionListener,
+        StatusFragment.TimeOutListener {
 
     private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
     private static final int    DESIRED_GAME_OPTION_BUFFER = 6;
@@ -53,6 +54,8 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
     private static final int    MAX_DOWNLOAD_RETRIES       = 3;
     private static int          mRetriesLeft               = MAX_DOWNLOAD_RETRIES;
+
+    public static final String  BUNDLE_DIFFICULTY          = "difficulty";
 
     private enum Difficulty {
 
@@ -93,7 +96,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
     private boolean            mPlayWhenReady      = true;
     private int                mCorrectChoice      = -1;
 
-    private int                mFetchWikiTastCount = 0;
+    private int                mFetchWikiTaskCount = 0;
     private Difficulty         mDifficulty;
     private TextView           mDifficultyLabelTextView;
     private SoundPool          mSoundPool;
@@ -112,7 +115,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
         setContentView(R.layout.app_007_activity_wikipedia_game);
 
         mSharedPreferences = getSharedPreferences("com.hulzenga.ioi_apps.app_007", Context.MODE_PRIVATE);
-        
+
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mShortAnimationLength = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mMediumAnimationLength = getResources().getInteger(android.R.integer.config_mediumAnimTime);
@@ -120,16 +123,30 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         mButtonsFragment = (ButtonsFragment) getFragmentManager().findFragmentById(R.id.app_007_buttonsFragment);
         mLinksFragment = (LinksFragment) getFragmentManager().findFragmentById(R.id.app_007_linksFragment);
-        mStatusFragment = (StatusFragment) getFragmentManager().findFragmentById(R.id.app_007_statusFragment);        
-        
+        mStatusFragment = (StatusFragment) getFragmentManager().findFragmentById(R.id.app_007_statusFragment);
+
         mLinkText = (TextView) findViewById(R.id.app_007_linkListText);
         mProgressBar = (ProgressBar) findViewById(R.id.app_007_downloadProgressBar);
         mProgressBarTextView = (TextView) findViewById(R.id.app_007_downloadProgressText);
 
         mDifficultyLabelTextView = (TextView) findViewById(R.id.app_007_difficultyTextView);
 
-        setDifficulty(Difficulty.HARD);
-
+        int difficulty = getIntent().getExtras().getInt(BUNDLE_DIFFICULTY);
+        switch (difficulty) {
+        case 0:
+            setDifficulty(Difficulty.EASY);
+            break;
+        case 1:
+            setDifficulty(Difficulty.NORMAL);
+            break;
+        case 2:
+            setDifficulty(Difficulty.HARD);
+            break;
+        default:
+            Log.e(TAG, "Unknown difficulty bundle settings: " + difficulty);
+            break;
+        }
+        
         nextQuestion();
     }
 
@@ -149,8 +166,8 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         // release SoundPoolresources
         mSoundPool.release();
-        
-        //release the timer
+
+        // release the timer
         mStatusFragment.stopTimer();
     }
 
@@ -163,7 +180,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
     }
 
     private int bufferSpaceRemaining() {
-        return DESIRED_GAME_OPTION_BUFFER - (mWikiBuffer.size() + mWikisInPlay.size() + mFetchWikiTastCount);
+        return DESIRED_GAME_OPTION_BUFFER - (mWikiBuffer.size() + mWikisInPlay.size() + mFetchWikiTaskCount);
     }
 
     private boolean isBufferBigEnough() {
@@ -178,7 +195,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         // spawn new FetchWikiTask until either max parallel download count or
         // desired future buffer size is reached
-        while (diff > 0 && mFetchWikiTastCount < MAX_PARALLEL_DOWNLOADS) {
+        while (diff > 0 && mFetchWikiTaskCount < MAX_PARALLEL_DOWNLOADS) {
             new FetchWikiTask().execute();
             diff--;
         }
@@ -244,7 +261,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
     public void onTimeOut(int score) {
         Toast.makeText(this, "Timed out", Toast.LENGTH_SHORT).show();
     }
-    
+
     public void selectWiki(int selection) {
         // lock buttons to avoid simultaneous input
         lockButtons();
@@ -258,12 +275,12 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
         final Drawable correctBg = correctButton.getBackground().mutate();
         final Button wrongButton = mButtons.get(selection);
         final Drawable wrongBg = wrongButton.getBackground();
-        
+
         DeveloperTools.makeBackgroundColored(correctButton, Color.GREEN);
 
         if (selection == mCorrectChoice) {
             mStatusFragment.addPoint();
-            
+
             // correct guess sound
             mSoundPool.play(mSoundCorrect, volume, volume, 0, 0, 1);
 
@@ -277,14 +294,13 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
             DeveloperTools.makeBackgroundColored(wrongButton, Color.RED);
             animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.ALPHA, 0.7f, 1.0f, 0.7f, 1.0f));
-            
+
             // rotate the correct button to draw attention to it
             animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_X, 1.0f, 1.15f, 1.0f));
             animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_Y, 1.0f, 1.15f, 1.0f));
             set.setDuration(mLongAnimationLength);
         }
-        
-        
+
         set.playTogether(animations);
         set.addListener(new AnimatorListener() {
 
@@ -305,7 +321,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
                 // return the buttons background to their original state
                 correctButton.setBackgroundDrawable(correctBg);
                 wrongButton.setBackgroundDrawable(wrongBg);
-                
+
                 // replace the correct choice with a new wiki from the buffer
                 mWikisInPlay.remove(mCorrectChoice);
 
@@ -409,7 +425,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mFetchWikiTastCount++;
+            mFetchWikiTaskCount++;
         }
 
         @Override
@@ -468,7 +484,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
 
         @Override
         protected void onPostExecute(Wiki result) {
-            mFetchWikiTastCount--;
+            mFetchWikiTaskCount--;
 
             if (result.getName() != null && result.getAssociatedLinks().size() > 0) {
                 mRetriesLeft = MAX_DOWNLOAD_RETRIES;

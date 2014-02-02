@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,7 +15,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.hulzenga.ioi_apps.AppRepository.AppSummary;
+import com.hulzenga.ioi_apps.AppRepository.App;
 
 public class TableOfContents extends Activity {
 
@@ -33,11 +34,12 @@ public class TableOfContents extends Activity {
         
         final List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
         final List<Class<?>> demos = new ArrayList<Class<?>>();
+        Resources res = getResources();
         
-        for (AppSummary app: AppRepository.getAppSummaries(getResources())) {
+        for (App app: AppRepository.App.values()) {
             HashMap<String, Object> item = new HashMap<String, Object>();
-            item.put(ACTIVITY_NAME, app.getTitle());
-            item.put(ACTIVITY_DESCRIPTION, app.getShortDescription());
+            item.put(ACTIVITY_NAME, app.getTitleString(res));
+            item.put(ACTIVITY_DESCRIPTION, app.getShortDescriptionString(res));
             item.put(ACTIVITY_ICON, app.getIcon());
             data.add(item);
             
