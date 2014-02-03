@@ -8,21 +8,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hulzenga.ioi_apps.R;
+import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
 
 public class StatusFragment extends Fragment {
 
-    private static final String TAG    = "STATUS FRAGMENT";
+    private static final String TAG     = "STATUS FRAGMENT";
 
     private TextView            mTimerText;
+    //private Game.Difficulty          mDifficulty;
     private TextView            mDifficultyText;
     private TextView            mScoreText;
 
-    private int                 mScore = 0;
-    private int                 mTime  = 10;
+    private int                 mScore  = 0;
+    private int                 mTime   = 60;
+
     private Thread              mTimerThread;
+    private volatile boolean    mPaused = false;
+    private volatile boolean    mFinish = false;
 
     private TimeOutListener     mTimeOutListener;
 
@@ -64,7 +68,7 @@ public class StatusFragment extends Fragment {
     }
 
     public void penaltyPoints(int points) {
-        mScore -= points;
+        mScore = ConstraintEnforcer.lowerBound(0, mScore - points);
         showScore();
     }
 
@@ -72,12 +76,9 @@ public class StatusFragment extends Fragment {
         mScoreText.setText(String.valueOf(mScore));
     }
 
-    public void setTimer(int seoncds) {
-
+    public void setTimer(int seconds) {
+        
     }
-
-    private volatile boolean mPaused = false;
-    private volatile boolean mFinish = false;
 
     public void startTimer() {
 
@@ -118,12 +119,11 @@ public class StatusFragment extends Fragment {
                                         mTimeOutListener.onTimeOut(mScore);
                                     }
                                 });
-                                
+
                                 mFinish = true;
                             }
                         }
                     }
-
                 }
             }
         });

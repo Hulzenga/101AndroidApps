@@ -3,6 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+     <ImageView
+         android:id="@+id/app_007_background"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentRight="true"
+         android:layout_alignParentTop="true"
+         android:scaleType="fitCenter"
+         android:src="@drawable/app_007_wikipedia" />
+     
     <RelativeLayout
         android:id="@+id/app_007_baseMenuContainer"
         android:layout_width="match_parent"
@@ -18,22 +29,27 @@
             android:layout_centerVertical="true"
             android:orientation="vertical" >
 
-            <Button
+            <ImageButton
                 android:id="@+id/app_007_playButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="play"
-                android:onClick="play" />
+                style="@style/app_007_menuButtons"                                
+                android:onClick="play"
+                android:src="@drawable/app_007_play" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/app_007_reviewButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="review"
-                android:onClick="review" />
-            
+                style="@style/app_007_menuButtons" 
+                android:onClick="review"
+                android:src="@drawable/app_007_review"/>
+
         </LinearLayout>
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="71dp"
+            android:src="@drawable/app_007_wikilinks_title" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -51,28 +67,34 @@
             android:layout_centerVertical="true"
             android:orientation="vertical" >
 
-            <Button
+            <ImageButton
                 android:id="@+id/app_007_easyButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/app_007_menuButtons" 
                 android:onClick="pickDifficulty"
-                android:text="easy" />
+                android:src="@drawable/app_007_easy" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/app_007_mediumButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/app_007_menuButtons"                
                 android:onClick="pickDifficulty"
-                android:text="medium" />
+                android:src="@drawable/app_007_medium" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/app_007_hardButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/app_007_menuButtons" 
                 android:onClick="pickDifficulty"
-                android:text="hard" />
+                android:src="@drawable/app_007_hard" />
         </LinearLayout>
-
+        
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="71dp"
+            android:src="@drawable/app_007_difficulty" />
     </RelativeLayout>
+
+   
 
 </RelativeLayout>

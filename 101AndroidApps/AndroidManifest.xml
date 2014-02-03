@@ -98,7 +98,7 @@
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_007.WikipediaGameMenu"
+            android:name="com.hulzenga.ioi_apps.app_007.Menu"
             android:label="@string/app_007_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
@@ -106,7 +106,7 @@
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_007.WikipediaGame"
+            android:name="com.hulzenga.ioi_apps.app_007.Game"
             android:label="@string/app_007_title"
             android:parentActivityName="com.hulzenga.ioi_apps.WikipediaGameMenu" >
             <meta-data

@@ -38,7 +38,8 @@
     <!-- App 007 -->
     <string name="app_007_title">A Wikipedia Game</string>
     <string name="app_007_shortDescription">Identify the Wikipedia article by the names of outgoing links on the page</string>
-    <string name="app_007_downloadFailure">Repeatedly failed to download Wiki pages!</string>
+    <string name="app_007_downloadProgress">Questions Downloaded</string>
+    <string name="app_007_downloadFailure">Failed to connect to Wikipedia</string>
     <string name="app_007_easy">Easy</string>
     <string name="app_007_normal">Normal</string>
     <string name="app_007_hard">Hard</string>

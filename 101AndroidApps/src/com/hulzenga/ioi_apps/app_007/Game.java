@@ -43,7 +43,7 @@ import com.hulzenga.ioi_apps.R;
 import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
 import com.hulzenga.ioi_apps.util.DeveloperTools;
 
-public class WikipediaGame extends DemoActivity implements ButtonsFragment.OptionSelectionListener,
+public class Game extends DemoActivity implements ButtonsFragment.OptionSelectionListener,
         StatusFragment.TimeOutListener {
 
     private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
@@ -146,7 +146,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
             Log.e(TAG, "Unknown difficulty bundle settings: " + difficulty);
             break;
         }
-        
+
         nextQuestion();
     }
 
@@ -363,24 +363,25 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
         int i = mWikiBuffer.size();
 
         mProgressBar.setProgress(i);
-        mLinkText.setText("downloads remaining (" + ConstraintEnforcer.lowerBound(0, i) + "/"
-                + mDifficulty.numberOfOptions + ")");
+        mLinkText.setText(getResources().getString(R.string.app_007_downloadProgress) + " ("
+                + ConstraintEnforcer.lowerBound(0, i) + "/" + mDifficulty.numberOfOptions + ")");
     }
 
     /**
      * Make the ProgressBar and ProgressBarTextView visible
      */
     private void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-        mProgressBarTextView.setVisibility(View.VISIBLE);
+        mProgressBar.animate().alpha(1f).setDuration(mShortAnimationLength);
+        mProgressBarTextView.animate().alpha(1f).setDuration(mShortAnimationLength);
     }
 
     /**
      * Hide the ProgressBar and ProgressBarTextView by making them invisible
      */
     private void hideProgressBar() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mProgressBarTextView.setVisibility(View.INVISIBLE);
+        mProgressBar.animate().alpha(0f).setDuration(mShortAnimationLength);
+        mProgressBarTextView.animate().alpha(0f).setDuration(mShortAnimationLength);
+        
     }
 
     private void bringWikisBackToBuffer() {
@@ -495,7 +496,7 @@ public class WikipediaGame extends DemoActivity implements ButtonsFragment.Optio
                 // if there are no retries left and there are not enough Wikis
                 // in the buffer to play a new round the app finishes
                 if (mRetriesLeft <= 0 && !isBufferBigEnough()) {
-                    Toast.makeText(WikipediaGame.this, getResources().getString(R.string.app_007_downloadFailure),
+                    Toast.makeText(Game.this, getResources().getString(R.string.app_007_downloadFailure),
                             Toast.LENGTH_LONG).show();
                     finish();
                 } else {
