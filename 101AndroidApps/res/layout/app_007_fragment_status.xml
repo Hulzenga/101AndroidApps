@@ -28,4 +28,12 @@
         android:layout_centerVertical="true"
         android:text="score" />
 
+    <TextView
+        android:id="@+id/app_007_scoreDeltaView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/app_007_scoreTextView"
+        android:layout_alignBottom="@+id/app_007_scoreTextView"
+        android:layout_alignParentRight="true"/>
+
 </RelativeLayout>

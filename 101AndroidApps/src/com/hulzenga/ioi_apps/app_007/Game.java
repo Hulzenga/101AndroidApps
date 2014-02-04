@@ -19,12 +19,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -222,7 +217,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
         for (int i = 0; i < mDifficulty.numberOfOptions; i++) {
             if (!mWikisInPlay.containsKey(i)) {
                 mWikisInPlay.put(i, mWikiBuffer.remove(0));
-                mButtons.get(i).setText(mWikisInPlay.get(i).mName);
+                mButtons.get(i).setText(mWikisInPlay.get(i).getName());
                 animations.add(ObjectAnimator.ofFloat(mButtons.get(i), View.ALPHA, 0.0f, 1.0f));
             }
         }
@@ -381,7 +376,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
     private void hideProgressBar() {
         mProgressBar.animate().alpha(0f).setDuration(mShortAnimationLength);
         mProgressBarTextView.animate().alpha(0f).setDuration(mShortAnimationLength);
-        
+
     }
 
     private void bringWikisBackToBuffer() {
@@ -433,13 +428,16 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
         protected Wiki doInBackground(ProgressBar... params) {
 
             String name = null;
+            String adress = null;
             List<String> links = new ArrayList<String>(MAX_NUMBER_OF_LINKS);
 
             try {
 
                 Document doc = Jsoup.connect(RANDOM_WIKI_PAGE_URL).timeout(10000).get();
+
                 String fullname = doc.title();
                 name = fullname.substring(0, fullname.length() - 35);
+                adress = doc.location();
 
                 // select the main content div
                 Element content = doc.select("div#content > div").first();
@@ -475,7 +473,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
                 Log.e(TAG, "Exception while trying to download/parse random wiki page: " + e.getMessage());
             }
 
-            return new Wiki(name, links);
+            return new Wiki(name, adress, links);
         }
 
         @Override
@@ -506,21 +504,4 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
         }
     }
 
-    private class Wiki {
-        private String       mName;
-        private List<String> mLinks;
-
-        public Wiki(String name, List<String> links) {
-            mName = name;
-            mLinks = links;
-        }
-
-        public String getName() {
-            return mName;
-        }
-
-        public List<String> getAssociatedLinks() {
-            return mLinks;
-        }
-    }
 }

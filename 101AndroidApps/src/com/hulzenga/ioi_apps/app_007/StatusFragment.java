@@ -1,7 +1,12 @@
 package com.hulzenga.ioi_apps.app_007;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +22,8 @@ public class StatusFragment extends Fragment {
     private static final String TAG     = "STATUS FRAGMENT";
 
     private TextView            mTimerText;
-    //private Game.Difficulty          mDifficulty;
     private TextView            mDifficultyText;
+    private TextView            mScoreDeltaText;
     private TextView            mScoreText;
 
     private int                 mScore  = 0;
@@ -29,6 +34,10 @@ public class StatusFragment extends Fragment {
     private volatile boolean    mFinish = false;
 
     private TimeOutListener     mTimeOutListener;
+
+    private int                 mAnimationLengthMedium;
+
+    private int mAnimationDistance;
 
     public interface TimeOutListener {
         public void onTimeOut(int score);
@@ -42,14 +51,18 @@ public class StatusFragment extends Fragment {
         mTimerText = (TextView) statusView.findViewById(R.id.app_007_timerTextView);
         mDifficultyText = (TextView) statusView.findViewById(R.id.app_007_difficultyTextView);
         mScoreText = (TextView) statusView.findViewById(R.id.app_007_scoreTextView);
+        mScoreDeltaText = (TextView) statusView.findViewById(R.id.app_007_scoreDeltaView);
         showScore();
 
+        mAnimationDistance = statusView.getHeight();
         return statusView;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        mAnimationLengthMedium = activity.getResources().getInteger(R.integer.animation_medium);
         try {
             mTimeOutListener = (TimeOutListener) activity;
         } catch (ClassCastException e) {
@@ -64,12 +77,73 @@ public class StatusFragment extends Fragment {
 
     public void addPoint() {
         mScore++;
-        showScore();
+
+        mScoreDeltaText.setText("+1");
+        mScoreDeltaText.setTextColor(Color.GREEN);
+        AnimatorSet set = new AnimatorSet();
+        Animator scoreDelta = ObjectAnimator.ofFloat(mScoreDeltaText, View.TRANSLATION_Y, -mAnimationDistance);
+        set.play(scoreDelta);
+        set.setDuration(mAnimationLengthMedium);
+        set.addListener(new AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mScoreDeltaText.setText("");
+                mScoreDeltaText.setTranslationY(0.0f);
+                showScore();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+        });
+        set.start();
     }
 
     public void penaltyPoints(int points) {
-        mScore = ConstraintEnforcer.lowerBound(0, mScore - points);
-        showScore();
+        // only do the animation and update if there are actual pennalty points
+        if (points > 0) {
+            mScore = ConstraintEnforcer.lowerBound(0, mScore - points);
+            mScoreDeltaText.setText("-" + points);
+            mScoreDeltaText.setTextColor(Color.RED);
+            AnimatorSet set = new AnimatorSet();
+            Animator scoreDelta = ObjectAnimator.ofFloat(mScoreDeltaText, View.TRANSLATION_Y, +mAnimationDistance);
+            set.play(scoreDelta);
+            set.setDuration(mAnimationLengthMedium);
+            set.addListener(new AnimatorListener() {
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mScoreDeltaText.setText("");
+                    mScoreDeltaText.setTranslationY(0.0f);
+                    showScore();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    
+                }
+            });
+            set.start();
+        }
+
     }
 
     private void showScore() {
@@ -77,7 +151,7 @@ public class StatusFragment extends Fragment {
     }
 
     public void setTimer(int seconds) {
-        
+
     }
 
     public void startTimer() {

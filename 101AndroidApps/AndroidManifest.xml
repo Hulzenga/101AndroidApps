@@ -99,6 +99,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_007.Menu"
+            android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title"
             android:parentActivityName="com.hulzenga.ioi_apps.TableOfContents" >
             <meta-data
@@ -107,6 +108,7 @@
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_007.Game"
+            android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title"
             android:parentActivityName="com.hulzenga.ioi_apps.WikipediaGameMenu" >
             <meta-data
@@ -114,7 +116,8 @@
                 android:value="com.hulzenga.ioi_apps.app_007.WikipediaGameMenu" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.Review"
+            android:name="com.hulzenga.ioi_apps.app_007.Review"
+            android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title" 
             android:parentActivityName="com.hulzenga.ioi_apps.WikipediaGameMenu" >
             <meta-data

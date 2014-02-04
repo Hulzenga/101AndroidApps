@@ -20,7 +20,7 @@ public class AppRepository {
         APP_006(com.hulzenga.ioi_apps.app_006.SimpleCameraActivity.class, R.string.app_006_title,
                 R.drawable.app_006_icon, R.string.app_006_shortDescription, 0),
         APP_007(com.hulzenga.ioi_apps.app_007.Menu.class, R.string.app_007_title,
-                R.drawable.ic_launcher, R.string.app_007_shortDescription, 0), ;       
+                R.drawable.app_007_icon, R.string.app_007_shortDescription, 0), ;       
 
         private int   title;
         private Class activity;
