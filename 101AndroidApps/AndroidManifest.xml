@@ -110,19 +110,19 @@
             android:name="com.hulzenga.ioi_apps.app_007.Game"
             android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title"
-            android:parentActivityName="com.hulzenga.ioi_apps.WikipediaGameMenu" >
+            android:parentActivityName="com.hulzenga.ioi_apps.app_007.Menu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.app_007.WikipediaGameMenu" />
+                android:value="com.hulzenga.ioi_apps.app_007.app_007.Menu" />
         </activity>
         <activity
             android:name="com.hulzenga.ioi_apps.app_007.Review"
             android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title" 
-            android:parentActivityName="com.hulzenga.ioi_apps.WikipediaGameMenu" >
+            android:parentActivityName="com.hulzenga.ioi_apps.app_007.Menu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.app_007.WikipediaGameMenu" />            
+                android:value="com.hulzenga.ioi_apps.app_007.app_007.Menu" />            
         </activity>
     </application>
 

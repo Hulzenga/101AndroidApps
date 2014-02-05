@@ -60,7 +60,8 @@ public class Menu extends DemoActivity {
     }
 
     public void review(View view) {
-
+        Intent i = new Intent(this, com.hulzenga.ioi_apps.app_007.Review.class);
+        startActivity(i);
     }
 
     public void pickDifficulty(View view) {

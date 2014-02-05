@@ -37,25 +37,10 @@ public class StatusFragment extends Fragment {
 
     private int                 mAnimationLengthMedium;
 
-    private int mAnimationDistance;
+    private int                 mAnimationDistance;
 
     public interface TimeOutListener {
         public void onTimeOut(int score);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View statusView = inflater.inflate(R.layout.app_007_fragment_status, container, false);
-
-        mTimerText = (TextView) statusView.findViewById(R.id.app_007_timerTextView);
-        mDifficultyText = (TextView) statusView.findViewById(R.id.app_007_difficultyTextView);
-        mScoreText = (TextView) statusView.findViewById(R.id.app_007_scoreTextView);
-        mScoreDeltaText = (TextView) statusView.findViewById(R.id.app_007_scoreDeltaView);
-        showScore();
-
-        mAnimationDistance = statusView.getHeight();
-        return statusView;
     }
 
     @Override
@@ -69,6 +54,25 @@ public class StatusFragment extends Fragment {
             Log.e(TAG, activity.toString() + " must implement StatusFragment.TimeOutListener");
         }
 
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        return inflater.inflate(R.layout.app_007_fragment_status, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mTimerText = (TextView) getView().findViewById(R.id.app_007_timerTextView);
+        mDifficultyText = (TextView) getView().findViewById(R.id.app_007_difficultyTextView);
+        mScoreText = (TextView) getView().findViewById(R.id.app_007_scoreTextView);
+        mScoreDeltaText = (TextView) getView().findViewById(R.id.app_007_scoreDeltaView);
+        showScore();
+
+        mAnimationDistance = getView().getHeight();
     }
 
     public void resetScore() {
@@ -138,7 +142,7 @@ public class StatusFragment extends Fragment {
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
-                    
+
                 }
             });
             set.start();
@@ -154,9 +158,16 @@ public class StatusFragment extends Fragment {
 
     }
 
+    private boolean mRunning = false;
+
+    public boolean isRunning() {
+        return mRunning;
+    }
+
     public void startTimer() {
 
         final Activity activity = getActivity();
+        mRunning = true;
 
         mTimerThread = new Thread(new Runnable() {
 

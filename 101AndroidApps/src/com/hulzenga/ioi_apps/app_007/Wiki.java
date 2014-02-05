@@ -14,24 +14,24 @@ import android.util.Log;
 
 public class Wiki {
 
-    private static final String TAG = "WIKI";
-    
+    private static final String TAG     = "WIKI";
+
     private String              mName;
     private static final String NAME    = "name";
-    private String              mAdress;
-    private static final String ADRESS  = "adress";
+    private String              mAddress;
+    private static final String ADDRESS = "address";
     private List<String>        mLinks;
     private static final String LINKS   = "links";
     private boolean             mCorrect;
     private static final String CORRECT = "correct";
 
-    public Wiki (String name, String adress, List<String> links) {
+    public Wiki(String name, String adress, List<String> links) {
         this(name, adress, links, false);
     }
-    
-    public Wiki(String name, String adress, List<String> links, boolean correct) {
+
+    public Wiki(String name, String address, List<String> links, boolean correct) {
         mName = name;
-        mAdress = adress;
+        mAddress = address;
         mLinks = links;
         mCorrect = correct;
     }
@@ -40,12 +40,17 @@ public class Wiki {
         return mName;
     }
 
-    public String getAdress() {
-        return mAdress;
+    public String getAddress() {
+        return mAddress;
     }
 
-    public List<String> getAssociatedLinks() {
+    public List<String> getLinks() {
         return mLinks;
+    }
+
+    public Wiki stripLinks() {
+        mLinks.clear();
+        return this;
     }
 
     public boolean isCorrect() {
@@ -56,45 +61,54 @@ public class Wiki {
         mCorrect = correct;
     }
 
-    public List<Wiki> loadWikis(Context context, String fileName) {
+    public static List<Wiki> loadWikis(Context context, String fileName, boolean deleteAfterReading) {
         List<Wiki> wikiList = new ArrayList<Wiki>();
-        
+
         File saveFile = new File(context.getFilesDir(), fileName + ".json");
-        boolean succes = false;
+        // if there is no save file return empty list
+        if (!saveFile.exists()) {
+            return wikiList;
+        }
+
+        // try and read wikis from the list
         try {
             FileReader fileReader = new FileReader(saveFile);
             JsonReader jsonReader = new JsonReader(fileReader);
-            
+
+            jsonReader.beginArray();
             while (jsonReader.hasNext()) {
                 wikiList.add(readWiki(jsonReader));
             }
+            jsonReader.endArray();
+
             jsonReader.close();
-            succes = true;
         } catch (IOException e) {
-            //if write fails, log it. Nothing else necessary
-            Log.e(TAG, "failed to write wikis in buffer to file");
+            // if write fails, log it. Nothing else necessary
+            Log.e(TAG, "failed to write wikis to file: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "JSON reader state failure: " + e.getMessage());
         } finally {
-            if (!succes) {
+            if (deleteAfterReading) {
                 saveFile.delete();
             }
         }
-        
+
         return wikiList;
     }
 
-    private Wiki readWiki(JsonReader reader) throws IOException {
+    private static Wiki readWiki(JsonReader reader) throws IOException {
         String wikiName = null;
         String adress = null;
         List<String> links = new ArrayList<String>();
         boolean correct = false;
-        
+
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
-            
+
             if (name.equals(NAME)) {
                 wikiName = reader.nextString();
-            } else if (name.equals(ADRESS)) {
+            } else if (name.equals(ADDRESS)) {
                 adress = reader.nextString();
             } else if (name.equals(LINKS)) {
                 reader.beginArray();
@@ -108,23 +122,26 @@ public class Wiki {
                 reader.skipValue();
             }
         }
-        
+        reader.endObject();
+
         return new Wiki(wikiName, adress, links, correct);
     }
-    
-    public void saveWikis(Context context, List<Wiki> wikis, String fileName) {
+
+    public static void saveWikis(Context context, List<Wiki> wikis, String fileName) {
         File saveFile = new File(context.getFilesDir(), fileName + ".json");
         boolean succes = false;
         try {
             FileWriter fileWriter = new FileWriter(saveFile);
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
-            for (Wiki wiki: wikis) {
+            jsonWriter.beginArray();
+            for (Wiki wiki : wikis) {
                 wiki.writeWiki(jsonWriter);
             }
+            jsonWriter.endArray();
             jsonWriter.close();
             succes = true;
         } catch (IOException e) {
-            //if write fails, log it. Nothing else necessary
+            // if write fails, log it. Nothing else necessary
             Log.e(TAG, "failed to write wikis in buffer to file");
         } finally {
             if (!succes) {
@@ -132,11 +149,11 @@ public class Wiki {
             }
         }
     }
-    
+
     private void writeWiki(JsonWriter writer) throws IOException {
         writer.beginObject();
         writer.name(NAME).value(mName);
-        writer.name(ADRESS).value(mAdress);
+        writer.name(ADDRESS).value(mAddress);
 
         writer.name(LINKS);
         writer.beginArray();
@@ -144,7 +161,7 @@ public class Wiki {
             writer.value(link);
         }
         writer.endArray();
-        
+
         writer.name(CORRECT).value(mCorrect);
         writer.endObject();
     }

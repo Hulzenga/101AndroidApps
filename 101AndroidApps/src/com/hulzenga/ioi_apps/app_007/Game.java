@@ -42,10 +42,13 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
         StatusFragment.TimeOutListener {
 
     private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
+    private static final String SAVED_NOT_PLAYED_WIKIS     = "saved_not_played";
+    public static final String  SAVED_AND_PLAYED_WIKIS     = "saved_and_played";
     private static final int    DESIRED_GAME_OPTION_BUFFER = 6;
     private static final int    MAX_PARALLEL_DOWNLOADS     = 3;
     private static final int    MIN_LINK_LENGTH            = 4;
     private static final int    MAX_NUMBER_OF_LINKS        = 6;
+    private static final int    PLAYED_WIKIS_LENGTH        = 100;
 
     private static final int    MAX_DOWNLOAD_RETRIES       = 3;
     private static int          mRetriesLeft               = MAX_DOWNLOAD_RETRIES;
@@ -84,7 +87,8 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
     // handy to keep around
     private Random             mRandom             = new Random();
 
-    private List<Wiki>         mWikiBuffer         = new LinkedList<Wiki>();
+    private List<Wiki>         mWikisInBuffer      = new LinkedList<Wiki>();
+    private List<Wiki>         mWikisPlayed        = new LinkedList<Wiki>();
 
     // this should really be an array, but a map just looks nicer
     private Map<Integer, Wiki> mWikisInPlay        = new HashMap<Integer, Wiki>();
@@ -141,8 +145,6 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
             Log.e(TAG, "Unknown difficulty bundle settings: " + difficulty);
             break;
         }
-
-        nextQuestion();
     }
 
     @Override
@@ -153,6 +155,13 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
         mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
         mSoundCorrect = mSoundPool.load(this, R.raw.app_007_correct, 1);
         mSoundWrong = mSoundPool.load(this, R.raw.app_007_wrong, 1);
+
+        List<Wiki> savedWikis = Wiki.loadWikis(this, SAVED_NOT_PLAYED_WIKIS, true);
+        if (savedWikis.size() > 0) {
+            mWikisInBuffer = savedWikis;
+        }
+
+        nextQuestion();
     }
 
     @Override
@@ -164,6 +173,22 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
 
         // release the timer
         mStatusFragment.stopTimer();
+
+        // save unplayed wikis
+        bringWikisBackToBuffer();
+        Wiki.saveWikis(this, mWikisInBuffer, SAVED_NOT_PLAYED_WIKIS);
+
+        // load the previously saved played Wikis
+        List<Wiki> savedAndPlayedWikis = Wiki.loadWikis(this, SAVED_AND_PLAYED_WIKIS, true);
+
+        if (savedAndPlayedWikis.size() > 0) {
+            // calculate how much of the previously saved played Wikis to add to
+            // the list
+            int lengthOfPadding = Math.min(PLAYED_WIKIS_LENGTH - mWikisPlayed.size(), savedAndPlayedWikis.size());
+            mWikisPlayed.addAll(savedAndPlayedWikis.subList(0, lengthOfPadding));
+        }
+
+        Wiki.saveWikis(this, mWikisPlayed, SAVED_AND_PLAYED_WIKIS);
     }
 
     private void setDifficulty(Difficulty gameDifficulty) {
@@ -175,11 +200,11 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
     }
 
     private int bufferSpaceRemaining() {
-        return DESIRED_GAME_OPTION_BUFFER - (mWikiBuffer.size() + mWikisInPlay.size() + mFetchWikiTaskCount);
+        return DESIRED_GAME_OPTION_BUFFER - (mWikisInBuffer.size() + mWikisInPlay.size() + mFetchWikiTaskCount);
     }
 
     private boolean isBufferBigEnough() {
-        return mWikiBuffer.size() + mWikisInPlay.size() >= mDifficulty.numberOfOptions;
+        return mWikisInBuffer.size() + mWikisInPlay.size() >= mDifficulty.numberOfOptions;
     }
 
     private void nextQuestion() {
@@ -214,9 +239,13 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
 
         List<Animator> animations = new ArrayList<Animator>();
 
+        if (!mStatusFragment.isRunning()) {
+            mStatusFragment.startTimer();
+        }
+
         for (int i = 0; i < mDifficulty.numberOfOptions; i++) {
             if (!mWikisInPlay.containsKey(i)) {
-                mWikisInPlay.put(i, mWikiBuffer.remove(0));
+                mWikisInPlay.put(i, mWikisInBuffer.remove(0));
                 mButtons.get(i).setText(mWikisInPlay.get(i).getName());
                 animations.add(ObjectAnimator.ofFloat(mButtons.get(i), View.ALPHA, 0.0f, 1.0f));
             }
@@ -275,7 +304,10 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
 
         if (selection == mCorrectChoice) {
             mStatusFragment.addPoint();
-
+            
+            // set the wiki to correct
+            mWikisInPlay.get(mCorrectChoice).setCorrect(true);
+            
             // correct guess sound
             mSoundPool.play(mSoundCorrect, volume, volume, 0, 0, 1);
 
@@ -284,6 +316,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
             set.setDuration(mShortAnimationLength);
         } else {
             mStatusFragment.penaltyPoints(mDifficulty.penalyPoints);
+
             // wrong guess sound
             mSoundPool.play(mSoundWrong, volume, volume, 0, 0, 1);
 
@@ -311,14 +344,21 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                // TODO: update score
 
                 // return the buttons background to their original state
                 correctButton.setBackgroundDrawable(correctBg);
                 wrongButton.setBackgroundDrawable(wrongBg);
 
-                // replace the correct choice with a new wiki from the buffer
-                mWikisInPlay.remove(mCorrectChoice);
+                /*
+                 * remove the correct choice from the list of Wikis in play and
+                 * move it to the played list. Strip links to save space.
+                 */
+                mWikisPlayed.add(0, mWikisInPlay.remove(mCorrectChoice).stripLinks());
+
+                // make sure the played list does not become too big
+                if (mWikisPlayed.size() > PLAYED_WIKIS_LENGTH) {
+                    mWikisPlayed.remove(mWikisPlayed.size() - 1);
+                }
 
                 nextQuestion();
             }
@@ -333,13 +373,12 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
     }
 
     private void addWikiToBuffer(Wiki option) {
-        mWikiBuffer.add(option);
+        mWikisInBuffer.add(option);
         if (mPlayWhenReady) {
             publishProgress();
 
             if (isBufferBigEnough()) {
                 hideProgressBar();
-                mStatusFragment.startTimer();
                 ShowNextQuestion();
             }
         }
@@ -355,7 +394,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
      * accordingly
      */
     private void publishProgress() {
-        int i = mWikiBuffer.size();
+        int i = mWikisInBuffer.size();
 
         mProgressBar.setProgress(i);
         mLinkText.setText(getResources().getString(R.string.app_007_downloadProgress) + " ("
@@ -382,7 +421,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
     private void bringWikisBackToBuffer() {
 
         for (Integer key : mWikisInPlay.keySet()) {
-            mWikiBuffer.add(mWikisInPlay.get(key));
+            mWikisInBuffer.add(mWikisInPlay.get(key));
         }
     }
 
@@ -390,7 +429,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
         StringBuilder sb = new StringBuilder();
 
         sb.append("<ol>");
-        for (String link : wiki.getAssociatedLinks()) {
+        for (String link : wiki.getLinks()) {
             sb.append("&#8226;" + link + "<br/>");
         }
         sb.append("</ol>");
@@ -477,15 +516,10 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-
-        }
-
-        @Override
         protected void onPostExecute(Wiki result) {
             mFetchWikiTaskCount--;
 
-            if (result.getName() != null && result.getAssociatedLinks().size() > 0) {
+            if (result.getName() != null && result.getLinks().size() > 0) {
                 mRetriesLeft = MAX_DOWNLOAD_RETRIES;
                 addWikiToBuffer(result);
             } else {
