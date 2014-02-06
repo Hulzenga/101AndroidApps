@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.hulzenga.ioi_apps.R;
 import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
+import com.hulzenga.ioi_apps.util.ScreenMetrics;
 
 public class StatusFragment extends Fragment {
 
@@ -36,8 +37,7 @@ public class StatusFragment extends Fragment {
     private TimeOutListener     mTimeOutListener;
 
     private int                 mAnimationLengthMedium;
-
-    private int                 mAnimationDistance;
+    private float               mAnimationDistance;
 
     public interface TimeOutListener {
         public void onTimeOut(int score);
@@ -48,12 +48,13 @@ public class StatusFragment extends Fragment {
         super.onAttach(activity);
 
         mAnimationLengthMedium = activity.getResources().getInteger(R.integer.animation_medium);
+        mAnimationDistance = ScreenMetrics.dpToPix(60.0f, activity);
+        
         try {
             mTimeOutListener = (TimeOutListener) activity;
         } catch (ClassCastException e) {
             Log.e(TAG, activity.toString() + " must implement StatusFragment.TimeOutListener");
         }
-
     }
 
     @Override
@@ -65,6 +66,7 @@ public class StatusFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+                
 
         mTimerText = (TextView) getView().findViewById(R.id.app_007_timerTextView);
         mDifficultyText = (TextView) getView().findViewById(R.id.app_007_difficultyTextView);
@@ -72,7 +74,6 @@ public class StatusFragment extends Fragment {
         mScoreDeltaText = (TextView) getView().findViewById(R.id.app_007_scoreDeltaView);
         showScore();
 
-        mAnimationDistance = getView().getHeight();
     }
 
     public void resetScore() {

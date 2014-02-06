@@ -33,13 +33,22 @@ public class Menu extends DemoActivity {
         mInPickDifficulty = true;
 
         mBackground.animate().translationX(-100f).setDuration(getResources().getInteger(R.integer.animation_medium));
-        // Animator anim = ObjectAnimator.ofFloat(mDifficultyContainer,
-        // View.TRANSLATION_X, 100f, 0f);
+
         mBaseMenuContainer.setAnimation(AnimationUtils.loadAnimation(this, R.anim.left_slide_out));
         mBaseMenuContainer.setVisibility(View.GONE);
 
         mDifficultyContainer.setAnimation(AnimationUtils.loadAnimation(this, R.anim.right_slide_in));
         mDifficultyContainer.setVisibility(View.VISIBLE);
+    }
+
+    public void highScores(View view) {
+        Intent intent = new Intent(this, com.hulzenga.ioi_apps.app_007.HighScores.class);
+        startActivity(intent);
+    }
+
+    public void review(View view) {
+        Intent intent = new Intent(this, com.hulzenga.ioi_apps.app_007.Review.class);
+        startActivity(intent);
     }
 
     @Override
@@ -48,7 +57,7 @@ public class Menu extends DemoActivity {
             mInPickDifficulty = false;
 
             mBackground.animate().translationX(0).setDuration(getResources().getInteger(R.integer.animation_medium));
-            
+
             mBaseMenuContainer.setAnimation(AnimationUtils.loadAnimation(this, R.anim.left_slide_in));
             mBaseMenuContainer.setVisibility(View.VISIBLE);
 
@@ -57,11 +66,6 @@ public class Menu extends DemoActivity {
         } else {
             super.onBackPressed();
         }
-    }
-
-    public void review(View view) {
-        Intent i = new Intent(this, com.hulzenga.ioi_apps.app_007.Review.class);
-        startActivity(i);
     }
 
     public void pickDifficulty(View view) {
@@ -81,6 +85,5 @@ public class Menu extends DemoActivity {
         }
 
         startActivity(i);
-        overridePendingTransition(R.anim.right_slide_in, R.anim.left_slide_out);
     }
 }

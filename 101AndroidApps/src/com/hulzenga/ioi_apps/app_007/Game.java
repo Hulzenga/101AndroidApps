@@ -55,7 +55,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
 
     public static final String  BUNDLE_DIFFICULTY          = "difficulty";
 
-    private enum Difficulty {
+    public enum Difficulty {
 
         EASY(R.string.app_007_easy, 3, 10, 0),
         NORMAL(R.string.app_007_normal, 3, 6, 1),
@@ -283,7 +283,7 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
     }
 
     public void onTimeOut(int score) {
-        Toast.makeText(this, "Timed out", Toast.LENGTH_SHORT).show();
+        lockButtons();
     }
 
     public void selectWiki(int selection) {

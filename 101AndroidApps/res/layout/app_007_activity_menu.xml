@@ -43,7 +43,13 @@
                 style="@style/app_007_menuButtons"
                 android:onClick="play"
                 android:src="@drawable/app_007_play" />
-
+            
+            <ImageButton
+                android:id="@+id/app_007_highScoresButton"
+                style="@style/app_007_menuButtons"
+                android:onClick="highScores"
+                android:src="@drawable/app_007_high_scores" />
+            
             <ImageButton
                 android:id="@+id/app_007_reviewButton"
                 style="@style/app_007_menuButtons"

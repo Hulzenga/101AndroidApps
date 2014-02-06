@@ -16,15 +16,16 @@ public class Wiki {
 
     private static final String TAG     = "WIKI";
 
-    private String              mName;
-    private static final String NAME    = "name";
-    private String              mAddress;
-    private static final String ADDRESS = "address";
-    private List<String>        mLinks;
-    private static final String LINKS   = "links";
-    private boolean             mCorrect;
-    private static final String CORRECT = "correct";
+    private static final String KEY_NAME    = "name";
+    private static final String KEY_ADDRESS = "address";
+    private static final String KEY_LINKS   = "links";
+    private static final String KEY_CORRECT = "correct";
 
+    private String              mName;
+    private String              mAddress;
+    private List<String>        mLinks;
+    private boolean             mCorrect;
+    
     public Wiki(String name, String adress, List<String> links) {
         this(name, adress, links, false);
     }
@@ -106,17 +107,17 @@ public class Wiki {
         while (reader.hasNext()) {
             String name = reader.nextName();
 
-            if (name.equals(NAME)) {
+            if (name.equals(KEY_NAME)) {
                 wikiName = reader.nextString();
-            } else if (name.equals(ADDRESS)) {
+            } else if (name.equals(KEY_ADDRESS)) {
                 adress = reader.nextString();
-            } else if (name.equals(LINKS)) {
+            } else if (name.equals(KEY_LINKS)) {
                 reader.beginArray();
                 while (reader.hasNext()) {
                     links.add(reader.nextString());
                 }
                 reader.endArray();
-            } else if (name.equals(CORRECT)) {
+            } else if (name.equals(KEY_CORRECT)) {
                 correct = reader.nextBoolean();
             } else {
                 reader.skipValue();
@@ -152,17 +153,17 @@ public class Wiki {
 
     private void writeWiki(JsonWriter writer) throws IOException {
         writer.beginObject();
-        writer.name(NAME).value(mName);
-        writer.name(ADDRESS).value(mAddress);
+        writer.name(KEY_NAME).value(mName);
+        writer.name(KEY_ADDRESS).value(mAddress);
 
-        writer.name(LINKS);
+        writer.name(KEY_LINKS);
         writer.beginArray();
         for (String link : mLinks) {
             writer.value(link);
         }
         writer.endArray();
 
-        writer.name(CORRECT).value(mCorrect);
+        writer.name(KEY_CORRECT).value(mCorrect);
         writer.endObject();
     }
 }
