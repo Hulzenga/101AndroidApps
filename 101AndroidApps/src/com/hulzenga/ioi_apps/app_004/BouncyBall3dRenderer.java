@@ -68,6 +68,11 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
         Matrix.setIdentityM(modelMatrix, 0);
         Matrix.translateM(modelMatrix, 0, 1.0f, 0.5f, 0.0f);
         sceneObjects.add(new SceneObject(modelMatrix, ShapeFactory.box(0.5f, 1.5f, 0.5f)));
+        
+        modelMatrix = new float[16];
+        Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.translateM(modelMatrix, 0, 0.0f, 2.0f, 0.0f);
+        sceneObjects.add(new SceneObject(modelMatrix, ShapeFactory.sphere(0.5f, 16, 16)));
     }
 
     public void setupCamera() {
