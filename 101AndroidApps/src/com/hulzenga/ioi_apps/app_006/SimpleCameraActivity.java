@@ -319,7 +319,6 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        // mActiveFragment = null;
     }
 
     public void toggleVideoOrPicture(View view) {
