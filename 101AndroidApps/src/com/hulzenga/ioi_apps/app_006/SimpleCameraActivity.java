@@ -11,6 +11,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -325,6 +326,13 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
 
         // toggle videoMode
         mVideoMode = !mVideoMode;
+    }
+
+    public void openGallery(View view) {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
+        galleryIntent.setType("image/*");
+        galleryIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        startActivity(galleryIntent);
     }
 
     @Override
