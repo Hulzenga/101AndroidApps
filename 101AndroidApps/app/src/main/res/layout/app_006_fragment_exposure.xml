@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:background="@drawable/app_006_item_background"
+    android:orientation="horizontal"
+    android:padding="8dp" >
+
+    <SeekBar
+        android:id="@+id/app_006_exposure_slider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.33" />
+
+</LinearLayout>

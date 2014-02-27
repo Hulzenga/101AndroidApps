@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="DemoAppTheme" parent="android:Theme.Holo"/>
+
+    <style name="FullscreenTheme" parent="android:Theme.Holo.NoActionBar.Fullscreen"/>
+
+    <style name="App_006_LeftSideButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="app_007_menuContainer"/>
+
+    <style name="app_007_menuButtons">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+    </style>
+
+</resources>

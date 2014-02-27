@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+     <ImageView
+         android:id="@+id/app_007_background"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentRight="true"
+         android:layout_alignParentTop="true"
+         android:scaleType="fitCenter"
+         android:src="@drawable/app_007_wikipedia" />
+     
+    <RelativeLayout
+        android:id="@+id/app_007_baseMenuContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:visibility="visible" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/app_007_playReviewLinearLayout"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/app_007_wikilinks_title" />
+
+        <LinearLayout
+            android:id="@+id/app_007_playReviewLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/app_007_playButton"
+                style="@style/app_007_menuButtons"
+                android:onClick="play"
+                android:src="@drawable/app_007_play" />
+            
+            <ImageButton
+                android:id="@+id/app_007_highScoresButton"
+                style="@style/app_007_menuButtons"
+                android:onClick="highScores"
+                android:src="@drawable/app_007_high_scores" />
+            
+            <ImageButton
+                android:id="@+id/app_007_reviewButton"
+                style="@style/app_007_menuButtons"
+                android:onClick="review"
+                android:src="@drawable/app_007_review" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/app_007_difficultyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/app_007_easyButton"
+                style="@style/app_007_menuButtons" 
+                android:onClick="pickDifficulty"
+                android:src="@drawable/app_007_easy" />
+
+            <ImageButton
+                android:id="@+id/app_007_mediumButton"
+                style="@style/app_007_menuButtons"                
+                android:onClick="pickDifficulty"
+                android:src="@drawable/app_007_medium" />
+
+            <ImageButton
+                android:id="@+id/app_007_hardButton"
+                style="@style/app_007_menuButtons" 
+                android:onClick="pickDifficulty"
+                android:src="@drawable/app_007_hard" />
+        </LinearLayout>
+        
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="71dp"
+            android:src="@drawable/app_007_difficulty" />
+    </RelativeLayout>
+
+   
+
+</RelativeLayout>
