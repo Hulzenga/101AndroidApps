@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/app_006_simple_cam_app_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="0dp"    
-    tools:context=".SimpleCameraActivity" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/app_006_simple_cam_app_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="0dp"
+                tools:context=".SimpleCameraActivity">
 
     <ToggleButton
         android:id="@+id/app_006_videoOrPictureToggle"
@@ -16,7 +16,7 @@
         android:background="@drawable/app_006_vid_pic"
         android:onClick="toggleVideoOrPicture"
         android:textOff="@string/generic_empty_string"
-        android:textOn="@string/generic_empty_string" />
+        android:textOn="@string/generic_empty_string"/>
 
     <ImageButton
         android:id="@+id/app_006_captureButton"
@@ -26,7 +26,7 @@
         android:layout_alignRight="@+id/app_006_videoOrPictureToggle"
         android:layout_centerVertical="true"
         android:onClick="takeCapture"
-        android:src="@drawable/app_006_start_capture" />
+        android:src="@drawable/app_006_start_capture"/>
 
     <com.hulzenga.ioi_apps.app_006.SimpleCameraPreview
         android:id="@+id/app_006_cameraPreview"
@@ -34,7 +34,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/app_006_videoOrPictureToggle"
-        android:layout_toRightOf="@+id/app_006_left_side_button_container" />
+        android:layout_toRightOf="@+id/app_006_left_side_button_container"/>
 
     <LinearLayout
         android:id="@+id/app_006_left_side_button_container"
@@ -43,7 +43,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <ImageButton
             android:id="@+id/app_006_cameraSelectButton"
@@ -51,7 +51,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleCameraFragment"
-            android:src="@drawable/app_006_camera_select" />
+            android:src="@drawable/app_006_camera_select"/>
 
         <ImageButton
             android:id="@+id/app_006_flashButton"
@@ -59,7 +59,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleFlashFragment"
-            android:src="@drawable/app_006_flash" />
+            android:src="@drawable/app_006_flash"/>
 
         <ImageButton
             android:id="@+id/app_006_colorEffectButton"
@@ -67,7 +67,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleColorEffectFragment"
-            android:src="@drawable/app_006_color_effect" />
+            android:src="@drawable/app_006_color_effect"/>
 
         <ImageButton
             android:id="@+id/app_006_exposureButton"
@@ -75,7 +75,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleExposureFragment"
-            android:src="@drawable/app_006_exposure" />
+            android:src="@drawable/app_006_exposure"/>
 
         <ImageButton
             android:id="@+id/app_006_settingsButton"
@@ -83,7 +83,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleSettingsFragment"
-            android:src="@drawable/app_006_settings" />
+            android:src="@drawable/app_006_settings"/>
     </LinearLayout>
 
     <FrameLayout
@@ -94,7 +94,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/app_006_cameraPreview"
         android:layout_margin="8dp"
-        android:paddingBottom="30dp" >
+        android:paddingBottom="30dp">
     </FrameLayout>
 
     <FrameLayout
@@ -104,7 +104,7 @@
         android:layout_alignLeft="@+id/app_006_bottomFragmentContainer"
         android:layout_alignRight="@+id/app_006_bottomFragmentContainer"
         android:layout_centerVertical="true"
-        android:layout_margin="8dp" 
+        android:layout_margin="8dp"
         >
     </FrameLayout>
 
@@ -117,7 +117,7 @@
         android:layout_toLeftOf="@+id/app_006_videoOrPictureToggle"
         android:orientation="horizontal"
         android:gravity="bottom"
-        android:padding="8dp" >
+        android:padding="8dp">
 
     </LinearLayout>
 
@@ -128,6 +128,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:onClick="openGallery"
-        android:src="@drawable/app_001_icon" />
+        android:src="@drawable/app_001_icon"/>
 
 </RelativeLayout>

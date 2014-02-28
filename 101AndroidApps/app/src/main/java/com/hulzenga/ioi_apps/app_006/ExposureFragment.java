@@ -13,51 +13,51 @@ import com.hulzenga.ioi_apps.app_006.SettingChangeListener.ChangeType;
 
 public class ExposureFragment extends Fragment {
 
-    private SettingChangeListener mSettingChangeListener;
+  private SettingChangeListener mSettingChangeListener;
 
-    private int                   mMinExposure;
-    private int                   mCurrentExposure;
-    private int                   mMaxExposure;
+  private int mMinExposure;
+  private int mCurrentExposure;
+  private int mMaxExposure;
 
-    public static ExposureFragment newInstance(SettingChangeListener settingChangeListener, int minExposure,
-            int currentExposure, int maxExposure) {
-        ExposureFragment fragment = new ExposureFragment();
-        fragment.mSettingChangeListener = settingChangeListener;
-        
-        fragment.mMinExposure = minExposure;
-        fragment.mCurrentExposure = currentExposure;
-        fragment.mMaxExposure = maxExposure;
+  public static ExposureFragment newInstance(SettingChangeListener settingChangeListener, int minExposure,
+                                             int currentExposure, int maxExposure) {
+    ExposureFragment fragment = new ExposureFragment();
+    fragment.mSettingChangeListener = settingChangeListener;
 
-        return fragment;
-    }
+    fragment.mMinExposure = minExposure;
+    fragment.mCurrentExposure = currentExposure;
+    fragment.mMaxExposure = maxExposure;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return fragment;
+  }
 
-        View view = inflater.inflate(R.layout.app_006_fragment_exposure, container, false);
-        SeekBar exposure = (SeekBar) view.findViewById(R.id.app_006_exposure_slider);
-        exposure.setMax(mMaxExposure - mMinExposure);
-        exposure.setProgress(mCurrentExposure - mMinExposure);
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        exposure.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    View view = inflater.inflate(R.layout.app_006_fragment_exposure, container, false);
+    SeekBar exposure = (SeekBar) view.findViewById(R.id.app_006_exposure_slider);
+    exposure.setMax(mMaxExposure - mMinExposure);
+    exposure.setProgress(mCurrentExposure - mMinExposure);
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
+    exposure.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-            }
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        // TODO Auto-generated method stub
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
+      }
 
-            }
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+        // TODO Auto-generated method stub
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mSettingChangeListener.changeSetting(ChangeType.EXPOSURE, progress + mMinExposure);
-            }
-        });
-        return view;
-    }
+      }
+
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        mSettingChangeListener.changeSetting(ChangeType.EXPOSURE, progress + mMinExposure);
+      }
+    });
+    return view;
+  }
 }

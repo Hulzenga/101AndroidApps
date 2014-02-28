@@ -15,18 +15,18 @@ import com.hulzenga.ioi_apps.R;
  */
 public class MonsterListAdapter extends SimpleCursorAdapter {
 
-    public MonsterListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
-        super(context, layout, c, from, to, flags);
-    }
+  public MonsterListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
+    super(context, layout, c, from, to, flags);
+  }
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        super.bindView(view, context, cursor);
+  @Override
+  public void bindView(View view, Context context, Cursor cursor) {
+    super.bindView(view, context, cursor);
 
-        // add a tag to the LinearLayout of each view containing the id and name
-        // of the element
-        LinearLayout layout = (LinearLayout) view.findViewById(R.id.app_003_linearItemLayout);
-        layout.setTag(R.id.app_003_item_id, cursor.getLong(0));
-        layout.setTag(R.id.app_003_item_name, cursor.getString(1));
-    }
+    // add a tag to the LinearLayout of each view containing the id and name
+    // of the element
+    LinearLayout layout = (LinearLayout) view.findViewById(R.id.app_003_linearItemLayout);
+    layout.setTag(R.id.app_003_item_id, cursor.getLong(0));
+    layout.setTag(R.id.app_003_item_name, cursor.getString(1));
+  }
 }

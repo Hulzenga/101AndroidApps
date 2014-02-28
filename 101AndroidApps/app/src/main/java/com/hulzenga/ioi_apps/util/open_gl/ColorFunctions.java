@@ -5,22 +5,22 @@ import com.hulzenga.ioi_apps.util.vector.Vec4;
 
 public class ColorFunctions {
 
-    public interface ColorFunction {
+  public interface ColorFunction {
 
-        public Vec4<Float> colorMap(Vec3<Float> position, Vec3<Float> normal);
+    public Vec4<Float> colorMap(Vec3<Float> position, Vec3<Float> normal);
+  }
+
+  public static class Uniform implements ColorFunction {
+
+    Vec4<Float> uniformColor;
+
+    public Uniform(Vec4<Float> uniformColor) {
+      this.uniformColor = uniformColor;
     }
-    
-    public class Uniform implements ColorFunction {
 
-        Vec4<Float> uniformColor;
-        
-        public Uniform(Vec4<Float> uniformColor) {
-            this.uniformColor = uniformColor;
-        }
-        
-        @Override
-        public Vec4<Float> colorMap(Vec3<Float> position, Vec3<Float> normal) {
-            return uniformColor;
-        }        
-    }    
+    @Override
+    public Vec4<Float> colorMap(Vec3<Float> position, Vec3<Float> normal) {
+      return uniformColor;
+    }
+  }
 }

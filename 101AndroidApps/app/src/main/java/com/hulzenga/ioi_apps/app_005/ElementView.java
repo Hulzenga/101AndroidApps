@@ -13,70 +13,74 @@ import com.hulzenga.ioi_apps.R;
 
 public class ElementView extends ImageView {
 
-    private int mPosition;
-    
-    private static Bitmap sEarth;
-    private static Bitmap sAir;
-    private static Bitmap sFire;
-    private static Bitmap sWater;
-    
-    public ElementView(Context context, int position) {
-        super(context);
-        
-        mPosition = position;
+  private static Bitmap sEarth;
+  private static Bitmap sAir;
+  private static Bitmap sFire;
+  private static Bitmap sWater;
+  private        int    mPosition;
 
-        if (sEarth == null) {
-            sEarth = BitmapFactory.decodeResource(getResources(), R.drawable.app_005_earth);
-            sAir = BitmapFactory.decodeResource(getResources(), R.drawable.app_005_air);
-            sFire = BitmapFactory.decodeResource(getResources(), R.drawable.app_005_fire);
-            sWater = BitmapFactory.decodeResource(getResources(), R.drawable.app_005_water);
-        }
-    }
-    
-    public void setPosition(int position) {
-        mPosition = position;
-    }
-    
-    public int getPosition() {
-        return mPosition;
-    }
-    
-    public static class DragShadowBuilder extends View.DragShadowBuilder {
+  public ElementView(Context context, int position) {
+    super(context);
 
-        private BitmapDrawable shadow;
-        
-        public DragShadowBuilder(ElementView view, Element.ClassicalElement element) {
-            
-            switch(element) {
-            case EARTH:
-                shadow = new BitmapDrawable(view.getContext().getResources(), sEarth);
-                break;
-            case AIR:
-                shadow = new BitmapDrawable(view.getContext().getResources(), sAir);
-                break;
-            case FIRE:
-                shadow = new BitmapDrawable(view.getContext().getResources(), sFire);
-                break;
-            case WATER:
-                shadow = new BitmapDrawable(view.getContext().getResources(), sWater);
-                break;
-            }
-            
-            shadow.setBounds(0, 0, shadow.getBitmap().getWidth(), shadow.getBitmap().getHeight());
-            
-        }
-        
-        @Override
-        public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
-            shadowSize.set(shadow.getBounds().right, shadow.getBounds().bottom);
-            shadowTouchPoint.set(shadow.getBounds().right, shadow.getBounds().bottom);
-        }
+    mPosition = position;
 
-        @Override
-        public void onDrawShadow(Canvas canvas) {
-            shadow.draw(canvas);
-        }
-        
+    ensureBitmapsLoaded(context);
+  }
+
+  private static void ensureBitmapsLoaded(Context context) {
+    if (sEarth == null) {
+      sEarth = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_earth);
+      sAir = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_air);
+      sFire = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_fire);
+      sWater = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_water);
     }
+  }
+
+  public int getPosition() {
+    return mPosition;
+  }
+
+  public void setPosition(int position) {
+    mPosition = position;
+  }
+
+  public static class DragShadowBuilder extends View.DragShadowBuilder {
+
+    private BitmapDrawable shadow;
+
+    public DragShadowBuilder(ElementView view, Element.ClassicalElement element) {
+
+
+      switch (element) {
+        case EARTH:
+          shadow = new BitmapDrawable(view.getContext().getResources(), sEarth);
+          break;
+        case AIR:
+          shadow = new BitmapDrawable(view.getContext().getResources(), sAir);
+          break;
+        case FIRE:
+          shadow = new BitmapDrawable(view.getContext().getResources(), sFire);
+          break;
+        case WATER:
+          shadow = new BitmapDrawable(view.getContext().getResources(), sWater);
+          break;
+      }
+
+      shadow.setBounds(0, 0, shadow.getBitmap().getWidth(), shadow.getBitmap().getHeight());
+
+    }
+
+    @Override
+    public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
+      shadowSize.set(shadow.getBounds().right, shadow.getBounds().bottom);
+      shadowTouchPoint.set(shadow.getBounds().right, shadow.getBounds().bottom);
+    }
+
+    @Override
+    public void onDrawShadow(Canvas canvas) {
+      shadow.draw(canvas);
+    }
+
+  }
 
 }

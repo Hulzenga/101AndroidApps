@@ -8,39 +8,38 @@ import android.view.MenuItem;
 /**
  * DemoActivity provides a common set of behaviours for all demo apps. These
  * are:
- * 
+ * <p/>
  * 1. show back navigation in the actionbar
- * 
+ * <p/>
  * 2. override the default animation to a slide in/out
- * 
+ *
  * @author Jouke Hulzenga
- * 
  */
 public abstract class DemoActivity extends Activity {
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    // setup the action bar to use up navigation
+    getActionBar().setDisplayHomeAsUpEnabled(true);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+
+      NavUtils.navigateUpFromSameTask(this);
+      overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
+      return true;
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // setup the action bar to use up navigation
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-
-            NavUtils.navigateUpFromSameTask(this);
-            overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    return super.onOptionsItemSelected(item);
+  }
 
 }

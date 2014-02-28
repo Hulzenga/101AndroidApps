@@ -20,82 +20,82 @@ import com.hulzenga.ioi_apps.R;
  */
 public class MonsterEditDialog extends DialogFragment {
 
-    private static final String TAG           = "EDIT_DIALOG";
+  private static final String TAG = "EDIT_DIALOG";
 
-    // argument bundle keys used for passing information from the host to the
-    // dialog and back again via the listener
-    public static final String  ARGUMENT_ID   = "id";
-    public static final String  ARGUMENT_NAME = "monsterName";
+  // argument bundle keys used for passing information from the host to the
+  // dialog and back again via the listener
+  public static final String ARGUMENT_ID   = "id";
+  public static final String ARGUMENT_NAME = "monsterName";
 
-    // callback interface to communicate from this fragment to the host
-    public interface EditDialogListener {
-        public void onEditDialogPositiveClick(Bundle arguments);
+  // callback interface to communicate from this fragment to the host
+  public interface EditDialogListener {
+    public void onEditDialogPositiveClick(Bundle arguments);
+  }
+
+  // the host listener
+  private EditDialogListener mListener = null;
+
+  @Override
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+
+    // try to cast the host to the appropriate listener class
+    try {
+      mListener = (EditDialogListener) activity;
+    } catch (ClassCastException e) {
+      Log.e(TAG, "ClassCastException: the host has not implemented the EditDialogListener interface");
     }
+  }
 
-    // the host listener
-    private EditDialogListener mListener = null;
+  @Override
+  public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    // dialog building necessities
+    LayoutInflater inflator = getActivity().getLayoutInflater();
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        // try to cast the host to the appropriate listener class
-        try {
-            mListener = (EditDialogListener) activity;
-        } catch (ClassCastException e) {
-            Log.e(TAG, "ClassCastException: the host has not implemented the EditDialogListener interface");
-        }
-    }
+    // extract data from the arguments bundle
+    final Bundle arguments = getArguments();
+    final String monsterName = arguments.getString(ARGUMENT_NAME);
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    // define the custom view parts
+    final View editDialog = inflator.inflate(R.layout.app_003_dialog_edit, null);
+    final EditText editText = (EditText) editDialog.findViewById(R.id.app_003_editDialogText);
 
-        // dialog building necessities
-        LayoutInflater inflator = getActivity().getLayoutInflater();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    editText.setText(monsterName);
 
-        // extract data from the arguments bundle
-        final Bundle arguments = getArguments();
-        final String monsterName = arguments.getString(ARGUMENT_NAME);
+    // setup random button
+    final Button randomMonsterButton = (Button) editDialog.findViewById(R.id.app_003_editDialogRandomButton);
+    randomMonsterButton.setOnClickListener(new View.OnClickListener() {
 
-        // define the custom view parts
-        final View editDialog = inflator.inflate(R.layout.app_003_dialog_edit, null);
-        final EditText editText = (EditText) editDialog.findViewById(R.id.app_003_editDialogText);
+      @Override
+      public void onClick(View v) {
+        editText.setText(MonsterGenerator.randomMonster());
+      }
+    });
 
-        editText.setText(monsterName);
+    // build the dialog
+    builder.setView(editDialog).setMessage(getResources().getString(R.string.app_003_edit_dialog))
+        .setPositiveButton(getResources().getString(android.R.string.ok), new OnClickListener() {
 
-        // setup random button
-        final Button randomMonsterButton = (Button) editDialog.findViewById(R.id.app_003_editDialogRandomButton);
-        randomMonsterButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                editText.setText(MonsterGenerator.randomMonster());
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            // if the editText has been changed from the original
+            // monster name, call back to the listener
+            if (!editText.getText().toString().equals(monsterName)) {
+              arguments.putString(ARGUMENT_NAME, editText.getText().toString());
+              mListener.onEditDialogPositiveClick(arguments);
+            } else {
+              // ignore
             }
-        });
+          }
+        }).setNegativeButton(getResources().getString(android.R.string.cancel), new OnClickListener() {
 
-        // build the dialog
-        builder.setView(editDialog).setMessage(getResources().getString(R.string.app_003_edit_dialog))
-                .setPositiveButton(getResources().getString(android.R.string.ok), new OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // if the editText has been changed from the original
-                        // monster name, call back to the listener
-                        if (!editText.getText().toString().equals(monsterName)) {
-                            arguments.putString(ARGUMENT_NAME, editText.getText().toString());
-                            mListener.onEditDialogPositiveClick(arguments);
-                        } else {
-                            // ignore
-                        }
-                    }
-                }).setNegativeButton(getResources().getString(android.R.string.cancel), new OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                });
-        return builder.create();
-    }
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        // do nothing
+      }
+    });
+    return builder.create();
+  }
 }

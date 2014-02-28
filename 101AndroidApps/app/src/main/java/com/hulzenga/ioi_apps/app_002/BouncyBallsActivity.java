@@ -6,26 +6,26 @@ import com.hulzenga.ioi_apps.DemoActivity;
 
 public class BouncyBallsActivity extends DemoActivity {
 
-	private BouncyBallsView bouncyBallView;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		bouncyBallView = new BouncyBallsView(this);
-		setContentView(bouncyBallView);				
-	}
+  private BouncyBallsView bouncyBallView;
 
-	@Override
-	protected void onPause() {
-		bouncyBallView.stop();
-		super.onPause();
-	}
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-	@Override
-	protected void onStart() {
-		bouncyBallView.start();
-		super.onStart();
-	}
-	
+    bouncyBallView = new BouncyBallsView(this);
+    setContentView(bouncyBallView);
+  }
+
+  @Override
+  protected void onPause() {
+    bouncyBallView.stop();
+    super.onPause();
+  }
+
+  @Override
+  protected void onStart() {
+    bouncyBallView.start();
+    super.onStart();
+  }
+
 }

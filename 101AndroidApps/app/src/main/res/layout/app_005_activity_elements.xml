@@ -1,20 +1,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ElementActivity" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context=".ElementActivity">
 
     <com.hulzenga.ioi_apps.app_005.ElementSnakeView
         android:id="@+id/app_005_ElementsGridView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"        
+        android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:numColumns="5"
-        android:layout_below="@+id/app_005_addElementButton" />
+        android:layout_below="@+id/app_005_addElementButton"/>
 
     <Button
         android:id="@+id/app_005_addMultipleElementsButton"
@@ -23,7 +23,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:onClick="addMultipleElements"
-        android:text="@string/app_005_addMultipleElementsButton" />
+        android:text="@string/app_005_addMultipleElementsButton"/>
 
     <Button
         android:id="@+id/app_005_addElementButton"
@@ -32,6 +32,6 @@
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/app_005_addMultipleElementsButton"
         android:onClick="addElement"
-        android:text="@string/app_005_addElementButton" />
+        android:text="@string/app_005_addElementButton"/>
 
 </RelativeLayout>
