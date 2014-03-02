@@ -21,8 +21,8 @@ public class Ball {
 
   //dissipative forces
   private static final float FRICTION_COEFFICIENT = 10.0f; //friction
-  private static final float WALL_BOUNCE_FACTOR   = 0.75f; //energy loss during bounce against wall
-  private static final float BALL_BOUNCE_FACTOR   = 0.94f; //energy loss during bounce against other balls
+  private static final float WALL_BOUNCE_FACTOR   = 0.75f; //energy loss during app_004_bounce against wall
+  private static final float BALL_BOUNCE_FACTOR   = 0.94f; //energy loss during app_004_bounce against other balls
 
   //to deal with floating point issues
   private static final float EPS = 0.5f;
@@ -71,7 +71,7 @@ public class Ball {
     } else if (nX + r > sXMax) {
       x = sXMax - r;
       vX = -WALL_BOUNCE_FACTOR * vX;
-    } else { //no bounce
+    } else { //no app_004_bounce
       x = nX;
       vX += dT * fx;
     }

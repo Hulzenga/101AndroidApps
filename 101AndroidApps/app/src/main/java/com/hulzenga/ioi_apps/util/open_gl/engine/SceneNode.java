@@ -1,7 +1,10 @@
-package com.hulzenga.ioi_apps.util.open_gl;
+package com.hulzenga.ioi_apps.util.open_gl.engine;
 
+import android.opengl.Matrix;
 import android.util.Log;
 
+import com.hulzenga.ioi_apps.util.open_gl.ColorFunction;
+import com.hulzenga.ioi_apps.util.open_gl.geometry.Geometry;
 import com.hulzenga.ioi_apps.util.vector.Vec3;
 import com.hulzenga.ioi_apps.util.vector.Vec4;
 
@@ -9,21 +12,19 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
-public class RenderObject {
+public class SceneNode {
 
+  public static final  int    BYTES_PER_FLOAT               = 4;
+  public static final  int    BYTES_PER_SHORT               = 2;
+  public static final  int    VERTICES_PER_TRIANGLE         = 3;
   private static final String TAG                           = "RENDER_OBJECT";
   private static final int    FLOATS_PER_VERTEX             = 3;
   private static final int    FLOATS_PER_COLOR              = 4;
   private static final int    FLOATS_PER_NORMAL             = 3;
   private static final int    FLOATS_PER_TEXTURE_COORDINATE = 2;
-
-  public static final int BYTES_PER_FLOAT = 4;
-  public static final int BYTES_PER_SHORT = 2;
-
-  public static final int VERTICES_PER_TRIANGLE = 3;
-
   private FloatBuffer mVertexBuffer;
   private ShortBuffer mIndexBuffer;
   private int         mNumberOfVertices;
@@ -39,13 +40,38 @@ public class RenderObject {
   private int mTextureOffset;
   private int mStride;
 
-  // TODO rewrite use integers for indices list
-  public RenderObject(List<Vec3<Float>> vertices, List<Vec4<Float>> colors, List<Vec3<Float>> normals,
-                      List<Vec3<Float>> textureCoords, List<Short> indices) {
+  private float[] mModelMatrix       = new float[16];
+  private float[] mTranslationMatrix = new float[16];
+  private float[] mRotationMatrix    = new float[16];
+  {
+    Matrix.setIdentityM(mModelMatrix, 0);
+    Matrix.setIdentityM(mTranslationMatrix, 0);
+    Matrix.setIdentityM(mRotationMatrix, 0);
+  }
 
-        /*
-         * check input validity and set RenderObject state accordingly
-         */
+  private List<NodeController> mNodeControllers = new ArrayList<NodeController>();
+
+  //TODO: implement alternate constructor which would accept geoemtry + texture
+  public SceneNode(Geometry geometry, ColorFunction colorFunction) {
+    List<Vec4<Float>> colors = new ArrayList<Vec4<Float>>();
+
+    List<Vec3<Float>> vertices = geometry.getVertices();
+    List<Vec3<Float>> normals = geometry.getNormals();
+
+    for (int i = 0; i < vertices.size(); i++) {
+      colors.add(colorFunction.apply(vertices.get(i), normals.get(i)));
+    }
+
+    allocateBuffers(vertices, colors, normals, geometry.getTextureCoordinates(), geometry.getIndices());
+  }
+
+  private void allocateBuffers(List<Vec3<Float>> vertices, List<Vec4<Float>> colors, List<Vec3<Float>> normals,
+                               List<Vec3<Float>> textureCoords, List<Short> indices) {
+
+    /*
+     * check input validity and set SceneNode state accordingly
+     * TODO: this needs to go elsewhere
+     */
 
     if (vertices == null || vertices.size() == 0) {
       Log.e(TAG, "input vertex list is either null or contains no vertices");
@@ -72,7 +98,7 @@ public class RenderObject {
       mNormal = true;
     }
 
-    if (textureCoords == null) {
+    if (textureCoords.size() == 0) {
       mTextured = false;
     } else if (textureCoords.size() != mNumberOfVertices) {
       Log.e(TAG, "the list of texture coordinates does not have the same length as the list of vertices");
@@ -88,10 +114,10 @@ public class RenderObject {
       mNumberOfIndices = indices.size();
     }
 
-        /*
-         * check each possible property and set their offset and contribution to
-         * the mStride
-         */
+    /*
+     * check each possible property and set their offset and contribution to
+     * the mStride
+     */
 
     int floatStride = 0;
 
@@ -116,9 +142,9 @@ public class RenderObject {
     // rest is in floats)
     mStride = floatStride * BYTES_PER_FLOAT;
 
-        /*
-         * allocate and fill mVertexBuffer
-         */
+    /*
+     * allocate and fill mVertexBuffer
+     */
 
     mVertexBuffer = ByteBuffer.allocateDirect(mNumberOfVertices * mStride).order(ByteOrder.nativeOrder())
         .asFloatBuffer();
@@ -155,6 +181,36 @@ public class RenderObject {
       mIndexBuffer.put(s);
     }
 
+  }
+
+  public void subscribe(NodeController controller) {
+    mNodeControllers.add(controller);
+  }
+
+  public void runControllers() {
+    for (NodeController controller: mNodeControllers) {
+      controller.update(this);
+    }
+  }
+
+  public void setTranslation(float x, float y, float z) {
+    Matrix.setIdentityM(mTranslationMatrix, 0);
+    Matrix.translateM(mTranslationMatrix, 0, x, y, z);
+    updateModelMatrix();
+  }
+
+  public void setRotation(float x, float y, float z) {
+    Matrix.setRotateEulerM(mRotationMatrix, 0, x, y, z);
+    updateModelMatrix();
+  }
+
+  private void updateModelMatrix() {
+    Matrix.setIdentityM(mModelMatrix, 0);
+    Matrix.multiplyMM(mModelMatrix, 0, mRotationMatrix, 0, mTranslationMatrix, 0);
+  }
+
+  public float[] getModelMatrix() {
+    return mModelMatrix;
   }
 
   public boolean hasColor() {
