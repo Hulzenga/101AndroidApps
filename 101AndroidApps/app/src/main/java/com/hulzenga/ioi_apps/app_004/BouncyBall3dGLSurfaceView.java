@@ -9,7 +9,10 @@ import com.hulzenga.ioi_apps.util.open_gl.ColorFunctionFactory;
 import com.hulzenga.ioi_apps.util.open_gl.engine.SceneGraph;
 import com.hulzenga.ioi_apps.util.open_gl.engine.SceneNode;
 import com.hulzenga.ioi_apps.util.open_gl.geometry.Box;
+import com.hulzenga.ioi_apps.util.open_gl.geometry.Geometry;
+import com.hulzenga.ioi_apps.util.open_gl.geometry.Grid;
 import com.hulzenga.ioi_apps.util.open_gl.geometry.Sphere;
+import com.hulzenga.ioi_apps.util.open_gl.geometry.Transform;
 
 public class BouncyBall3dGLSurfaceView extends GLSurfaceView {
 
@@ -25,12 +28,19 @@ public class BouncyBall3dGLSurfaceView extends GLSurfaceView {
     SceneGraph mSceneGraph = new SceneGraph();
 
     ColorFunction uniformRed = ColorFunctionFactory.createUniform(1.0f, 0.0f, 0.0f, 1.0f);
+    /*
     SceneNode floor = new SceneNode(new Box(10.0f, 0.0f, 10.0f), uniformRed);
     mSceneGraph.addNode(floor);
 
     SceneNode block = new SceneNode(new Box(0.5f, 1.5f, 0.5f), uniformRed);
     block.setTranslation(1.0f, 0.5f, 0.0f);
     mSceneGraph.addNode(block);
+    */
+
+    Geometry floorGeometry = new Grid(20.0f, 20.0f, 30, 30);
+    Transform.jiggle(floorGeometry, 0.0f, 0.2f, 0.0f);
+    SceneNode floor = new SceneNode(floorGeometry, uniformRed);
+    mSceneGraph.addNode(floor);
 
     SceneNode ball = new SceneNode(new Sphere(0.5f, 16, 16), ColorFunctionFactory.createRandom());
     ball.setTranslation(0.0f, 2.0f, 0.0f);
