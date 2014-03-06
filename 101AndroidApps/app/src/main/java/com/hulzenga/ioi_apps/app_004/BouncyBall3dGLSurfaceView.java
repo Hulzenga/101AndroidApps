@@ -2,13 +2,14 @@ package com.hulzenga.ioi_apps.app_004;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.hulzenga.ioi_apps.util.open_gl.ColorFunction;
 import com.hulzenga.ioi_apps.util.open_gl.ColorFunctionFactory;
 import com.hulzenga.ioi_apps.util.open_gl.engine.SceneGraph;
 import com.hulzenga.ioi_apps.util.open_gl.engine.SceneNode;
-import com.hulzenga.ioi_apps.util.open_gl.geometry.Box;
+import com.hulzenga.ioi_apps.util.open_gl.geometry.Cylinder;
 import com.hulzenga.ioi_apps.util.open_gl.geometry.Geometry;
 import com.hulzenga.ioi_apps.util.open_gl.geometry.Grid;
 import com.hulzenga.ioi_apps.util.open_gl.geometry.Sphere;
@@ -17,40 +18,20 @@ import com.hulzenga.ioi_apps.util.open_gl.geometry.Transform;
 public class BouncyBall3dGLSurfaceView extends GLSurfaceView {
 
   private BouncyBall3dRenderer mRenderer;
-  private BouncyBallSimulator  mBallSimulator;
 
-  private float                mPreviousX;
-  private float                mPreviousY;
+  private float mPreviousX;
+  private float mPreviousY;
 
   public BouncyBall3dGLSurfaceView(Context context) {
-    super(context);
+    this(context, null);
+  }
 
-    SceneGraph mSceneGraph = new SceneGraph();
+  public BouncyBall3dGLSurfaceView(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
 
-    ColorFunction uniformRed = ColorFunctionFactory.createUniform(1.0f, 0.0f, 0.0f, 1.0f);
-    /*
-    SceneNode floor = new SceneNode(new Box(10.0f, 0.0f, 10.0f), uniformRed);
-    mSceneGraph.addNode(floor);
-
-    SceneNode block = new SceneNode(new Box(0.5f, 1.5f, 0.5f), uniformRed);
-    block.setTranslation(1.0f, 0.5f, 0.0f);
-    mSceneGraph.addNode(block);
-    */
-
-    Geometry floorGeometry = new Grid(20.0f, 20.0f, 30, 30);
-    Transform.jiggle(floorGeometry, 0.0f, 0.2f, 0.0f);
-    SceneNode floor = new SceneNode(floorGeometry, uniformRed);
-    mSceneGraph.addNode(floor);
-
-    SceneNode ball = new SceneNode(new Sphere(0.5f, 16, 16), ColorFunctionFactory.createRandom());
-    ball.setTranslation(0.0f, 2.0f, 0.0f);
-    mSceneGraph.addNode(ball);
-
-    mBallSimulator = new BouncyBallSimulator(0.5f, 2.0f, 0.0f, 30.0f);
-
-    ball.subscribe(mBallSimulator);
-
-    mRenderer = new BouncyBall3dRenderer(context, mSceneGraph);
+  public void setScene(SceneGraph sceneGraph) {
+    mRenderer = new BouncyBall3dRenderer(getContext(), sceneGraph);
 
     setEGLContextClientVersion(2);
 
@@ -78,18 +59,6 @@ public class BouncyBall3dGLSurfaceView extends GLSurfaceView {
       return true;
 
     }
-    return false;
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    mBallSimulator.start(getContext());
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-    mBallSimulator.stop();
+    return super.onTouchEvent(e);
   }
 }

@@ -1,6 +1,6 @@
 package com.hulzenga.ioi_apps.util.open_gl.geometry;
 
-import com.hulzenga.ioi_apps.util.vector.Vec3;
+import com.hulzenga.ioi_apps.util.open_gl.vector.Vec3;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ public class Sphere extends Geometry {
 
     final int numberOfVertices = (slices * segments + 2);
 
-    List<Vec3<Float>> vertices = getVertices();
-    List<Vec3<Float>> normals = getNormals();
-    List<Vec3<Float>> textureCoordinates = getTextureCoordinates();
+    List<Vec3> vertices = getVertices();
+    List<Vec3> normals = getNormals();
+    List<Vec3> textureCoordinates = getTextureCoordinates();
     List<Short> indices = getIndices();
 
     /*
@@ -20,7 +20,7 @@ public class Sphere extends Geometry {
      */
 
     // add top vertex
-    vertices.add(new Vec3<Float>(0.0f, radius, 0.0f));
+    vertices.add(new Vec3(0.0f, radius, 0.0f));
 
     for (int i = 0; i < slices; i++) {
 
@@ -28,7 +28,7 @@ public class Sphere extends Geometry {
       final float segmentHeight = (float) (radius * Math.cos((i + 1) * Math.PI / (slices + 1)));
 
       for (int j = 0; j < segments; j++) {
-        vertices.add(new Vec3<Float>(
+        vertices.add(new Vec3(
             rScale * ((float) Math.sin(j * 2.0 * Math.PI / segments)),
             segmentHeight,
             rScale * ((float) Math.cos(j * 2.0 * Math.PI / segments))
@@ -37,7 +37,7 @@ public class Sphere extends Geometry {
     }
 
     // add bottom vertex
-    vertices.add(new Vec3<Float>(0.0f, -radius, 0.0f));
+    vertices.add(new Vec3(0.0f, -radius, 0.0f));
 
 
     /*
@@ -50,7 +50,7 @@ public class Sphere extends Geometry {
               vertices.get(i).y * vertices.get(i).y +
               vertices.get(i).z * vertices.get(i).z);
 
-      normals.add(new Vec3<Float>(vertices.get(i).x / length, vertices.get(i).y / length, vertices.get(i).z
+      normals.add(new Vec3(vertices.get(i).x / length, vertices.get(i).y / length, vertices.get(i).z
           / length));
     }
 
@@ -98,12 +98,12 @@ public class Sphere extends Geometry {
     // bottom
     for (int i = segments * (slices - 1); i < segments * slices - 1; i++) {
       indices.add((short) (i + 1));
-      indices.add((short) (i + 2));
       indices.add((short) (numberOfVertices - 1));
+      indices.add((short) (i + 2));
     }
 
     indices.add((short) (segments * slices));
-    indices.add((short) (segments * (slices - 1) + 1));
     indices.add((short) (numberOfVertices - 1));
+    indices.add((short) (segments * (slices - 1) + 1));
   }
 }

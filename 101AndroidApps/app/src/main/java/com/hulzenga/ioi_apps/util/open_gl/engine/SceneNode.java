@@ -5,8 +5,8 @@ import android.util.Log;
 
 import com.hulzenga.ioi_apps.util.open_gl.ColorFunction;
 import com.hulzenga.ioi_apps.util.open_gl.geometry.Geometry;
-import com.hulzenga.ioi_apps.util.vector.Vec3;
-import com.hulzenga.ioi_apps.util.vector.Vec4;
+import com.hulzenga.ioi_apps.util.open_gl.vector.Vec3;
+import com.hulzenga.ioi_apps.util.open_gl.vector.Vec4;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -43,6 +43,7 @@ public class SceneNode {
   private float[] mModelMatrix       = new float[16];
   private float[] mTranslationMatrix = new float[16];
   private float[] mRotationMatrix    = new float[16];
+
   {
     Matrix.setIdentityM(mModelMatrix, 0);
     Matrix.setIdentityM(mTranslationMatrix, 0);
@@ -53,10 +54,10 @@ public class SceneNode {
 
   //TODO: implement alternate constructor which would accept geoemtry + texture
   public SceneNode(Geometry geometry, ColorFunction colorFunction) {
-    List<Vec4<Float>> colors = new ArrayList<Vec4<Float>>();
+    List<Vec4> colors = new ArrayList<Vec4>();
 
-    List<Vec3<Float>> vertices = geometry.getVertices();
-    List<Vec3<Float>> normals = geometry.getNormals();
+    List<Vec3> vertices = geometry.getVertices();
+    List<Vec3> normals = geometry.getNormals();
 
     for (int i = 0; i < vertices.size(); i++) {
       colors.add(colorFunction.apply(vertices.get(i), normals.get(i)));
@@ -65,8 +66,8 @@ public class SceneNode {
     allocateBuffers(vertices, colors, normals, geometry.getTextureCoordinates(), geometry.getIndices());
   }
 
-  private void allocateBuffers(List<Vec3<Float>> vertices, List<Vec4<Float>> colors, List<Vec3<Float>> normals,
-                               List<Vec3<Float>> textureCoords, List<Short> indices) {
+  private void allocateBuffers(List<Vec3> vertices, List<Vec4> colors, List<Vec3> normals,
+                               List<Vec3> textureCoords, List<Short> indices) {
 
     /*
      * check input validity and set SceneNode state accordingly
@@ -188,7 +189,7 @@ public class SceneNode {
   }
 
   public void runControllers() {
-    for (NodeController controller: mNodeControllers) {
+    for (NodeController controller : mNodeControllers) {
       controller.update(this);
     }
   }
@@ -199,14 +200,27 @@ public class SceneNode {
     updateModelMatrix();
   }
 
-  public void setRotation(float x, float y, float z) {
-    Matrix.setRotateEulerM(mRotationMatrix, 0, x, y, z);
-    updateModelMatrix();
-  }
-
   private void updateModelMatrix() {
     Matrix.setIdentityM(mModelMatrix, 0);
-    Matrix.multiplyMM(mModelMatrix, 0, mRotationMatrix, 0, mTranslationMatrix, 0);
+    Matrix.multiplyMM(mModelMatrix, 0, mTranslationMatrix, 0, mRotationMatrix, 0);
+  }
+
+  /**
+   * set rotation matrix, rotates in y->x->z order
+   *
+   * @param x
+   * @param y
+   * @param z
+   */
+  public void setRotation(float x, float y, float z) {
+    float[] tmpMatrix = new float[16];
+
+    Matrix.setRotateM(mRotationMatrix, 0, y, 0.0f, 1.0f, 0.0f);
+    Matrix.setRotateM(tmpMatrix, 0, x, 1.0f, 0.0f, 0.0f);
+    Matrix.multiplyMM(mRotationMatrix, 0,tmpMatrix , 0, mRotationMatrix, 0);
+    Matrix.setRotateM(tmpMatrix, 0, z, 0.0f, 0.0f, 1.0f);
+    Matrix.multiplyMM(mRotationMatrix, 0, tmpMatrix, 0, mRotationMatrix, 0);
+    updateModelMatrix();
   }
 
   public float[] getModelMatrix() {

@@ -4,9 +4,10 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
+import com.hulzenga.ioi_apps.util.ConstraintEnforcer;
+import com.hulzenga.ioi_apps.util.open_gl.ShaderTools;
 import com.hulzenga.ioi_apps.util.open_gl.engine.SceneGraph;
 import com.hulzenga.ioi_apps.util.open_gl.engine.SceneNode;
-import com.hulzenga.ioi_apps.util.open_gl.ShaderTools;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -38,6 +39,7 @@ import static android.opengl.GLES20.glGetProgramiv;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glLinkProgram;
 import static android.opengl.GLES20.glUniform3f;
+import static android.opengl.GLES20.glUniform3fv;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
@@ -47,11 +49,13 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
   private static final String TAG = "BOUNCY_BALL_3D_RENDERER";
   private Context context;
 
-  private SceneGraph          mSceneGraph;
+  private SceneGraph mSceneGraph;
 
-  private volatile float mDeltaX   = 0.0f;
-  private volatile float mDeltaY   = 0.0f;
-  private volatile float mDistance = 0.0f;
+  private volatile     float mDeltaX     = 0.0f;
+  private static final float MIN_DELTA_Y = 0.0f;
+  private static final float MAX_DELTA_Y = 90.0f;
+  private volatile     float mDeltaY     = MIN_DELTA_Y;
+  private volatile     float mDistance   = 0.0f;
 
   private float[] mViewTranslateMatrix = new float[16];
   private float[] mViewRotateMatrix    = new float[16];
@@ -69,9 +73,11 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
   private int mColorHandle;
   private int mNormalHandle;
 
-  private float[] mLightPosition    = {3.0f, 2.0f, 2.0f, 1.0f};
+  private float[] mLightPosition    = {4.0f, 4.0f, 3.0f, 1.0f};
   private float[] mLightEyePosition = new float[4];
-  private int  mLightPositionHandle;
+  private int   mLightPositionHandle;
+  private float mWidth;
+  private float mHeight;
 
   public BouncyBall3dRenderer(Context context, SceneGraph sceneGraph) {
     this.context = context;
@@ -85,12 +91,12 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
     // eye position
     final float eyeX = 0.0f;
     final float eyeY = 2.0f;
-    final float eyeZ = 4.0f;
+    final float eyeZ = 6.0f;
 
     // look at vector
-    final float lookX = 0.0f;
-    final float lookY = 1.0f;
-    final float lookZ = 0.0f;
+    final float lookX = mSceneGraph.getLookAtX();
+    final float lookY = mSceneGraph.getLookAtY();
+    final float lookZ = mSceneGraph.getLookAtZ();
 
     // up vector
     final float upX = 0.0f;
@@ -108,10 +114,9 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
   }
 
   private void updateViewMatrix() {
+    Matrix.setIdentityM(mViewRotateMatrix, 0);
+    Matrix.rotateM(mViewRotateMatrix, 0, mDeltaY, 1.0f, 0.0f, 0.0f);
     Matrix.rotateM(mViewRotateMatrix, 0, mDeltaX, 0.0f, 1.0f, 0.0f);
-
-    mDeltaX = 0.0f;
-    mDeltaY = 0.0f;
 
     Matrix.setIdentityM(mViewTranslateMatrix, 0);
     Matrix.translateM(mViewTranslateMatrix, 0, 0.0f, 0.0f, mDistance);
@@ -178,13 +183,16 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
   @Override
   public void onSurfaceChanged(GL10 arg0, int width, int height) {
 
+    mWidth = (float) width;
+    mHeight = (float) height;
+
     final float ratio = ((float) width) / ((float) height);
     final float left = -ratio;
     final float right = ratio;
     final float bottom = -1.0f;
     final float top = 1.0f;
     final float near = 1.0f;
-    final float far = 7.0f;
+    final float far = 14.0f;
 
     Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
   }
@@ -217,7 +225,7 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
       glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVMatrix, 0);
       glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
-      Matrix.multiplyMV(mLightEyePosition, 0, mMVMatrix, 0, mLightPosition, 0);
+      Matrix.multiplyMV(mLightEyePosition, 0, mViewMatrix, 0, mLightPosition, 0);
       glUniform3f(mLightPositionHandle, mLightEyePosition[0], mLightEyePosition[1], mLightEyePosition[2]);
 
       node.getIndexBuffer().position(0);
@@ -227,11 +235,10 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
 
   public void touchMove(float dx, float dy) {
     mDeltaX += dx;
-    mDeltaY += dy;
+    mDeltaY = ConstraintEnforcer.doubleBound(MIN_DELTA_Y, mDeltaY+dy, MAX_DELTA_Y);
 
     updateViewMatrix();
   }
-
 
 
 }
