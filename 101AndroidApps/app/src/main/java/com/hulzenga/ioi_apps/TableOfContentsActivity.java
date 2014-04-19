@@ -10,14 +10,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.hulzenga.ioi_apps.AppRepository.App;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TableOfContents extends Activity {
+public class TableOfContentsActivity extends Activity {
 
   private static final String TAG = "TABLE_OF_CONTENTS";
 
@@ -36,7 +34,7 @@ public class TableOfContents extends Activity {
     final List<Class<?>> demos = new ArrayList<Class<?>>();
     Resources res = getResources();
 
-    for (App app : AppRepository.App.values()) {
+    for (DemoApp app : DemoApp.values()) {
       HashMap<String, Object> item = new HashMap<String, Object>();
       item.put(ACTIVITY_NAME, app.getTitleString(res));
       item.put(ACTIVITY_DESCRIPTION, app.getShortDescriptionString(res));
@@ -58,7 +56,7 @@ public class TableOfContents extends Activity {
         final Class startThisActivity = demos.get(position);
 
         if (startThisActivity != null) {
-          final Intent appIntent = new Intent(TableOfContents.this, startThisActivity);
+          final Intent appIntent = new Intent(TableOfContentsActivity.this, startThisActivity);
           startActivity(appIntent);
           overridePendingTransition(R.anim.right_slide_in, R.anim.left_slide_out);
         }
