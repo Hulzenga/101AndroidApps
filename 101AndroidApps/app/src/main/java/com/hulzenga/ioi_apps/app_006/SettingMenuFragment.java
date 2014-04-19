@@ -30,7 +30,7 @@ public class SettingMenuFragment extends Fragment {
 
   private static final String IMAGE_SIZE    = "Image size";
   private static final String FOCUS         = "Focus";
-  private static final String SCENE_MODE    = "Scene mode";
+  private static final String SCENE_MODE    = "SceneGraph mode";
   private static final String ISO           = "ISO";
   private static final String WHITE_BALANCE = "White balance";
   //private static final String TIMER = "Timer";

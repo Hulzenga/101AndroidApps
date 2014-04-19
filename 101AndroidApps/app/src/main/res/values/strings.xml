@@ -43,5 +43,8 @@
     <string name="app_007_easy">Easy</string>
     <string name="app_007_normal">Normal</string>
     <string name="app_007_hard">Hard</string>
+    <!-- App 008 -->
+    <string name="app_008_title">Open Overheid</string>
+    <string name="app_008_shortDescription">Dutch government public feed reader</string>
 
 </resources>

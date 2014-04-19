@@ -324,8 +324,8 @@ public class Game extends DemoActivity implements ButtonsFragment.OptionSelectio
       animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.ALPHA, 0.7f, 1.0f, 0.7f, 1.0f));
 
       // rotate the correct button to draw attention to it
-      animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_X, 1.0f, 1.15f, 1.0f));
-      animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_Y, 1.0f, 1.15f, 1.0f));
+      //animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_X, 1.0f, 1.15f, 1.0f));
+      //animations.add(ObjectAnimator.ofFloat(mButtons.get(mCorrectChoice), View.SCALE_Y, 1.0f, 1.15f, 1.0f));
       set.setDuration(mLongAnimationLength);
     }
 
