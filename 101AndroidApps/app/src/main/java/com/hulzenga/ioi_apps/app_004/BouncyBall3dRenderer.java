@@ -39,23 +39,20 @@ import static android.opengl.GLES20.glGetProgramiv;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glLinkProgram;
 import static android.opengl.GLES20.glUniform3f;
-import static android.opengl.GLES20.glUniform3fv;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 
 public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
 
-  private static final String TAG = "BOUNCY_BALL_3D_RENDERER";
-  private Context context;
-
+  private static final String TAG         = "BOUNCY_BALL_3D_RENDERER";
+  private static final float  MIN_DELTA_Y = 0.0f;
+  private volatile     float  mDeltaY     = MIN_DELTA_Y;
+  private static final float  MAX_DELTA_Y = 90.0f;
+  private Context    context;
   private SceneGraph mSceneGraph;
-
-  private volatile     float mDeltaX     = 0.0f;
-  private static final float MIN_DELTA_Y = 0.0f;
-  private static final float MAX_DELTA_Y = 90.0f;
-  private volatile     float mDeltaY     = MIN_DELTA_Y;
-  private volatile     float mDistance   = 0.0f;
+  private volatile float mDeltaX   = 0.0f;
+  private volatile float mDistance = 0.0f;
 
   private float[] mViewTranslateMatrix = new float[16];
   private float[] mViewRotateMatrix    = new float[16];
@@ -235,7 +232,7 @@ public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
 
   public void touchMove(float dx, float dy) {
     mDeltaX += dx;
-    mDeltaY = ConstraintEnforcer.doubleBound(MIN_DELTA_Y, mDeltaY+dy, MAX_DELTA_Y);
+    mDeltaY = ConstraintEnforcer.doubleBound(MIN_DELTA_Y, mDeltaY + dy, MAX_DELTA_Y);
 
     updateViewMatrix();
   }

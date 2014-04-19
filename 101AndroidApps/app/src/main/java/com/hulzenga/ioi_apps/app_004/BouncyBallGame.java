@@ -113,6 +113,7 @@ public class BouncyBallGame implements NodeController {
     sceneGraph.addNode(ball);
 
     sceneGraph.setLookAt(0.0f, FLOOR_DOWN, 0.0f);
+
     return sceneGraph;
   }
 

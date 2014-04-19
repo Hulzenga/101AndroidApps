@@ -10,8 +10,7 @@ varying vec4 v_Color;
 varying vec3 v_Normal;
 
 void main() {
-	
-	gl_PointSize = 10.0;
+
 	gl_Position = u_MVPMatrix * a_Position;
 	
 	v_Position = vec3(u_MVMatrix * a_Position);
