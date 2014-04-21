@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
 import com.hulzenga.ioi_apps.app_008.OverheidActivity;
+import com.hulzenga.ioi_apps.app_009.ThumbsUpActivity;
 
 public enum DemoApp {
 
@@ -22,7 +23,9 @@ public enum DemoApp {
   APP_007(com.hulzenga.ioi_apps.app_007.Menu.class, R.string.app_007_title,
       R.drawable.app_007_icon, R.string.app_007_shortDescription, 0),
   APP_008(OverheidActivity.class, R.string.app_008_title,
-      R.drawable.ic_launcher, R.string.app_008_shortDescription, 0);
+      R.drawable.ic_launcher, R.string.app_008_shortDescription, 0),
+  APP_009(ThumbsUpActivity.class, R.string.app_009_title,
+      R.drawable.app_009_icon, R.string.app_009_shortDescription, 0);
 
   private int   title;
   private Class activity;

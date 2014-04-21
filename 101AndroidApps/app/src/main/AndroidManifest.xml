@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -134,6 +135,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hulzenga.ioi_apps.TableOfContents" />
         </activity>
+        <activity
+            android:name=".app_009.ThumbsUpActivity"
+            android:label="@string/app_009_title"
+            android:icon="@drawable/app_009_icon"
+            android:parentActivityName=".TableOfContentsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+        </activity>
+        <service android:name=".app_009.ThumbsUpService"
+                 android:label="@string/app_009_service_title" />
     </application>
 
 </manifest>
