@@ -13,7 +13,7 @@ public enum DemoApp {
   APP_002(com.hulzenga.ioi_apps.app_002.BouncyBallsActivity.class, R.string.app_002_title,
       R.drawable.app_002_icon, R.string.app_002_shortDescription, 0),
   APP_003(com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity.class, R.string.app_003_title,
-      R.drawable.ic_launcher, R.string.app_003_shortDescription, 0),
+      R.drawable.app_003_icon, R.string.app_003_shortDescription, 0),
   APP_004(com.hulzenga.ioi_apps.app_004.BouncyBall3dActivity.class, R.string.app_004_title,
       R.drawable.app_004_icon, R.string.app_004_shortDescription, 0),
   APP_005(com.hulzenga.ioi_apps.app_005.ElementActivity.class, R.string.app_005_title,
@@ -23,7 +23,7 @@ public enum DemoApp {
   APP_007(com.hulzenga.ioi_apps.app_007.Menu.class, R.string.app_007_title,
       R.drawable.app_007_icon, R.string.app_007_shortDescription, 0),
   APP_008(OverheidActivity.class, R.string.app_008_title,
-      R.drawable.ic_launcher, R.string.app_008_shortDescription, 0),
+      R.drawable.app_008_icon, R.string.app_008_shortDescription, 0),
   APP_009(ThumbsUpActivity.class, R.string.app_009_title,
       R.drawable.app_009_icon, R.string.app_009_shortDescription, 0);
 

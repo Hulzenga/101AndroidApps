@@ -52,6 +52,7 @@
         <activity
             android:name="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
             android:label="@string/app_003_title"
+            android:icon="@drawable/app_003_icon"
             android:parentActivityName=".TableOfContentsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" >
             <meta-data
@@ -129,6 +130,7 @@
         </activity>
         <activity
             android:name=".app_008.OverheidActivity"
+            android:icon="@drawable/app_008_icon"
             android:label="@string/app_008_title"
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
