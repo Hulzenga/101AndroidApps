@@ -11,7 +11,8 @@
         android:id="@+id/app_009_thumbsUpButton"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/app_009_thumbs_down"/>
+        android:src="@drawable/app_009_thumbs_down"
+        android:layout_margin="32dp"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -49,7 +49,7 @@
     <!-- App 009 -->
     <string name="app_009_title">Thumbs Up Web Server</string>
     <string name="app_009_shortDescription">A simple web server</string>
-    <string name="app_009_server_start_failure">Failed to start the ThumbsUp server (is Wi-Fi enabled ?)</string>
+    <string name="app_009_server_start_failure">Failed to start the ThumbsUp server</string>
     <string name="app_009_service_title">Thumbs Up Service</string>
     <string name="app_009_server_running_message">Server running at</string>
     <string name="app_009_start_server_instruction">Flip the thumb to launch the server</string>

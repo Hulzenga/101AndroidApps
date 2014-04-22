@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -34,7 +36,7 @@ public class ThumbsUpActivity extends DemoActivity {
       setBound(true);
 
       if (mThumbsUpService.isServerRunning()) {
-        mThumbsUpButton.setImageDrawable(getResources().getDrawable(R.drawable.app_009_thumbs_up));
+        setServerRunning(true);
       }
     }
 
@@ -52,6 +54,7 @@ public class ThumbsUpActivity extends DemoActivity {
     setContentView(R.layout.app_009_activity_thumbs_up);
     mThumbsUpButton = (ImageButton) findViewById(R.id.app_009_thumbsUpButton);
     mServerStatusTextView = (TextView) findViewById(R.id.app_009_serverStatusTextView);
+    mServerStatusTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
     setBound(false);
     setServerRunning(false);
@@ -92,8 +95,8 @@ public class ThumbsUpActivity extends DemoActivity {
 
   private void setServerRunning(boolean running) {
     if (running) {
-      mServerStatusTextView.setText(getResources().getString(R.string.app_009_server_running_message)
-          + " " + mThumbsUpService.getServerAddress());
+      mServerStatusTextView.setText(Html.fromHtml(getResources().getString(R.string.app_009_server_running_message)
+          + " <a href=\"http://"+mThumbsUpService.getServerAddress()+"\">"+mThumbsUpService.getServerAddress()+"</a>"));
       mThumbsUpButton.setImageDrawable(getResources().getDrawable(R.drawable.app_009_thumbs_up));
     } else {
       mServerStatusTextView.setText(R.string.app_009_start_server_instruction);

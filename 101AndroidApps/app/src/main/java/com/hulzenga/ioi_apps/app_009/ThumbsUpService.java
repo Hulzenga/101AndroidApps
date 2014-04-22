@@ -42,7 +42,7 @@ public class ThumbsUpService extends Service {
 
   public boolean startServer() {
     try {
-      mServer = new ThumbsUpServer();
+      mServer = new ThumbsUpServer(getAssets(), "www/app_009");
       mServer.start();
       mServerRunning = true;
 
