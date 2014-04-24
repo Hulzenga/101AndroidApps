@@ -53,5 +53,7 @@
     <string name="app_009_service_title">Thumbs Up Service</string>
     <string name="app_009_server_running_message">Server running at</string>
     <string name="app_009_start_server_instruction">Flip the thumb to launch the server</string>
-
+    <!-- App 010 -->
+    <string name="app_010_title">Compass</string>
+    <string name="app_010_shortDescription">Basic compass app</string>
 </resources>

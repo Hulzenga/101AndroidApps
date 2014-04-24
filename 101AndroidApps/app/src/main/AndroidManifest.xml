@@ -148,6 +148,16 @@
         </activity>
         <service android:name=".app_009.ThumbsUpService"
                  android:label="@string/app_009_service_title" />
+        <activity
+            android:name=".app_010.CompassActivity"
+            android:label="@string/app_010_title"
+            android:icon="@drawable/app_010_icon"
+            android:parentActivityName=".TableOfContentsActivity"
+            android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+        </activity>
     </application>
 
 </manifest>
