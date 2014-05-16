@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hulzenga.ioi_apps" >
+    package="com.hulzenga.ioi.android">
 
-    <!-- TODO: change glEsVersion required to false and implement checks in app 004 -->
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -32,101 +31,101 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_001.HelloWorldActivity"
+            android:name=".app_001.HelloWorldActivity"
             android:icon="@drawable/app_001_icon"
             android:label="@string/app_001_title"
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_002.BouncyBallsActivity"
+            android:name=".app_002.BouncyBallsActivity"
             android:icon="@drawable/app_002_icon"
             android:label="@string/app_002_title"
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_003.MonsterDatabaseActivity"
+            android:name=".app_003.MonsterDatabaseActivity"
             android:label="@string/app_003_title"
             android:icon="@drawable/app_003_icon"
             android:parentActivityName=".TableOfContentsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
 
         <provider
-            android:name="com.hulzenga.ioi_apps.app_003.database.MonsterProvider"
-            android:authorities="com.hulzenga.ioi_androdiapps.app_003.database.monsterprovider"
+            android:name=".app_003.database.MonsterProvider"
+            android:authorities="com.hulzenga.ioi.android.app_003.database.monsterprovider"
             android:exported="false" />
 
         <activity
-            android:name="com.hulzenga.ioi_apps.app_004.BouncyBall3dActivity"
+            android:name=".app_004.BouncyBall3dActivity"
             android:icon="@drawable/app_004_icon"
             android:label="@string/app_004_title"
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_005.ElementActivity"
+            android:name=".app_005.ElementActivity"
             android:icon="@drawable/app_005_icon"
             android:label="@string/app_005_title"
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_006.SimpleCameraActivity"
+            android:name=".app_006.SimpleCameraActivity"
             android:label="@string/app_006_title"
             android:parentActivityName=".TableOfContentsActivity"
             android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_007.Menu"
+            android:name=".app_007.Menu"
             android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title"
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_007.Game"
+            android:name=".app_007.WikiGameActivity"
             android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title"
-            android:parentActivityName="com.hulzenga.ioi_apps.app_007.Menu" >
+            android:parentActivityName=".app_007.Menu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.app_007.app_007.Menu" />
+                android:value="com.hulzenga.ioi.android.app_007.app_007.Menu" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_007.Review"
+            android:name=".app_007.Review"
             android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title"
-            android:parentActivityName="com.hulzenga.ioi_apps.app_007.Menu" >
+            android:parentActivityName=".app_007.Menu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.app_007.app_007.Menu" />
+                android:value="com.hulzenga.ioi.android.app_007.app_007.Menu" />
         </activity>
         <activity
-            android:name="com.hulzenga.ioi_apps.app_007.HighScores"
+            android:name=".app_007.HighScores"
             android:icon="@drawable/app_007_icon"
             android:label="@string/app_007_title"
-            android:parentActivityName="com.hulzenga.ioi_apps.app_007.Menu" >
+            android:parentActivityName=".app_007.Menu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.app_007.app_007.Menu" />
+                android:value="com.hulzenga.ioi.android.app_007.app_007.Menu" />
         </activity>
         <activity
             android:name=".app_008.OverheidActivity"
@@ -135,7 +134,7 @@
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <activity
             android:name=".app_009.ThumbsUpActivity"
@@ -144,7 +143,7 @@
             android:parentActivityName=".TableOfContentsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
         <service android:name=".app_009.ThumbsUpService"
                  android:label="@string/app_009_service_title" />
@@ -152,11 +151,10 @@
             android:name=".app_010.CompassActivity"
             android:label="@string/app_010_title"
             android:icon="@drawable/app_010_icon"
-            android:parentActivityName=".TableOfContentsActivity"
-            android:configChanges="orientation|screenSize">
+            android:parentActivityName=".TableOfContentsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hulzenga.ioi_apps.TableOfContents" />
+                android:value="com.hulzenga.ioi.android.TableOfContents" />
         </activity>
     </application>
 

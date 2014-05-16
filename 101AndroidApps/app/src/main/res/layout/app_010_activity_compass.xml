@@ -2,13 +2,35 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@android:color/black">
 
     <view
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        class="com.hulzenga.ioi_apps.app_010.CompassView"
+        class="com.hulzenga.ioi.android.app_010.CompassView"
         android:id="@+id/app_010_compassView"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/default_margin"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Heading"
+        android:id="@+id/app_010_headingTextView"
+        android:layout_above="@+id/app_010_compassView"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/default_margin"/>
+
+    <view
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class="com.hulzenga.ioi.android.app_010.SequentialMeasurementsView"
+        android:id="@+id/app_010_fieldMeasurementsView"
+        android:layout_below="@+id/app_010_compassView"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/default_margin"/>
+
 </RelativeLayout>

@@ -8,7 +8,7 @@
     <view
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.hulzenga.ioi_apps.app_004.BouncyBall3dGLSurfaceView"
+        class="com.hulzenga.ioi.android.app_004.BouncyBall3dGLSurfaceView"
         android:id="@+id/app_004_bouncyBall3dView"
         android:layout_gravity="center_horizontal"
         android:layout_alignParentLeft="true"

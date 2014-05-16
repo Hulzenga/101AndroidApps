@@ -8,7 +8,7 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".ElementActivity">
 
-    <com.hulzenga.ioi_apps.app_005.ElementSnakeView
+    <com.hulzenga.ioi.android.app_005.ElementSnakeView
         android:id="@+id/app_005_ElementsGridView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

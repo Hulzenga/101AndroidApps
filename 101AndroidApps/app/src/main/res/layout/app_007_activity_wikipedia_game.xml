@@ -10,7 +10,7 @@
 
     <fragment
         android:id="@+id/app_007_buttonsFragment"
-        android:name="com.hulzenga.ioi_apps.app_007.ButtonsFragment"
+        android:name="com.hulzenga.ioi.android.app_007.ButtonsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/app_007_statusFragment"
-        android:name="com.hulzenga.ioi_apps.app_007.StatusFragment"
+        android:name="com.hulzenga.ioi.android.app_007.StatusFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/app_007_linksFragment"
-        android:name="com.hulzenga.ioi_apps.app_007.LinksFragment"
+        android:name="com.hulzenga.ioi.android.app_007.LinksFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/app_007_buttonsFragment"

@@ -28,7 +28,7 @@
         android:onClick="takeCapture"
         android:src="@drawable/app_006_start_capture"/>
 
-    <com.hulzenga.ioi_apps.app_006.SimpleCameraPreview
+    <com.hulzenga.ioi.android.app_006.SimpleCameraPreview
         android:id="@+id/app_006_cameraPreview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

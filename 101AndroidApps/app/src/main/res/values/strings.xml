@@ -56,4 +56,5 @@
     <!-- App 010 -->
     <string name="app_010_title">Compass</string>
     <string name="app_010_shortDescription">Basic compass app</string>
+    <string name="app_010_lock_screen">Lock Screen Rotation</string>
 </resources>
