@@ -51,6 +51,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleCameraFragment"
+            android:contentDescription="@string/app_006_cameraSelectDescription"
             android:src="@drawable/app_006_camera_select"/>
 
         <ImageButton
@@ -59,6 +60,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleFlashFragment"
+            android:contentDescription="@string/app_006_flashButtonDescription"
             android:src="@drawable/app_006_flash"/>
 
         <ImageButton
@@ -67,6 +69,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleColorEffectFragment"
+            android:contentDescription="@string/app_006_colorEffectDescription"
             android:src="@drawable/app_006_color_effect"/>
 
         <ImageButton
@@ -75,6 +78,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleExposureFragment"
+            android:contentDescription="@string/app_006_exposureButtonDescription"
             android:src="@drawable/app_006_exposure"/>
 
         <ImageButton
@@ -83,6 +87,7 @@
             android:layout_height="0dp"
             android:layout_weight="1.0"
             android:onClick="toggleSettingsFragment"
+            android:contentDescription="@string/app_006_settingsButtonDescription"
             android:src="@drawable/app_006_settings"/>
     </LinearLayout>
 
@@ -128,6 +133,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:onClick="openGallery"
+        android:contentDescription="@string/app_006_galleryButtonDescription"
         android:src="@drawable/app_001_icon"/>
 
 </RelativeLayout>

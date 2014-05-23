@@ -11,7 +11,7 @@ import fi.iki.elonen.NanoHTTPD;
 /**
  * Created by jouke on 21-4-14.
  */
-public class ThumbsUpServer extends NanoHTTPD {
+class ThumbsUpServer extends NanoHTTPD {
 
   public static final  String              MIME_DEFAULT_BINARY = "application/octet-stream";
   private static final int                 PORT                = 8080;
@@ -46,7 +46,7 @@ public class ThumbsUpServer extends NanoHTTPD {
   private AssetManager mAssetManager;
   private String       mRootDir;
 
-  public ThumbsUpServer(AssetManager assetManager, String rootDir) throws IOException {
+  public ThumbsUpServer(AssetManager assetManager, String rootDir) {
     super(PORT);
     mAssetManager = assetManager;
     mRootDir = rootDir;

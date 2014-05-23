@@ -16,6 +16,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -101,7 +102,10 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
     }
 
     // hide action bar
-    getActionBar().hide();
+    final ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
 
     // hide the status bar
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -168,12 +172,9 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
   }
 
   private boolean hasCameraFeature(Context context) {
-    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
-        || context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
-      return true;
-    } else {
-      return false;
-    }
+
+    return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
+        || context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
   }
 
   private void discoverCameras() {
@@ -315,11 +316,6 @@ public class SimpleCameraActivity extends DemoActivity implements SettingChangeL
           .add(R.id.app_006_settingMenuContainer, mEmptyFragment).commit();
       mActiveFragment = mSettingMenuFragment;
     }
-  }
-
-  @Override
-  public void onBackPressed() {
-    super.onBackPressed();
   }
 
   public void toggleVideoOrPicture(View view) {

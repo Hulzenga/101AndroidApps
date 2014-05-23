@@ -1,8 +1,9 @@
 package com.hulzenga.ioi.android;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
 /**
@@ -15,7 +16,7 @@ import android.view.MenuItem;
  *
  * @author Jouke Hulzenga
  */
-public abstract class DemoActivity extends Activity {
+public abstract class DemoActivity extends ActionBarActivity {
 
   @Override
   public void onBackPressed() {
@@ -28,7 +29,10 @@ public abstract class DemoActivity extends Activity {
     super.onCreate(savedInstanceState);
 
     // setup the action bar to use up navigation
-    getActionBar().setDisplayHomeAsUpEnabled(true);
+    final ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
   }
 

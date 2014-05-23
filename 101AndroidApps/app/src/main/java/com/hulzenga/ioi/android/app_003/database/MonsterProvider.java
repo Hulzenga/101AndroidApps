@@ -154,7 +154,7 @@ public class MonsterProvider extends ContentProvider {
   }
 
   //checks all columns in the projection for invalid columns
-  public void checkColumns(String[] projection) {
+  void checkColumns(String[] projection) {
     for (String column : projection) {
       if (!VALID_COLUMNS.contains(column)) {
         throw new IllegalArgumentException("Invalid columns in projection");

@@ -17,10 +17,10 @@ import java.util.Arrays;
 /**
  * Created by jouke on 24-4-14.
  */
-public class CompassView extends View {
+class CompassView extends View {
 
 
-  private static final float COMPASS_SCREEN_FRACTION = 0.8f;
+  private static final float COMPASS_SCREEN_FRACTION = 0.9f;
   private static final float TILT_SCALE              = 0.8f;
   private static final float MAX_SCALE               = 100.0f; //
   private static final float NEEDLE_SCALE_WIDTH      = 16.0f;
@@ -31,7 +31,7 @@ public class CompassView extends View {
   private static final float MEDIUM_LINE             = 2.0f;
   private static final float THIN_LINE               = 1.0f;
   private static final float FINE_LINE               = 1.0f;
-  public static final  float TILT_CUTOFF             = 45.0f;
+  private static final  float TILT_CUTOFF             = 45.0f;
 
   private final Paint mPinHighlightPaint;
   private final Paint mTextPaint;

@@ -43,7 +43,7 @@ import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 
-public class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
+class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
 
   private static final String TAG         = "BOUNCY_BALL_3D_RENDERER";
   private static final float  MIN_DELTA_Y = 0.0f;

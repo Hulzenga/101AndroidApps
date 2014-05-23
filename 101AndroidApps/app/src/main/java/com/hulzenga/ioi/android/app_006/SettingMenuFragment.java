@@ -1,9 +1,11 @@
 package com.hulzenga.ioi.android.app_006;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.hardware.Camera.Parameters;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +37,7 @@ public class SettingMenuFragment extends Fragment {
   private static final String WHITE_BALANCE = "White balance";
   //private static final String TIMER = "Timer";
 
-  public static final List<String> SETTINGS = new ArrayList<String>();
+  private static final List<String> SETTINGS = new ArrayList<String>();
 
   static {
     SETTINGS.add(IMAGE_SIZE);
@@ -48,7 +50,7 @@ public class SettingMenuFragment extends Fragment {
 
   private boolean[] availableSettings = new boolean[SETTINGS.size()];
 
-  public static final Map<Integer, ChangeType> SETTING_CHANGE_MAP = new HashMap<Integer, ChangeType>();
+  private static final SparseArray<ChangeType> SETTING_CHANGE_MAP = new SparseArray<ChangeType>();
 
   static {
     SETTING_CHANGE_MAP.put(SETTINGS.indexOf(IMAGE_SIZE), ChangeType.IMAGE_SIZE);

@@ -1,7 +1,7 @@
 package com.hulzenga.ioi.android.app_002;
 
 
-public class Ball {
+class Ball {
 
   //fundamental physical properties
   private static final float MIN_RADIUS   = 35.0f;
@@ -145,11 +145,7 @@ public class Ball {
     final float dx = x - this.x;
     final float dy = y - this.y;
 
-    if (dx * dx + dy * dy < r * r) {
-      return true;
-    } else {
-      return false;
-    }
+    return dx * dx + dy * dy < r * r;
   }
 
   //when a ball is selected it's speed is set to 0

@@ -60,17 +60,17 @@ public class Cylinder extends Geometry {
 
 
     for (int i = 2 * segments + 2; i < 4 * segments; i += 2) {
-      indices.add((short) (i + 0));
+      indices.add((short) (i));
       indices.add((short) (i + 1));
       indices.add((short) (i + 3));
 
-      indices.add((short) (i + 0));
+      indices.add((short) (i));
       indices.add((short) (i + 3));
       indices.add((short) (i + 2));
     }
 
     int index = 4 * segments;
-    indices.add((short) (4 * segments + 0));
+    indices.add((short) (4 * segments));
     indices.add((short) (4 * segments + 1));
     indices.add((short) (2 * segments + 2));
 

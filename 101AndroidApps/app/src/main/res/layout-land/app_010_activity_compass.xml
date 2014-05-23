@@ -3,44 +3,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/black">
+    android:gravity="center">
 
     <view
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         class="com.hulzenga.ioi.android.app_010.CompassView"
-        android:id="@+id/app_010_compassView"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:id="@+id/app_010_compassView"/>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Heading"
-            android:id="@+id/app_010_headingTextView"
-            android:layout_marginRight="81dp"
-            android:layout_marginTop="40dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/app_010_fieldMeasurementsView"
-            android:layout_alignEnd="@+id/app_010_fieldMeasurementsView"/>
-
-        <view
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            class="com.hulzenga.ioi.android.app_010.SequentialMeasurementsView"
-            android:id="@+id/app_010_fieldMeasurementsView"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_toRightOf="@+id/app_010_compassView"/>
-    </LinearLayout>
+    <view
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        class="com.hulzenga.ioi.android.app_010.CompassDetailsView"
+        android:id="@+id/app_010_detailsView"
+        />
 
 </LinearLayout>

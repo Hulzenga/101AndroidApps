@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 
 import com.hulzenga.ioi.android.util.open_gl.engine.SceneGraph;
 
-public class BouncyBall3dGLSurfaceView extends GLSurfaceView {
+class BouncyBall3dGLSurfaceView extends GLSurfaceView {
 
   private BouncyBall3dRenderer mRenderer;
 

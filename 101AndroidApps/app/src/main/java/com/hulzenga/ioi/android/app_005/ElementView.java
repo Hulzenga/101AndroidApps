@@ -11,13 +11,17 @@ import android.widget.ImageView;
 
 import com.hulzenga.ioi.android.R;
 
-public class ElementView extends ImageView {
+class ElementView extends ImageView {
 
   private static Bitmap sEarth;
   private static Bitmap sAir;
   private static Bitmap sFire;
   private static Bitmap sWater;
   private        int    mPosition;
+
+  public ElementView(Context context) {
+    this(context, 0);
+  }
 
   public ElementView(Context context, int position) {
     super(context);

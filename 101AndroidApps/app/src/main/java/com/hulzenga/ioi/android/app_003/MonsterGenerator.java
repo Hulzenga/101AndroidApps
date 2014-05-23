@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * Simple static class spitting out random monster names
  */
-public class MonsterGenerator {
+class MonsterGenerator {
 
   // random inputs for the monster names
   private static final String[] MONSTER_PREFIX  = {"", "Hell", "Infernal", "Vorpal", "Murderous", "Razor", "Foul",

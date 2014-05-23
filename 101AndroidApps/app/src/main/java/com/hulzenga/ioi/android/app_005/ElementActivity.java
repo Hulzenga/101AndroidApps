@@ -41,12 +41,6 @@ public class ElementActivity extends DemoActivity implements ElementAnimationCal
   }
 
 
-  @Override
-  protected void onPause() {
-    // TODO Auto-generated method stub
-    super.onPause();
-  }
-
   public void addElement(View v) {
     mAdapter.add(new Element());
   }

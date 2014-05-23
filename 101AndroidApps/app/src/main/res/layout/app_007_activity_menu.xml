@@ -12,6 +12,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:scaleType="fitCenter"
+        android:contentDescription="@string/app_007_backgroundImageDescription"
         android:src="@drawable/app_007_wikipedia"/>
 
     <RelativeLayout
@@ -20,6 +21,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+
         android:visibility="visible">
 
         <ImageView
@@ -28,6 +30,7 @@
             android:layout_above="@+id/app_007_playReviewLinearLayout"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:contentDescription="@string/app_007_headerDescription"
             android:src="@drawable/app_007_wikilinks_title"/>
 
         <LinearLayout
@@ -42,18 +45,21 @@
                 android:id="@+id/app_007_playButton"
                 style="@style/app_007_menuButtons"
                 android:onClick="play"
+                android:contentDescription="@string/app_007_playImageButtonDescription"
                 android:src="@drawable/app_007_play"/>
 
             <ImageButton
                 android:id="@+id/app_007_highScoresButton"
                 style="@style/app_007_menuButtons"
                 android:onClick="highScores"
+                android:contentDescription="@string/app_007_highScoresImageButtonDescription"
                 android:src="@drawable/app_007_high_scores"/>
 
             <ImageButton
                 android:id="@+id/app_007_reviewButton"
                 style="@style/app_007_menuButtons"
                 android:onClick="review"
+                android:contentDescription="@string/app_007_reviewImageButtonDescription"
                 android:src="@drawable/app_007_review"/>
         </LinearLayout>
     </RelativeLayout>
@@ -77,18 +83,21 @@
                 android:id="@+id/app_007_easyButton"
                 style="@style/app_007_menuButtons"
                 android:onClick="pickDifficulty"
+                android:contentDescription="@string/app_007_easyImageButtonDescription"
                 android:src="@drawable/app_007_easy"/>
 
             <ImageButton
                 android:id="@+id/app_007_mediumButton"
                 style="@style/app_007_menuButtons"
                 android:onClick="pickDifficulty"
+                android:contentDescription="@string/app_007_mediumImageButtonDescription"
                 android:src="@drawable/app_007_medium"/>
 
             <ImageButton
                 android:id="@+id/app_007_hardButton"
                 style="@style/app_007_menuButtons"
                 android:onClick="pickDifficulty"
+                android:contentDescription="@string/app_007_hardImageButtonDescription"
                 android:src="@drawable/app_007_hard"/>
         </LinearLayout>
 
@@ -98,6 +107,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="71dp"
+            android:contentDescription="@string/app_007_difficultyHeaderImageDescription"
             android:src="@drawable/app_007_difficulty"/>
     </RelativeLayout>
 

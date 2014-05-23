@@ -27,6 +27,7 @@
     <!-- App 004 -->
     <string name="app_004_title">3D Bouncy Ball</string>
     <string name="app_004_shortDescription">Basic OpenGL ES 2.0 scene, showing a bouncy ball</string>
+    <string name="app_004_bounce">Bounce</string>
     <!-- App 005 -->
     <string name="app_005_title">An Elemental Grid</string>
     <string name="app_005_shortDescription">Elemental fun with a custom AdapterView, animations and drag\'n\'drop</string>
@@ -43,6 +44,15 @@
     <string name="app_007_easy">Easy</string>
     <string name="app_007_normal">Normal</string>
     <string name="app_007_hard">Hard</string>
+    <string name="app_007_headerDescription">Wikilinks header</string>
+    <string name="app_007_playImageButtonDescription">play wikilinks</string>
+    <string name="app_007_backgroundImageDescription">Wikilinks background</string>
+    <string name="app_007_highScoresImageButtonDescription">High score</string>
+    <string name="app_007_reviewImageButtonDescription">Review</string>
+    <string name="app_007_difficultyHeaderImageDescription">Difficulty header</string>
+    <string name="app_007_hardImageButtonDescription">Hard difficulty</string>
+    <string name="app_007_mediumImageButtonDescription">Medium difficulty</string>
+    <string name="app_007_easyImageButtonDescription">Easy difficulty</string>
     <!-- App 008 -->
     <string name="app_008_title">Open Overheid</string>
     <string name="app_008_shortDescription">Dutch government public feed reader</string>
@@ -57,4 +67,15 @@
     <string name="app_010_title">Compass</string>
     <string name="app_010_shortDescription">Basic compass app</string>
     <string name="app_010_lock_screen">Lock Screen Rotation</string>
+    <string name="app_005_elementDescription">Element Image</string>
+    <string name="app_008_noActionBarError">Error: ActionBar not available</string>
+    <string name="app_009_thumbsUpButtonDescriptionStatusDown">thumbs up server status: down</string>
+    <string name="app_006_cameraSelectDescription">select camera</string>
+    <string name="app_006_flashButtonDescription">set flash</string>
+    <string name="app_006_colorEffectDescription">select color filter</string>
+    <string name="app_006_exposureButtonDescription">set exposure</string>
+    <string name="app_006_settingsButtonDescription">change settings</string>
+    <string name="app_006_galleryButtonDescription">go to gallery</string>
+
+
 </resources>

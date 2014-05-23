@@ -21,21 +21,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignLeft="@+id/app_007_statusFragment"
-        android:layout_below="@+id/app_007_statusFragment">
+        android:layout_below="@+id/app_007_statusFragment"
+        android:baselineAligned="false">
 
         <fragment
             android:id="@+id/app_007_linksFragment"
             android:name="com.hulzenga.ioi.android.app_007.LinksFragment"
             android:layout_weight="1.0"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            tools:layout="@layout/app_007_fragment_links"/>
 
         <fragment
             android:id="@+id/app_007_buttonsFragment"
             android:name="com.hulzenga.ioi.android.app_007.ButtonsFragment"
             android:layout_weight="1.0"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            tools:layout="@layout/app_007_fragment_buttons"/>
 
     </LinearLayout>
 

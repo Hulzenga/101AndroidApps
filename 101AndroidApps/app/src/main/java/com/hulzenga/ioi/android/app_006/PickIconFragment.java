@@ -33,21 +33,21 @@ public class PickIconFragment extends Fragment {
   private SettingChangeListener mSettingChangeListener;
 
   private             int          mSelectedPosition = -1;
-  public static final List<Object> CAMERA_ORDER      = new ArrayList<Object>();
+  private static final List<Object> CAMERA_ORDER      = new ArrayList<Object>();
 
   static {
     CAMERA_ORDER.add(String.valueOf(CameraInfo.CAMERA_FACING_BACK));
     CAMERA_ORDER.add(String.valueOf(CameraInfo.CAMERA_FACING_FRONT));
   }
 
-  public static final Map<Object, Integer> CAMERA_ICON_MAP = new HashMap<Object, Integer>();
+  private static final Map<Object, Integer> CAMERA_ICON_MAP = new HashMap<Object, Integer>();
 
   static {
     CAMERA_ICON_MAP.put(String.valueOf(CameraInfo.CAMERA_FACING_FRONT), R.drawable.app_006_camera_facing_front);
     CAMERA_ICON_MAP.put(String.valueOf(CameraInfo.CAMERA_FACING_BACK), R.drawable.app_006_camera_facing_back);
   }
 
-  public static final List<Object> FLASH_ORDER = new ArrayList<Object>();
+  private static final List<Object> FLASH_ORDER = new ArrayList<Object>();
 
   static {
     FLASH_ORDER.add(Parameters.FLASH_MODE_OFF);
@@ -67,7 +67,7 @@ public class PickIconFragment extends Fragment {
     FLASH_ICON_MAP.put(Parameters.FLASH_MODE_TORCH, R.drawable.app_006_flash_torch);
   }
 
-  public static final List<Object> EFFECT_ORDER = new ArrayList<Object>();
+  private static final List<Object> EFFECT_ORDER = new ArrayList<Object>();
 
   static {
     EFFECT_ORDER.add(Parameters.EFFECT_NONE);

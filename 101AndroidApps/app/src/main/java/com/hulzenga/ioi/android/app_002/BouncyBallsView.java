@@ -12,7 +12,7 @@ import android.view.View.OnTouchListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BouncyBallsView extends View implements OnTouchListener {
+class BouncyBallsView extends View implements OnTouchListener {
 
 	/*
    * TODO: figure out bug which causes all balls to disappear. Encountered when

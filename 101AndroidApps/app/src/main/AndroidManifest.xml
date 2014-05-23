@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -150,7 +151,7 @@
         <activity
             android:name=".app_010.CompassActivity"
             android:label="@string/app_010_title"
-            android:icon="@drawable/app_010_icon"
+            android:icon="@drawable/app_009_icon"
             android:parentActivityName=".TableOfContentsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

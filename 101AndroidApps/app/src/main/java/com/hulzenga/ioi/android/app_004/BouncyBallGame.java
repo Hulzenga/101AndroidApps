@@ -49,7 +49,7 @@ public class BouncyBallGame implements NodeController {
     bouncyBall3dGLSurfaceView.setScene(createScene());
   }
 
-  public SceneGraph createScene() {
+  SceneGraph createScene() {
     SceneGraph sceneGraph = new SceneGraph();
 
     ColorFunction uniformRed = ColorFunctionFactory.createUniform(1.0f, 0.0f, 0.0f, 1.0f);

@@ -43,11 +43,11 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
   private static final int    TOUCH_CLICK                        = 1;
   private static final int    TOUCH_SCROLL                       = 2;
   private static final int    SCROLL_THRESHOLD                   = 10;
-  final int mElementMeasureSpec;
+  private final int mElementMeasureSpec;
   /**
    * Views that need to be cleaned before they can be recycled
    */
-  List<View> mCleanTheseViews = new ArrayList<View>();
+  private List<View> mCleanTheseViews = new ArrayList<View>();
   private ElementAdapter mElementAdapter;
   private int            mRemovedItemPosition;
   private int            mCount;
@@ -222,7 +222,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
     }
   }
 
-  public void cleanViews() {
+  void cleanViews() {
     if (mCleanTheseViews.size() > 0) {
       for (View v : mCleanTheseViews) {
         v.setRotationY(0.0f);
@@ -390,10 +390,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
       case MotionEvent.ACTION_MOVE:
         switch (mTouchState) {
           case TOUCH_CLICK:
-            if (!shouldStartScrolling(x, y)) {
-              // didn't cross the scrolling threshold so do nothing
-
-            } else {
+            if (shouldStartScrolling(x, y)) {
               // started scrolling so this can't be a long press
               removeCallbacks(mLongPressRunnable);
 
@@ -514,10 +511,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
   private boolean shouldStartScrolling(float x, float y) {
 
-    if (Math.abs(x - mTouchStartX) > SCROLL_THRESHOLD || Math.abs(y - mTouchStartY) > SCROLL_THRESHOLD) {
-      return true;
-    }
-    return false;
+    return Math.abs(x - mTouchStartX) > SCROLL_THRESHOLD || Math.abs(y - mTouchStartY) > SCROLL_THRESHOLD;
   }
 
   private void startLongPressCheck() {

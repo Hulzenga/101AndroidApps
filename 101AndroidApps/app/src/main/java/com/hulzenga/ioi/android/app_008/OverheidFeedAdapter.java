@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by jouke on 19-4-14.
  */
-public class OverheidFeedAdapter extends ArrayAdapter<OverheidFeedItem> {
+class OverheidFeedAdapter extends ArrayAdapter<OverheidFeedItem> {
 
   public OverheidFeedAdapter(Context context, List<OverheidFeedItem> list) {
     super(context, R.layout.app_008_item_feed, list);
@@ -32,7 +32,7 @@ public class OverheidFeedAdapter extends ArrayAdapter<OverheidFeedItem> {
 
     if (convertView == null) {
       LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      convertView = inflater.inflate(R.layout.app_008_item_feed, null);
+      convertView = inflater.inflate(R.layout.app_008_item_feed, parent, false);
 
       FeedItemHolder holder = new FeedItemHolder();
       holder.titleView = (TextView) convertView.findViewById(R.id.app_008_item_feed_title);

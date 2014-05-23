@@ -8,7 +8,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ElementAnimator {
+class ElementAnimator {
 
   public static final long ANIMATION_LENGTH_SHORT = 250L;
   public static final long ANIMATION_LENGTH_LONG  = 1000L;

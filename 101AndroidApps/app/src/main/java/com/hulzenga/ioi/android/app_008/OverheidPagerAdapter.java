@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 
-public class OverheidPagerAdapter extends FragmentPagerAdapter {
+class OverheidPagerAdapter extends FragmentPagerAdapter {
 
   public OverheidPagerAdapter(FragmentManager fragmentManager) {
     super(fragmentManager);

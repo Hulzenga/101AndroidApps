@@ -13,7 +13,7 @@ import com.hulzenga.ioi.android.R;
  * stores the name and id values of monsters in the tag of layout element of
  * each row
  */
-public class MonsterListAdapter extends SimpleCursorAdapter {
+class MonsterListAdapter extends SimpleCursorAdapter {
 
   public MonsterListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
     super(context, layout, c, from, to, flags);

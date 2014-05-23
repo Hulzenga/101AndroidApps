@@ -1,6 +1,6 @@
 package com.hulzenga.ioi.android.app_008;
 
-public class OverheidFeedItem {
+class OverheidFeedItem {
 
   private String mTitle;
   private String mLink;

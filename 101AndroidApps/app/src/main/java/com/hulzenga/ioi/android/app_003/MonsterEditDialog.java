@@ -1,5 +1,6 @@
 package com.hulzenga.ioi.android.app_003;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -58,8 +59,8 @@ public class MonsterEditDialog extends DialogFragment {
     final Bundle arguments = getArguments();
     final String monsterName = arguments.getString(ARGUMENT_NAME);
 
-    // define the custom view parts
-    final View editDialog = inflator.inflate(R.layout.app_003_dialog_edit, null);
+    // define the custom view parts, dialog so no root to attach to
+     @SuppressLint("InflateParams") final View editDialog = inflator.inflate(R.layout.app_003_dialog_edit, null);
     final EditText editText = (EditText) editDialog.findViewById(R.id.app_003_editDialogText);
 
     editText.setText(monsterName);
@@ -85,8 +86,6 @@ public class MonsterEditDialog extends DialogFragment {
             if (!editText.getText().toString().equals(monsterName)) {
               arguments.putString(ARGUMENT_NAME, editText.getText().toString());
               mListener.onEditDialogPositiveClick(arguments);
-            } else {
-              // ignore
             }
           }
         }).setNegativeButton(getResources().getString(android.R.string.cancel), new OnClickListener() {

@@ -13,12 +13,12 @@ import static com.hulzenga.ioi.android.app_003.database.MonsterContract.TABLE_MO
 /**
  * SQLiteOpenHelper to guarantee existance of an up to date database
  */
-public class MonsterDatabaseHelper extends SQLiteOpenHelper {
+class MonsterDatabaseHelper extends SQLiteOpenHelper {
 
   private static final String TAG = "MONSTER_DATABASE_HELPER";
 
-  public static final int    DATABASE_VERSION = 1;
-  public static final String DATABASE_NAME    = "Monsters.db";
+  private static final int    DATABASE_VERSION = 1;
+  private static final String DATABASE_NAME    = "Monsters.db";
 
   //SQL query which creates the database
   private static final String DATABASE_CREATE =

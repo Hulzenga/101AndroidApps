@@ -19,7 +19,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bounce"
+        android:text="@string/app_004_bounce"
         android:id="@+id/app_004_bounceButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

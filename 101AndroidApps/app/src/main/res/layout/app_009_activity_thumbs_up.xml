@@ -12,6 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/app_009_thumbs_down"
+        android:contentDescription="@string/app_009_thumbsUpButtonDescriptionStatusDown"
         android:layout_margin="32dp"/>
 
     <TextView

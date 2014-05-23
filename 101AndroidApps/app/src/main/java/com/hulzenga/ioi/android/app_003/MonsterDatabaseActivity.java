@@ -147,8 +147,7 @@ public class MonsterDatabaseActivity extends DemoActivity implements LoaderManag
   @Override
   public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
     String[] projection = {MonsterContract.COLUMN_MONSTER_ID, MonsterContract.COLUMN_MONSTER_NAME};
-    CursorLoader cursorLoader = new CursorLoader(this, MonsterProvider.CONTENT_URI, projection, null, null, null);
-    return cursorLoader;
+    return new CursorLoader(this, MonsterProvider.CONTENT_URI, projection, null, null, null);
   }
 
   @Override

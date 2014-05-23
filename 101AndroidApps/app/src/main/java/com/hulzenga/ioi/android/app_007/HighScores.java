@@ -16,8 +16,8 @@ import java.util.Map;
 public class HighScores extends DemoActivity {
 
   private static final String DIFFICULTY = "difficulty";
-  ListView    mHighScoreList;
-  ListAdapter mAdapter;
+  private ListView    mHighScoreList;
+  private ListAdapter mAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

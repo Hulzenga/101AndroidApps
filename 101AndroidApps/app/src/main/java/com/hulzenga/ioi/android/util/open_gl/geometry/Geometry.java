@@ -58,12 +58,12 @@ public abstract class Geometry {
     int numberOfTriangles = indices.size() / VERTICES_PER_TRIANGLE;
 
     for (int i = 0; i < numberOfTriangles; i++) {
-      Vec3 a = vertices.get(i * VERTICES_PER_TRIANGLE + 0).copy().
+      Vec3 a = vertices.get(i * VERTICES_PER_TRIANGLE).copy().
           subtract(vertices.get(i * VERTICES_PER_TRIANGLE + 1));
       Vec3 b = vertices.get(i * VERTICES_PER_TRIANGLE + 1).copy().
           subtract(vertices.get(i * VERTICES_PER_TRIANGLE + 2));
       a.cross(b).normalize();
-      normals.set(i * VERTICES_PER_TRIANGLE + 0, a);
+      normals.set(i * VERTICES_PER_TRIANGLE , a);
       normals.set(i * VERTICES_PER_TRIANGLE + 1, a);
       normals.set(i * VERTICES_PER_TRIANGLE + 2, a);
     }
@@ -84,12 +84,12 @@ public abstract class Geometry {
     }
 
     for (int i = 0; i < indices.size();) {
-      if (removalList.contains(indices.get(i+0)) ||
+      if (removalList.contains(indices.get(i)) ||
           removalList.contains(indices.get(i+1)) ||
           removalList.contains(indices.get(i+2))) {
         indices.remove(i+2);
         indices.remove(i+1);
-        indices.remove(i+0);
+        indices.remove(i);
       } else {
         i += 3;
       }
@@ -124,7 +124,7 @@ public abstract class Geometry {
     int numberOfTriangles = indices.size() / VERTICES_PER_TRIANGLE;
     Short s1, s2, s3;
     for (int i = 0; i < numberOfTriangles; i++) {
-      s1 = indices.get(i * 3 + 0);
+      s1 = indices.get(i * 3);
       s2 = indices.get(i * 3 + 1);
       s3 = indices.get(i * 3 + 2);
 

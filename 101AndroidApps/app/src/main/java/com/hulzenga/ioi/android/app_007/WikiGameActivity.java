@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -39,63 +40,34 @@ import java.util.Map;
 import java.util.Random;
 
 public class WikiGameActivity extends DemoActivity implements ButtonsFragment.OptionSelectionListener,
-                                                  StatusFragment.TimeOutListener {
-
+                                                              StatusFragment.TimeOutListener {
+  public static final  String SAVED_AND_PLAYED_WIKIS     = "saved_and_played";
+  public static final  String BUNDLE_DIFFICULTY          = "difficulty";
   private static final String TAG                        = "YET_ANOTHER_WIKIPEDIA_GAME";
   private static final String SAVED_NOT_PLAYED_WIKIS     = "saved_not_played";
-  public static final  String SAVED_AND_PLAYED_WIKIS     = "saved_and_played";
   private static final int    DESIRED_GAME_OPTION_BUFFER = 6;
   private static final int    MAX_PARALLEL_DOWNLOADS     = 3;
   private static final int    MIN_LINK_LENGTH            = 4;
   private static final int    MAX_NUMBER_OF_LINKS        = 6;
   private static final int    PLAYED_WIKIS_LENGTH        = 100;
-
-  private static final int MAX_DOWNLOAD_RETRIES = 3;
-  private static       int mRetriesLeft         = MAX_DOWNLOAD_RETRIES;
-
-  public static final String BUNDLE_DIFFICULTY = "difficulty";
-
-  public enum Difficulty {
-
-    EASY(R.string.app_007_easy, 3, 10, 0),
-    NORMAL(R.string.app_007_normal, 3, 6, 1),
-    HARD(R.string.app_007_hard, 4, 5, 2);
-
-    public final int label;
-    public final int numberOfOptions;
-    public final int numberOfLinks;
-    public final int penalyPoints;
-
-    private Difficulty(int label, int numberOfOptions, int numberOfLinks, int penaltyPoints) {
-      this.label = label;
-      this.numberOfOptions = numberOfOptions;
-      this.numberOfLinks = numberOfLinks;
-      this.penalyPoints = penaltyPoints;
-    }
-  }
-
-  private TextView mLinkText;
-  private TextView mProgressBarTextView;
-
+  private static final int    MAX_DOWNLOAD_RETRIES       = 3;
+  private static       int    mRetriesLeft               = MAX_DOWNLOAD_RETRIES;
+  private TextView        mLinkText;
+  private TextView        mProgressBarTextView;
   private ButtonsFragment mButtonsFragment;
   private LinksFragment   mLinksFragment;
   private StatusFragment  mStatusFragment;
-
   private List<Button> mButtons = new ArrayList<Button>();
   private ProgressBar mProgressBar;
-
   // handy to keep around
-  private Random mRandom = new Random();
-
-  private List<Wiki> mWikisInBuffer = new LinkedList<Wiki>();
-  private List<Wiki> mWikisPlayed   = new LinkedList<Wiki>();
-
-  // this should really be an array, but a map just looks nicer
-  private Map<Integer, Wiki> mWikisInPlay   = new HashMap<Integer, Wiki>();
-  private boolean            mPlayWhenReady = true;
-  private int                mCorrectChoice = -1;
-
-  private int mFetchWikiTaskCount = 0;
+  private Random             mRandom             = new Random();
+  private List<Wiki>         mWikisInBuffer      = new LinkedList<Wiki>();
+  private List<Wiki>         mWikisPlayed        = new LinkedList<Wiki>();
+  @SuppressLint("UseSparseArrays") //code works out a lot nicer with a real map
+  private Map<Integer, Wiki> mWikisInPlay        = new HashMap<Integer, Wiki>();
+  private boolean            mPlayWhenReady      = true;
+  private int                mCorrectChoice      = -1;
+  private int                mFetchWikiTaskCount = 0;
   private Difficulty        mDifficulty;
   private TextView          mDifficultyLabelTextView;
   private SoundPool         mSoundPool;
@@ -147,6 +119,14 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
     }
   }
 
+  private void setDifficulty(Difficulty gameDifficulty) {
+    mDifficulty = gameDifficulty;
+
+    mDifficultyLabelTextView.setText(getResources().getString(mDifficulty.label));
+    mProgressBar.setMax(mDifficulty.numberOfOptions);
+    mButtons = mButtonsFragment.setNumberOfButtons(mDifficulty.numberOfOptions);
+  }
+
   @Override
   protected void onResume() {
     super.onResume();
@@ -191,20 +171,11 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
     Wiki.saveWikis(this, mWikisPlayed, SAVED_AND_PLAYED_WIKIS);
   }
 
-  private void setDifficulty(Difficulty gameDifficulty) {
-    mDifficulty = gameDifficulty;
+  private void bringWikisBackToBuffer() {
 
-    mDifficultyLabelTextView.setText(getResources().getString(mDifficulty.label));
-    mProgressBar.setMax(mDifficulty.numberOfOptions);
-    mButtons = mButtonsFragment.setNumberOfButtons(mDifficulty.numberOfOptions);
-  }
-
-  private int bufferSpaceRemaining() {
-    return DESIRED_GAME_OPTION_BUFFER - (mWikisInBuffer.size() + mWikisInPlay.size() + mFetchWikiTaskCount);
-  }
-
-  private boolean isBufferBigEnough() {
-    return mWikisInBuffer.size() + mWikisInPlay.size() >= mDifficulty.numberOfOptions;
+    for (Integer key : mWikisInPlay.keySet()) {
+      mWikisInBuffer.add(mWikisInPlay.get(key));
+    }
   }
 
   private void nextQuestion() {
@@ -232,6 +203,44 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
     } else {
       ShowNextQuestion();
     }
+  }
+
+  private int bufferSpaceRemaining() {
+    return DESIRED_GAME_OPTION_BUFFER - (mWikisInBuffer.size() + mWikisInPlay.size() + mFetchWikiTaskCount);
+  }
+
+  private boolean isBufferBigEnough() {
+    return mWikisInBuffer.size() + mWikisInPlay.size() >= mDifficulty.numberOfOptions;
+  }
+
+  private void lockButtons() {
+    for (Button button : mButtons) {
+      button.setClickable(false);
+    }
+  }
+
+  private void clearText() {
+    mLinkText.setText("");
+  }
+
+  /**
+   * show the download progress by setting the Progressbar and ProgressbarText
+   * accordingly
+   */
+  private void publishProgress() {
+    int i = mWikisInBuffer.size();
+
+    mProgressBar.setProgress(i);
+    mLinkText.setText(getResources().getString(R.string.app_007_downloadProgress) + " ("
+        + ConstraintEnforcer.lowerBound(0, i) + "/" + mDifficulty.numberOfOptions + ")");
+  }
+
+  /**
+   * Make the ProgressBar and ProgressBarTextView visible
+   */
+  private void showProgressBar() {
+    mProgressBar.animate().alpha(1f).setDuration(mShortAnimationLength);
+    mProgressBarTextView.animate().alpha(1f).setDuration(mShortAnimationLength);
   }
 
   private void ShowNextQuestion() {
@@ -280,6 +289,24 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
 
     mCorrectChoice = mRandom.nextInt(mDifficulty.numberOfOptions);
     showWikiLinks(mWikisInPlay.get(mCorrectChoice));
+  }
+
+  private void releaseButtons() {
+    for (Button button : mButtons) {
+      button.setClickable(true);
+    }
+  }
+
+  private void showWikiLinks(Wiki wiki) {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("<ol>");
+    for (String link : wiki.getLinks()) {
+      sb.append("&#8226;").append(link).append("<br/>");
+    }
+    sb.append("</ol>");
+
+    mLinkText.setText(Html.fromHtml(sb.toString()));
   }
 
   public void onTimeOut(int score) {
@@ -390,26 +417,6 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
   }
 
   /**
-   * show the download progress by setting the Progressbar and ProgressbarText
-   * accordingly
-   */
-  private void publishProgress() {
-    int i = mWikisInBuffer.size();
-
-    mProgressBar.setProgress(i);
-    mLinkText.setText(getResources().getString(R.string.app_007_downloadProgress) + " ("
-        + ConstraintEnforcer.lowerBound(0, i) + "/" + mDifficulty.numberOfOptions + ")");
-  }
-
-  /**
-   * Make the ProgressBar and ProgressBarTextView visible
-   */
-  private void showProgressBar() {
-    mProgressBar.animate().alpha(1f).setDuration(mShortAnimationLength);
-    mProgressBarTextView.animate().alpha(1f).setDuration(mShortAnimationLength);
-  }
-
-  /**
    * Hide the ProgressBar and ProgressBarTextView by making them invisible
    */
   private void hideProgressBar() {
@@ -418,50 +425,28 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
 
   }
 
-  private void bringWikisBackToBuffer() {
+  public enum Difficulty {
 
-    for (Integer key : mWikisInPlay.keySet()) {
-      mWikisInBuffer.add(mWikisInPlay.get(key));
-    }
-  }
+    EASY(R.string.app_007_easy, 3, 10, 0),
+    NORMAL(R.string.app_007_normal, 3, 6, 1),
+    HARD(R.string.app_007_hard, 4, 5, 2);
 
-  private void showWikiLinks(Wiki wiki) {
-    StringBuilder sb = new StringBuilder();
+    public final int label;
+    public final int numberOfOptions;
+    public final int numberOfLinks;
+    public final int penalyPoints;
 
-    sb.append("<ol>");
-    for (String link : wiki.getLinks()) {
-      sb.append("&#8226;").append(link).append("<br/>");
-    }
-    sb.append("</ol>");
-
-    mLinkText.setText(Html.fromHtml(sb.toString()));
-  }
-
-  private void clearText() {
-    mLinkText.setText("");
-  }
-
-  private void lockButtons() {
-    for (Button button : mButtons) {
-      button.setClickable(false);
-    }
-  }
-
-  private void releaseButtons() {
-    for (Button button : mButtons) {
-      button.setClickable(true);
+    private Difficulty(int label, int numberOfOptions, int numberOfLinks, int penaltyPoints) {
+      this.label = label;
+      this.numberOfOptions = numberOfOptions;
+      this.numberOfLinks = numberOfLinks;
+      this.penalyPoints = penaltyPoints;
     }
   }
 
   private class FetchWikiTask extends AsyncTask<ProgressBar, Integer, Wiki> {
 
     private static final String RANDOM_WIKI_PAGE_URL = "http://en.m.wikipedia.org/wiki/Special:Random";
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      mFetchWikiTaskCount++;
-    }
 
     @Override
     protected Wiki doInBackground(ProgressBar... params) {
@@ -513,6 +498,12 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
       }
 
       return new Wiki(name, adress, links);
+    }
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      mFetchWikiTaskCount++;
     }
 
     @Override
