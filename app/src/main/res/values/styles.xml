@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="DemoAppTheme" parent="android:Theme.Holo"/>
+    <style name="DemoAppTheme" parent="Theme.AppCompat" />
 
-    <style name="FullscreenTheme" parent="android:Theme.Holo.NoActionBar.Fullscreen"/>
+    <style name="FullscreenTheme" parent="Theme.AppCompat">
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
     <style name="App_006_LeftSideButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="app_007_menuContainer"/>
+    <style name="app_007_menuContainer" />
 
     <style name="app_007_menuButtons">
         <item name="android:layout_width">match_parent</item>
