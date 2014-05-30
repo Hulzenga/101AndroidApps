@@ -1,13 +1,10 @@
 package com.hulzenga.ioi.android.app_005;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.hulzenga.ioi.android.R;
 import com.hulzenga.ioi.android.app_005.ElementAdapter.ElementChangeObserver.ChangeType;
 
 import java.util.HashMap;
@@ -16,14 +13,10 @@ import java.util.Map;
 
 class ElementAdapter extends ArrayAdapter<Element> {
 
-  private Bitmap        sEarthElement;
-  private Bitmap        sAirElement;
-  private Bitmap        sFireElement;
-  private Bitmap        sWaterElement;
-  private Bitmap        sEmptyElement;
+
   private Context       mContext;
   private List<Element> mElements;
-  private Map<Element, Integer> mElementIdMap   = new HashMap<Element, Integer>();
+  private Map<Element, Integer> mElementIdMap   = new HashMap<>();
   private int                   mIdCount        = 0;
   private int                   mDraggedElement = -1;
   private ElementChangeObserver mElementChangeObserver;
@@ -34,13 +27,6 @@ class ElementAdapter extends ArrayAdapter<Element> {
 
     mContext = context;
     mElements = elements;
-
-    //load element bitmaps
-    sEarthElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_earth_element);
-    sAirElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_air_element);
-    sFireElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_fire_element);
-    sWaterElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_water_element);
-    sEmptyElement = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_005_empty_element);
 
     allocateIds();
   }
@@ -57,10 +43,6 @@ class ElementAdapter extends ArrayAdapter<Element> {
     mElementChangeObserver = observer;
   }
 
-  public List<Element> getAllElements() {
-    return mElements;
-  }
-
   @Override
   public void add(Element element) {
     mElements.add(0, element);
@@ -75,6 +57,8 @@ class ElementAdapter extends ArrayAdapter<Element> {
   public void notifyElementChange(ChangeType type, int... args) {
     if (mElementChangeObserver != null) {
       mElementChangeObserver.onElementChange(type, args);
+    } else {
+      throw new IllegalStateException("No ElementChangeObserver is registered!");
     }
   }
 
@@ -100,24 +84,10 @@ class ElementAdapter extends ArrayAdapter<Element> {
     }
 
     if (position != mDraggedElement) {
-      switch (mElements.get(position).getType()) {
-        case EARTH:
-          elementView.setImageBitmap(sEarthElement);
-          break;
-        case AIR:
-          elementView.setImageBitmap(sAirElement);
-          break;
-        case FIRE:
-          elementView.setImageBitmap(sFireElement);
-          break;
-        case WATER:
-          elementView.setImageBitmap(sWaterElement);
-          break;
-      }
+      elementView.setImageBitmap(mElements.get(position).getIcon());
     } else {
-      elementView.setImageBitmap(sEmptyElement);
+      elementView.setImageBitmap(Element.getmEmptyIcon());
     }
-
 
     return elementView;
   }

@@ -13,11 +13,8 @@ import com.hulzenga.ioi.android.R;
 
 class ElementView extends ImageView {
 
-  private static Bitmap sEarth;
-  private static Bitmap sAir;
-  private static Bitmap sFire;
-  private static Bitmap sWater;
-  private        int    mPosition;
+
+  private int mPosition;
 
   public ElementView(Context context) {
     this(context, 0);
@@ -27,17 +24,6 @@ class ElementView extends ImageView {
     super(context);
 
     mPosition = position;
-
-    ensureBitmapsLoaded(context);
-  }
-
-  private static void ensureBitmapsLoaded(Context context) {
-    if (sEarth == null) {
-      sEarth = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_earth);
-      sAir = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_air);
-      sFire = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_fire);
-      sWater = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_005_water);
-    }
   }
 
   public int getPosition() {
@@ -52,26 +38,10 @@ class ElementView extends ImageView {
 
     private BitmapDrawable shadow;
 
-    public DragShadowBuilder(ElementView view, Element.ClassicalElement element) {
+    public DragShadowBuilder(ElementView view, Element element) {
 
-
-      switch (element) {
-        case EARTH:
-          shadow = new BitmapDrawable(view.getContext().getResources(), sEarth);
-          break;
-        case AIR:
-          shadow = new BitmapDrawable(view.getContext().getResources(), sAir);
-          break;
-        case FIRE:
-          shadow = new BitmapDrawable(view.getContext().getResources(), sFire);
-          break;
-        case WATER:
-          shadow = new BitmapDrawable(view.getContext().getResources(), sWater);
-          break;
-      }
-
+      shadow = new BitmapDrawable(view.getContext().getResources(), element.getShadow());
       shadow.setBounds(0, 0, shadow.getBitmap().getWidth(), shadow.getBitmap().getHeight());
-
     }
 
     @Override

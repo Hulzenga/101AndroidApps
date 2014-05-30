@@ -19,74 +19,73 @@ import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 
 import com.hulzenga.ioi.android.app_005.ElementAdapter.ElementChangeObserver;
+import com.hulzenga.ioi.android.util.Constrain;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class ElementSnakeView extends AdapterView<ElementAdapter> implements ElementChangeObserver {
 
-  private static final String TAG                                = "ELEMENTS_VIEW";
+  private static final String TAG = "ELEMENTS_VIEW";
   //TODO: This needs to be changed to be pixel density dependent
-  private static final int    ELEMENT_SIZE                       = 100;
-  private static final int    MIN_PADDING                        = 15;
-  private static final int    MIN_SCROLL                         = 0;
-  private static final int    ANIMATION_NEW_ELEMENT              = 0;
-  private static final int    ANIMATION_NEW_ELEMENT_SHIFT_ROW    = 1;
-  private static final int    ANIMATION_REMOVE_ELEMENT           = 2;
-  private static final int    ANIMATION_REMOVE_ELEMENT_SHIFT_ROW = 3;
-  private static final int    ANIMATION_DRAG_FLIP                = 4;
-  private static final int    ANIMATION_SWAP_ELEMENTS            = 5;
-  private static final int    TOUCH_NONE                         = 0;
-  private              int    mTouchState                        = TOUCH_NONE;
-  private static final int    TOUCH_CLICK                        = 1;
-  private static final int    TOUCH_SCROLL                       = 2;
-  private static final int    SCROLL_THRESHOLD                   = 10;
+  private static final int ELEMENT_SIZE = 100;
+  private static final int MIN_PADDING = 15;
+  private static final int MIN_SCROLL = 0;
+  private static final int ANIMATION_NEW_ELEMENT = 0;
+  private static final int ANIMATION_NEW_ELEMENT_SHIFT_ROW = 1;
+  private static final int ANIMATION_REMOVE_ELEMENT = 2;
+  private static final int ANIMATION_REMOVE_ELEMENT_SHIFT_ROW = 3;
+  private static final int ANIMATION_DRAG_FLIP = 4;
+  private static final int ANIMATION_SWAP_ELEMENTS = 5;
+
+  private enum TouchState {
+    NONE, CLICK, SCROLLING
+  }
+  private TouchState mTouchState = TouchState.NONE;
+  private static final int SCROLL_THRESHOLD = 10;
   private final int mElementMeasureSpec;
   /**
    * Views that need to be cleaned before they can be recycled
    */
-  private List<View> mCleanTheseViews = new ArrayList<View>();
+  private List<View> mCleanTheseViews = new ArrayList<>();
   private ElementAdapter mElementAdapter;
-  private int            mRemovedItemPosition;
-  private int            mCount;
-  private int            mElementsInFirstRow;
-  private int            mVisibleRowCount;
-  private int            mDraggedElement;
+  private int mRemovedItemPosition;
+  private int mCount;
+  private int mElementsInFirstRow;
+  private int mVisibleRowCount;
+  private int mDraggedElement;
   /**
    * distance from the top of the view screen to the top of the first row
-   * (including padding)
    */
-  private int mScrollDistance = 0;
-  private int             mMaxScroll;
-  private int             mColumnCount;
-  private int             mRowCount;
-  private int             mPadding;
-  private int             mGridBlock;
-  private float           mWidth;
-  private float           mHeight;
-  private int             mSwapPosition0;
-  private int             mSwapPosition1;
+  private int mScrollPosition = 0;
+  private int mMaxScroll;
+  private int mColumnCount;
+  private int mPadding;
+  private int mGridBlock;
+  private float mHeight;
+  private int mSwapPosition0;
+  private int mSwapPosition1;
   /*
    * Animation variables
    */
   private ElementAnimator mElementAnimator;
-  private boolean        mDoAnimation     = false;
-  private int            mAnimationType   = -1;
-  private List<Animator> mChildAnimations = new ArrayList<Animator>();
-  private Interpolator   mInterpolator    = new LinearInterpolator();
-  private AnimatorListener         mReleaseOnEndListener;
-  private AnimatorListener         mRequestLayoutOnEndListener;
+  private boolean mDoAnimation = false;
+  private int mAnimationType = -1;
+  private List<Animator> mChildAnimations = new ArrayList<>();
+  private Interpolator mInterpolator = new LinearInterpolator();
+  private AnimatorListener mReleaseOnEndListener;
+  private AnimatorListener mRequestLayoutOnEndListener;
   /*
    * Touch state variables
    */
-  private float                    mTouchStartX;
-  private float                    mTouchStartY;
-  private float                    mPrevY;
-  private Runnable                 mLongPressRunnable;
+  private float mTouchStartX;
+  private float mTouchStartY;
+  private float mPrevY;
+  private Runnable mLongPressRunnable;
   private ElementAnimationCallback mAnimationCallback;
-  private Queue<View> mElementViewRecycler = new LinkedBlockingQueue<View>();
+  private Queue<View> mElementViewRecycler = new LinkedList<>();
   private int mSelectedPosition;
   private boolean mDropSucces = false;
   private int mFirstChildPosition;
@@ -94,10 +93,8 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
   public ElementSnakeView(Context context, AttributeSet attrs) {
     super(context, attrs);
+    Element.loadBitmaps(context);
 
-        /*
-         * setup variables which are too long to setup above
-         */
     mElementMeasureSpec = MeasureSpec.makeMeasureSpec(ELEMENT_SIZE, MeasureSpec.EXACTLY);
 
     mReleaseOnEndListener = new AnimatorListener() {
@@ -167,6 +164,9 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
   protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     super.onLayout(changed, left, top, right, bottom);
 
+    //invalidate to get rid of artifacts
+    invalidate();
+
     // do nothing if no adapter defined
     if (mElementAdapter == null) {
       return;
@@ -215,7 +215,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
       } else {
         // an animation is going on off screen, but nothing happens on
         // screen, use empty animator to keep program flow as expected
-        set.play(mElementAnimator.doNothingAnimator(getChildAt(0)));
+        set.play(mElementAnimator.doNothingAnimator(this));
       }
 
       set.start();
@@ -246,12 +246,12 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
     if (position < mElementsInFirstRow) {
       final int left = mPadding + mGridBlock * (mColumnCount - mElementsInFirstRow + position);
-      child.layout(left, mPadding - mScrollDistance, left + ELEMENT_SIZE, mGridBlock - mScrollDistance);
+      child.layout(left, mPadding - mScrollPosition, left + ELEMENT_SIZE, mGridBlock - mScrollPosition);
     } else {
       // all other rows
       row = (position - mElementsInFirstRow) / mColumnCount + 1;
       rowIndex = (position - mElementsInFirstRow) % mColumnCount;
-      final int top = mPadding + row * mGridBlock - mScrollDistance;
+      final int top = mPadding + row * mGridBlock - mScrollPosition;
 
       int left;
       if (row % 2 != 0) {
@@ -346,10 +346,10 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
   // set bounds so as to draw one row before and after the visible screen
   private void setDrawingBounds() {
 
-    if (mScrollDistance < 2 * mGridBlock) {
+    if (mScrollPosition < 2 * mGridBlock) {
       mFirstChildPosition = 0;
     } else {
-      mFirstChildPosition = mElementsInFirstRow + ((mScrollDistance / mGridBlock) - 1) * mColumnCount;
+      mFirstChildPosition = mElementsInFirstRow + ((mScrollPosition / mGridBlock) - 1) * mColumnCount;
     }
     mLastChildPosition = mFirstChildPosition + (mVisibleRowCount + 2) * mColumnCount;
   }
@@ -383,21 +383,21 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
       case MotionEvent.ACTION_DOWN:
         mTouchStartX = x;
         mTouchStartY = y;
-        mTouchState = TOUCH_CLICK; // assume click
+        mTouchState = TouchState.CLICK; // assume click
         startLongPressCheck();
         break;
 
       case MotionEvent.ACTION_MOVE:
         switch (mTouchState) {
-          case TOUCH_CLICK:
+          case CLICK:
             if (shouldStartScrolling(x, y)) {
               // started scrolling so this can't be a long press
               removeCallbacks(mLongPressRunnable);
 
-              mTouchState = TOUCH_SCROLL;
+              mTouchState = TouchState.SCROLLING;
             }
             break;
-          case TOUCH_SCROLL:
+          case SCROLLING:
             scroll(mPrevY - y);
             break;
           default:
@@ -413,12 +413,12 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
         removeCallbacks(mLongPressRunnable);
 
         switch (mTouchState) {
-          case TOUCH_CLICK:
+          case CLICK:
             clickPosition(x, y);
             break;
         }
 
-        mTouchState = TOUCH_NONE;
+        mTouchState = TouchState.NONE;
         break;
     }
 
@@ -430,7 +430,6 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
 
-    mWidth = w;
     mHeight = h;
 
     mColumnCount = (w - MIN_PADDING) / (ELEMENT_SIZE + MIN_PADDING);
@@ -438,7 +437,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
     mGridBlock = mPadding + ELEMENT_SIZE;
     mVisibleRowCount = (int) Math.ceil(mHeight / ((float) mGridBlock));
 
-    mElementAnimator = new ElementAnimator(mWidth, mGridBlock, mColumnCount);
+    mElementAnimator = new ElementAnimator(w, mGridBlock, mColumnCount);
     mElementAdapter.notifyDataSetChanged();//
   }
 
@@ -498,19 +497,12 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
   }
 
   private void scroll(float delta) {
-    mScrollDistance += (int) (delta);
-
-    if (mScrollDistance < MIN_SCROLL) {
-      mScrollDistance = MIN_SCROLL;
-    } else if (mScrollDistance > mMaxScroll) {
-      mScrollDistance = mMaxScroll;
-    }
+    mScrollPosition = Constrain.doubleBound(MIN_SCROLL, mScrollPosition + (int) delta, mMaxScroll);
 
     requestLayout();
   }
 
   private boolean shouldStartScrolling(float x, float y) {
-
     return Math.abs(x - mTouchStartX) > SCROLL_THRESHOLD || Math.abs(y - mTouchStartY) > SCROLL_THRESHOLD;
   }
 
@@ -519,7 +511,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
       @Override
       public void run() {
-        if (mTouchState == TOUCH_CLICK) {
+        if (mTouchState == TouchState.CLICK) {
           longClickPosition(mTouchStartX, mTouchStartY);
         }
       }
@@ -537,12 +529,12 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
       ClipData data = ClipData.newPlainText("", "");
 
       View.DragShadowBuilder sb = new ElementView.DragShadowBuilder(elementView, mElementAdapter
-          .getItem(position).getType());
+          .getItem(position));
 
       elementView.startDrag(data, sb, (Integer) position, 0);
       mElementAdapter.startDragging(position);
     }
-    mTouchState = TOUCH_NONE;
+    mTouchState = TouchState.NONE;
   }
 
   @Override
@@ -615,9 +607,9 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
       mElementsInFirstRow = mCount % mColumnCount == 0 ? mColumnCount : mCount % mColumnCount;
     }
 
-    mRowCount = (mCount - mElementsInFirstRow) / mColumnCount + 1;
+    int rowCount = (mCount - mElementsInFirstRow) / mColumnCount + 1;
 
-    mMaxScroll = (mPadding + mRowCount * mGridBlock) - (int) mHeight;
+    mMaxScroll = (mPadding + rowCount * mGridBlock) - (int) mHeight;
 
     // max scroll must be bigger than MIN_SCROLL
     mMaxScroll = (mMaxScroll < MIN_SCROLL) ? MIN_SCROLL : mMaxScroll;

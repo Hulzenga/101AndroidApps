@@ -42,14 +42,14 @@ public class ElementActivity extends DemoActivity implements ElementAnimationCal
 
 
   public void addElement(View v) {
-    mAdapter.add(new Element());
+    mAdapter.add(Element.getRandomElement());
   }
 
   // the code for this should ideally have been implemented inside the
   // snakeview
   public void addMultipleElements(View v) {
     mAddNMoreElements = 4;
-    addElement(null);
+    addElement(v);
   }
 
   private void enableButtons() {

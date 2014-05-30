@@ -11,12 +11,12 @@ import java.util.List;
 class ElementAnimator {
 
   public static final long ANIMATION_LENGTH_SHORT = 250L;
-  public static final long ANIMATION_LENGTH_LONG  = 1000L;
+  public static final long ANIMATION_LENGTH_LONG = 1000L;
 
   private float mWidth;
   private float mGridBlock;
 
-  private int  mColumnCount;
+  private int mColumnCount;
   private long mAStep;
 
   private PropertyValuesHolder mPvhFirstRowInsertion;
@@ -28,14 +28,15 @@ class ElementAnimator {
   private PropertyValuesHolder mPvhStartUp;
   private PropertyValuesHolder mPvhStartDown;
 
-  private List<PropertyValuesHolder> mPvhMoveLeftForwardInAboveRowList   = new ArrayList<PropertyValuesHolder>();
-  private List<PropertyValuesHolder> mPvhMoveLeftForwardInSameRowList    = new ArrayList<PropertyValuesHolder>();
-  private List<PropertyValuesHolder> mPvhMoveLeftBackwardInSameRowList   = new ArrayList<PropertyValuesHolder>();
-  private List<PropertyValuesHolder> mPvhMoveLeftBackWardInBelowRowList  = new ArrayList<PropertyValuesHolder>();
-  private List<PropertyValuesHolder> mPvhMoveRightForwardInAboveRowList  = new ArrayList<PropertyValuesHolder>();
-  private List<PropertyValuesHolder> mPvhMoveRightForwardInSameRowList   = new ArrayList<PropertyValuesHolder>();
-  private List<PropertyValuesHolder> mPvhMoveRightBackwardInSameRowList  = new ArrayList<PropertyValuesHolder>();
-  private List<PropertyValuesHolder> mPvhMoveRightBackwardInBelowRowList = new ArrayList<PropertyValuesHolder>();
+  private List<PropertyValuesHolder> mPvhMoveLeftForwardInAboveRowList = new ArrayList<>();
+  private List<PropertyValuesHolder> mPvhMoveLeftForwardInSameRowList = new ArrayList<>();
+  private List<PropertyValuesHolder> mPvhMoveLeftBackwardInSameRowList = new ArrayList<>();
+  private List<PropertyValuesHolder> mPvhMoveLeftBackWardInBelowRowList = new ArrayList<>();
+  private List<PropertyValuesHolder> mPvhMoveRightForwardInAboveRowList = new ArrayList<>();
+  private List<PropertyValuesHolder> mPvhMoveRightForwardInSameRowList = new ArrayList<>();
+  private List<PropertyValuesHolder> mPvhMoveRightBackwardInSameRowList = new ArrayList<>();
+  private List<PropertyValuesHolder> mPvhMoveRightBackwardInBelowRowList = new ArrayList<>();
+  private List<Animator> mAnimatorReturnList = new ArrayList<>();
 
   public ElementAnimator(float width, float gridBlock, int columnCount) {
     mWidth = width;
@@ -114,6 +115,7 @@ class ElementAnimator {
   }
 
   public Animator doNothingAnimator(View view) {
+
     return ObjectAnimator.ofFloat(view, View.ALPHA, 1.0f, 1.0f).setDuration(ANIMATION_LENGTH_SHORT);
   }
 
@@ -147,12 +149,9 @@ class ElementAnimator {
     return ObjectAnimator.ofPropertyValuesHolder(view, mPvhMoveDown).setDuration(ANIMATION_LENGTH_SHORT);
   }
 
-    /*
-     * Row shift Animators
-     */
-
-  private List<Animator> mAnimatorReturnList = new ArrayList<Animator>();
-
+  /*
+   * Row shift Animators
+   */
   public List<Animator> moveEvenRowDown(View view, int rowIndex) {
 
     mAnimatorReturnList.clear();
