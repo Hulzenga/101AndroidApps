@@ -4,7 +4,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
-import com.hulzenga.ioi.android.util.ConstraintEnforcer;
+import com.hulzenga.ioi.android.util.Constrain;
 import com.hulzenga.ioi.android.util.open_gl.ShaderTools;
 import com.hulzenga.ioi.android.util.open_gl.engine.SceneGraph;
 import com.hulzenga.ioi.android.util.open_gl.engine.SceneNode;
@@ -232,7 +232,7 @@ class BouncyBall3dRenderer implements GLSurfaceView.Renderer {
 
   public void touchMove(float dx, float dy) {
     mDeltaX += dx;
-    mDeltaY = ConstraintEnforcer.doubleBound(MIN_DELTA_Y, mDeltaY + dy, MAX_DELTA_Y);
+    mDeltaY = Constrain.doubleBound(MIN_DELTA_Y, mDeltaY + dy, MAX_DELTA_Y);
 
     updateViewMatrix();
   }

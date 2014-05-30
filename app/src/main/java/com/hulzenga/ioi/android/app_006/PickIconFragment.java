@@ -17,7 +17,7 @@ import android.widget.SimpleAdapter;
 
 import com.hulzenga.ioi.android.R;
 import com.hulzenga.ioi.android.app_006.SettingChangeListener.ChangeType;
-import com.hulzenga.ioi.android.util.ConstraintEnforcer;
+import com.hulzenga.ioi.android.util.Constrain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -165,7 +165,7 @@ public class PickIconFragment extends Fragment {
     DisplayMetrics metrics = new DisplayMetrics();
     getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
     int availableIconSpaces = (int) Math.floor(container.getWidth() / (metrics.density * 90.0));
-    mGridView.setNumColumns(ConstraintEnforcer.upperBound(mGridViewData.size(), availableIconSpaces));
+    mGridView.setNumColumns(Constrain.upperBound(mGridViewData.size(), availableIconSpaces));
 
     mAdapter = new SimpleAdapter(getActivity(), mGridViewData, R.layout.app_006_item_icon_description,
         new String[]{SETTING_ICON, SETTING_DESCRIPTION}, new int[]{R.id.app_006_icon,

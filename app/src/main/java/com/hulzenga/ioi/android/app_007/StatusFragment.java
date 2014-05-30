@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hulzenga.ioi.android.R;
-import com.hulzenga.ioi.android.util.ConstraintEnforcer;
+import com.hulzenga.ioi.android.util.Constrain;
 import com.hulzenga.ioi.android.util.ScreenMetrics;
 
 public class StatusFragment extends Fragment {
@@ -117,7 +117,7 @@ public class StatusFragment extends Fragment {
   public void penaltyPoints(int points) {
     // only do the animation and update if there are actual pennalty points
     if (points > 0) {
-      mScore = ConstraintEnforcer.lowerBound(0, mScore - points);
+      mScore = Constrain.lowerBound(0, mScore - points);
       mScoreDeltaText.setText("-" + points);
       mScoreDeltaText.setTextColor(Color.RED);
       AnimatorSet set = new AnimatorSet();

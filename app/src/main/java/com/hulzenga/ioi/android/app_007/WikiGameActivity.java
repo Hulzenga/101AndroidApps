@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.hulzenga.ioi.android.DemoActivity;
 import com.hulzenga.ioi.android.R;
-import com.hulzenga.ioi.android.util.ConstraintEnforcer;
+import com.hulzenga.ioi.android.util.Constrain;
 import com.hulzenga.ioi.android.util.DeveloperTools;
 
 import org.jsoup.Jsoup;
@@ -232,7 +232,7 @@ public class WikiGameActivity extends DemoActivity implements ButtonsFragment.Op
 
     mProgressBar.setProgress(i);
     mLinkText.setText(getResources().getString(R.string.app_007_downloadProgress) + " ("
-        + ConstraintEnforcer.lowerBound(0, i) + "/" + mDifficulty.numberOfOptions + ")");
+        + Constrain.lowerBound(0, i) + "/" + mDifficulty.numberOfOptions + ")");
   }
 
   /**
