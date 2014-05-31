@@ -4,14 +4,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 import com.hulzenga.ioi.android.app_005.ElementSnakeView.ElementAnimationCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ElementActivity extends DemoActivity implements ElementAnimationCallback {
+public class ElementActivity extends AppActivity implements ElementAnimationCallback {
 
   private ElementSnakeView mElementsSnakeView;
   private Button           mAddElementButton;

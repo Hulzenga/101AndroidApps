@@ -10,10 +10,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 
-public class BouncyBall3dActivity extends DemoActivity {
+public class BouncyBall3dActivity extends AppActivity {
 
   private BouncyBall3dGLSurfaceView mGLSurfaceView;
   private BouncyBallGame mGame;

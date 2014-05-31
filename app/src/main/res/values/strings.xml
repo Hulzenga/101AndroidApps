@@ -3,10 +3,12 @@
 
     <!-- Generic Strings -->
     <string name="generic_empty_string">""</string>
+    <string name="app_menu_infoTitle">info</string>
 
-    <!-- Table of content Strings -->
-    <string name="app_name">101 Android Apps</string>
-    <string name="root_app_image">This image gives an impression of the app</string>
+    <!-- App 000: Table of Contents -->
+    <string name="app_000_title">101 Android Apps</string>
+    <string name="app_000_shortDescription">An open source collection of simple Android apps</string>
+    <string name="app_000_item_icon">A small icon representing the app</string>
     <!-- App 001 -->
     <string name="app_001_title">HelloWorld</string>
     <string name="app_001_shortDescription">displays the world famous hello world string</string>
@@ -33,9 +35,16 @@
     <string name="app_005_shortDescription">Elemental fun with a custom AdapterView, animations and drag\'n\'drop</string>
     <string name="app_005_addElementButton">Add Element</string>
     <string name="app_005_addMultipleElementsButton">Add 5 Elements</string>
+    <string name="app_005_elementDescription">Element Image</string>
     <!-- App 006 -->
     <string name="app_006_title">Simple Camera</string>
     <string name="app_006_shortDescription">A simple camera app</string>
+    <string name="app_006_cameraSelectDescription">select camera</string>
+    <string name="app_006_flashButtonDescription">set flash</string>
+    <string name="app_006_colorEffectDescription">select color filter</string>
+    <string name="app_006_exposureButtonDescription">set exposure</string>
+    <string name="app_006_settingsButtonDescription">change settings</string>
+    <string name="app_006_galleryButtonDescription">go to gallery</string>
     <!-- App 007 -->
     <string name="app_007_title">A Wikipedia Game</string>
     <string name="app_007_shortDescription">Identify Wikipedia articles by their outgoing links</string>
@@ -56,6 +65,7 @@
     <!-- App 008 -->
     <string name="app_008_title">Open Overheid</string>
     <string name="app_008_shortDescription">Dutch government public feed reader</string>
+    <string name="app_008_noActionBarError">Error: ActionBar not available</string>
     <!-- App 009 -->
     <string name="app_009_title">Thumbs Up Web Server</string>
     <string name="app_009_shortDescription">A simple web server</string>
@@ -63,19 +73,12 @@
     <string name="app_009_service_title">Thumbs Up Service</string>
     <string name="app_009_server_running_message">Server running at</string>
     <string name="app_009_start_server_instruction">Flip the thumb to launch the server</string>
+    <string name="app_009_thumbsUpButtonDescriptionStatusDown">thumbs up server status: down</string>
     <!-- App 010 -->
     <string name="app_010_title">Compass</string>
     <string name="app_010_shortDescription">Basic compass app</string>
     <string name="app_010_lock_screen">Lock Screen Rotation</string>
-    <string name="app_005_elementDescription">Element Image</string>
-    <string name="app_008_noActionBarError">Error: ActionBar not available</string>
-    <string name="app_009_thumbsUpButtonDescriptionStatusDown">thumbs up server status: down</string>
-    <string name="app_006_cameraSelectDescription">select camera</string>
-    <string name="app_006_flashButtonDescription">set flash</string>
-    <string name="app_006_colorEffectDescription">select color filter</string>
-    <string name="app_006_exposureButtonDescription">set exposure</string>
-    <string name="app_006_settingsButtonDescription">change settings</string>
-    <string name="app_006_galleryButtonDescription">go to gallery</string>
+
 
 
 </resources>

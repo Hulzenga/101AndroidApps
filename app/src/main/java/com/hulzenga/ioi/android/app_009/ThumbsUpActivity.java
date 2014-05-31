@@ -14,13 +14,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 
 /**
  * Created by jouke on 20-4-14.
  */
-public class ThumbsUpActivity extends DemoActivity {
+public class ThumbsUpActivity extends AppActivity {
 
   private static final String TAG = "ThumbsUpActivity";
 

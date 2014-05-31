@@ -1,16 +1,15 @@
 package com.hulzenga.ioi.android.app_008;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 
-public class OverheidActivity extends DemoActivity {
+public class OverheidActivity extends AppActivity {
 
   private final String TAG = "OverheidActivity";
 

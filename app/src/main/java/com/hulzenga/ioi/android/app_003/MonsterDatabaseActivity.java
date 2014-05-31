@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 import com.hulzenga.ioi.android.app_003.MonsterEditDialog.EditDialogListener;
 import com.hulzenga.ioi.android.app_003.database.MonsterContract;
@@ -32,7 +32,7 @@ import com.hulzenga.ioi.android.app_003.database.MonsterProvider;
  * "http://www.vogella.com/articles/AndroidSQLite/article.html">http://www.
  * vogella.com/articles/AndroidSQLite/article.html</a >
  */
-public class MonsterDatabaseActivity extends DemoActivity implements LoaderManager.LoaderCallbacks<Cursor>,
+public class MonsterDatabaseActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor>,
                                                                      EditDialogListener {
 
   // private state keeping

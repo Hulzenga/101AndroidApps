@@ -2,10 +2,10 @@ package com.hulzenga.ioi.android.app_001;
 
 import android.os.Bundle;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 
-public class HelloWorldActivity extends DemoActivity {
+public class HelloWorldActivity extends AppActivity {
 
 
   @Override

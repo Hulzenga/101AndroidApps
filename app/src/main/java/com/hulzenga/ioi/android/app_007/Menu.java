@@ -8,9 +8,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.hulzenga.ioi.android.R;
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 
-public class Menu extends DemoActivity {
+public class Menu extends AppActivity {
 
   private static final String  TAG               = "Menu";
   private              boolean mInPickDifficulty = false;

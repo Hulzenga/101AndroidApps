@@ -5,15 +5,15 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
-import com.hulzenga.ioi.android.DemoActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HighScores extends DemoActivity {
+public class HighScores extends AppActivity {
 
   private static final String DIFFICULTY = "difficulty";
   private ListView    mHighScoreList;

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_000_longDescription">
+        101 Android Apps is an open source repository of simple Android apps. For more information
+        about specific apps do a long click on the chosen app in this menu, or click the info menu
+        button when inside the app.
+
+        The complete source of these apps is available at:
+        <a href="github.com/Hulzenga">github.com/Hulzenga</a>
+    </string>
+    <string name="app_001_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_002_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_003_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_004_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_005_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_006_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_007_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_008_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_009_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+    <string name="app_010_longDescription">
+        The simplest possible activity with a single TextView.
+    </string>
+
+</resources>

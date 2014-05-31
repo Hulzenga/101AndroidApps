@@ -16,13 +16,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 
 /**
  * Created by jouke on 24-4-14.
  */
-public class CompassActivity extends DemoActivity {
+public class CompassActivity extends AppActivity {
 
   private CompassView         mCompassView;
   private CompassDetailsView  mCompassDetailsView;

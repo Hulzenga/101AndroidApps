@@ -10,15 +10,15 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
-import com.hulzenga.ioi.android.DemoActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Review extends DemoActivity {
+public class Review extends AppActivity {
 
   private static final String NAME    = "name";
   private static final String ADDRESS = "adress";

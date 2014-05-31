@@ -24,7 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 import com.hulzenga.ioi.android.app_006.PickIconFragment.ParameterGroup;
 import com.hulzenga.ioi.android.util.DeveloperTools;
@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleCameraActivity extends DemoActivity implements SettingChangeListener {
+public class SimpleCameraActivity extends AppActivity implements SettingChangeListener {
 
   private static final String TAG = "SIMPLE_CAM_ACTIVITY";
 

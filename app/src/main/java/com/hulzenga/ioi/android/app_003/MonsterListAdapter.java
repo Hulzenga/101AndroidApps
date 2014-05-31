@@ -26,7 +26,7 @@ class MonsterListAdapter extends SimpleCursorAdapter {
     // add a tag to the LinearLayout of each view containing the id and name
     // of the element
     LinearLayout layout = (LinearLayout) view.findViewById(R.id.app_003_linearItemLayout);
-    layout.setTag(R.id.app_003_item_id, cursor.getLong(0));
+    layout.setTag(R.id.app_003_item_id,  cursor.getLong(0));
     layout.setTag(R.id.app_003_item_name, cursor.getString(1));
   }
 }

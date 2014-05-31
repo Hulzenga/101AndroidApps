@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
 import com.hulzenga.ioi.android.util.Constrain;
 import com.hulzenga.ioi.android.util.DeveloperTools;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class WikiGameActivity extends DemoActivity implements ButtonsFragment.OptionSelectionListener,
+public class WikiGameActivity extends AppActivity implements ButtonsFragment.OptionSelectionListener,
                                                               StatusFragment.TimeOutListener {
   public static final  String SAVED_AND_PLAYED_WIKIS     = "saved_and_played";
   public static final  String BUNDLE_DIFFICULTY          = "difficulty";

@@ -2,9 +2,9 @@ package com.hulzenga.ioi.android.app_002;
 
 import android.os.Bundle;
 
-import com.hulzenga.ioi.android.DemoActivity;
+import com.hulzenga.ioi.android.AppActivity;
 
-public class BouncyBallsActivity extends DemoActivity {
+public class BouncyBallsActivity extends AppActivity {
 
   private BouncyBallsView bouncyBallView;
 
