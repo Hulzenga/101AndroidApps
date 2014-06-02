@@ -9,11 +9,11 @@ import com.hulzenga.ioi.android.R;
 import com.hulzenga.ioi.android.app_005.ElementSnakeView.ElementAnimationCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ElementActivity extends AppActivity implements ElementAnimationCallback {
 
-  private ElementSnakeView mElementsSnakeView;
   private Button           mAddElementButton;
   private Button           mAddMultipleElementsButton;
 
@@ -28,18 +28,31 @@ public class ElementActivity extends AppActivity implements ElementAnimationCall
     setContentView(R.layout.app_005_activity_elements);
 
     // link up member views
-    mElementsSnakeView = (ElementSnakeView) findViewById(R.id.app_005_ElementsGridView);
+    ElementSnakeView mElementsSnakeView = (ElementSnakeView) findViewById(R.id.app_005_ElementsGridView);
     mAddElementButton = (Button) findViewById(R.id.app_005_addElementButton);
     mAddMultipleElementsButton = (Button) findViewById(R.id.app_005_addMultipleElementsButton);
 
+    List<Element> elementalList;
+    if (savedInstanceState != null && savedInstanceState.containsKey("elements")) {
+      final Element[] elements = (Element[]) savedInstanceState.get("elements");
+      elementalList = new ArrayList<>(Arrays.asList(elements));
+    } else {
+      elementalList = new ArrayList<>();
+    }
 
-    List<Element> elementalList = new ArrayList<Element>();
     mAdapter = new ElementAdapter(this, R.layout.app_005_item_element, elementalList);
 
     mElementsSnakeView.setAdapter(mAdapter);
     mElementsSnakeView.registerAnimationCallback(this);
   }
 
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    final List<Element> elementList = mAdapter.getElements();
+    final Element[] elements = elementList.toArray(new Element[elementList.size()]);
+    outState.putSerializable("elements", elements);
+    super.onSaveInstanceState(outState);
+  }
 
   public void addElement(View v) {
     mAdapter.add(Element.getRandomElement());

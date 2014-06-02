@@ -72,6 +72,10 @@ class ElementAdapter extends ArrayAdapter<Element> {
     return mElementIdMap.get(mElements.get(position));
   }
 
+  public List<Element> getElements() {
+    return mElements;
+  }
+
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
 

@@ -30,9 +30,10 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
   private static final String TAG = "ELEMENTS_VIEW";
   //TODO: This needs to be changed to be pixel density dependent
-  private static final int ELEMENT_SIZE = 100;
-  private static final int MIN_PADDING = 15;
+  private static final int ELEMENT_SIZE_DIP = 80;
+  private static final int MIN_PADDING_DIP = 8;
   private static final int MIN_SCROLL = 0;
+
   private static final int ANIMATION_NEW_ELEMENT = 0;
   private static final int ANIMATION_NEW_ELEMENT_SHIFT_ROW = 1;
   private static final int ANIMATION_REMOVE_ELEMENT = 2;
@@ -46,6 +47,8 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
   private TouchState mTouchState = TouchState.NONE;
   private static final int SCROLL_THRESHOLD = 10;
   private final int mElementMeasureSpec;
+  private int mElementSizePix;
+  private int mMinPaddingPix;
   /**
    * Views that need to be cleaned before they can be recycled
    */
@@ -95,7 +98,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
     super(context, attrs);
     Element.loadBitmaps(context);
 
-    mElementMeasureSpec = MeasureSpec.makeMeasureSpec(ELEMENT_SIZE, MeasureSpec.EXACTLY);
+    mElementMeasureSpec = MeasureSpec.makeMeasureSpec(mElementSizePix, MeasureSpec.EXACTLY);
 
     mReleaseOnEndListener = new AnimatorListener() {
 
@@ -246,7 +249,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
 
     if (position < mElementsInFirstRow) {
       final int left = mPadding + mGridBlock * (mColumnCount - mElementsInFirstRow + position);
-      child.layout(left, mPadding - mScrollPosition, left + ELEMENT_SIZE, mGridBlock - mScrollPosition);
+      child.layout(left, mPadding - mScrollPosition, left + mElementSizePix, mGridBlock - mScrollPosition);
     } else {
       // all other rows
       row = (position - mElementsInFirstRow) / mColumnCount + 1;
@@ -262,7 +265,7 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
         left = mPadding + rowIndex * mGridBlock;
       }
 
-      child.layout(left, top, left + ELEMENT_SIZE, top + ELEMENT_SIZE);
+      child.layout(left, top, left + mElementSizePix, top + mElementSizePix);
     }
 
     if (mDoAnimation) {
@@ -431,14 +434,16 @@ public class ElementSnakeView extends AdapterView<ElementAdapter> implements Ele
     super.onSizeChanged(w, h, oldw, oldh);
 
     mHeight = h;
+    mElementSizePix = (int) (ELEMENT_SIZE_DIP*getResources().getDisplayMetrics().density);
+    mMinPaddingPix = (int) (MIN_PADDING_DIP*getResources().getDisplayMetrics().density);
 
-    mColumnCount = (w - MIN_PADDING) / (ELEMENT_SIZE + MIN_PADDING);
-    mPadding = (w - mColumnCount * ELEMENT_SIZE) / (mColumnCount + 1);
-    mGridBlock = mPadding + ELEMENT_SIZE;
+    mColumnCount = (w - mMinPaddingPix) / (mElementSizePix + mMinPaddingPix);
+    mPadding = (w - mColumnCount * mElementSizePix) / (mColumnCount + 1);
+    mGridBlock = mPadding + mElementSizePix;
     mVisibleRowCount = (int) Math.ceil(mHeight / ((float) mGridBlock));
 
     mElementAnimator = new ElementAnimator(w, mGridBlock, mColumnCount);
-    mElementAdapter.notifyDataSetChanged();//
+    calculateGridDimensions();
   }
 
   @Override

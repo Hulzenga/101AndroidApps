@@ -24,29 +24,29 @@ android {
     }
 }
 
-
-task compileSVG {
-    def dLDPI = "app/src/main/res/drawable-ldpi/"
-    def dMDPI = "app/src/main/res/drawable-mdpi/"
-    def dHDPI = "app/src/main/res/drawable-hdpi/"
-    def dXHDPI = "app/src/main/res/drawable-xhdpi/"
-    def dXXHDPI = "app/src/main/res/drawable-xxhdpi/"
-
-    def sLDPI = 67.5
-    def sMDPI = 90
-    def sHDPI = 135
-    def sXHDPI = 180
-    def sXXHDPI = 270
-
-    def files = file('svg').listFiles({f -> f ==~ /.*.svg/} as FileFilter).sort{f1, f2 -> f2.lastModified() <=> f1.lastModified()}
-    files.each { File file ->
-        ("inkscape -d " + String.valueOf(sLDPI) + " -e "+dLDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
-        ("inkscape -d " + String.valueOf(sMDPI) + " -e "+dMDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
-        ("inkscape -d " + String.valueOf(sHDPI) + " -e "+dHDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
-        ("inkscape -d " + String.valueOf(sXHDPI) + " -e "+dXHDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
-        ("inkscape -d " + String.valueOf(sXXHDPI) + " -e "+dXXHDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
-    }
-}
+//TODO: figure out how to put this in an independent task which doesn't get run on assembleDebug
+//task compileSVG {
+//    def dLDPI = "app/src/main/res/drawable-ldpi/"
+//    def dMDPI = "app/src/main/res/drawable-mdpi/"
+//    def dHDPI = "app/src/main/res/drawable-hdpi/"
+//    def dXHDPI = "app/src/main/res/drawable-xhdpi/"
+//    def dXXHDPI = "app/src/main/res/drawable-xxhdpi/"
+//
+//    def sLDPI = 67.5
+//    def sMDPI = 90
+//    def sHDPI = 135
+//    def sXHDPI = 180
+//    def sXXHDPI = 270
+//
+//    def files = file('svg').listFiles({f -> f ==~ /.*.svg/} as FileFilter).sort{f1, f2 -> f2.lastModified() <=> f1.lastModified()}
+//    files.each { File file ->
+//        ("inkscape -d " + String.valueOf(sLDPI) + " -e "+dLDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
+//        ("inkscape -d " + String.valueOf(sMDPI) + " -e "+dMDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
+//        ("inkscape -d " + String.valueOf(sHDPI) + " -e "+dHDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
+//        ("inkscape -d " + String.valueOf(sXHDPI) + " -e "+dXHDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
+//        ("inkscape -d " + String.valueOf(sXXHDPI) + " -e "+dXXHDPI+file.getName().substring(0, file.getName().length()-4) + ".png " + file).execute()
+//    }
+//}
 
 
 dependencies {
