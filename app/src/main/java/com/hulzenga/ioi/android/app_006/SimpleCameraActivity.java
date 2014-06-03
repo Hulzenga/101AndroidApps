@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 
 import com.hulzenga.ioi.android.AppActivity;
 import com.hulzenga.ioi.android.R;
-import com.hulzenga.ioi.android.app_006.PickIconFragment.ParameterGroup;
 import com.hulzenga.ioi.android.util.DeveloperTools;
 import com.hulzenga.ioi.android.util.DeveloperTools.Statefulness;
 import com.hulzenga.ioi.android.util.FileManager;
@@ -38,40 +36,50 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.InjectViews;
+
 public class SimpleCameraActivity extends AppActivity implements SettingChangeListener {
 
-  private static final String TAG = "SIMPLE_CAM_ACTIVITY";
+  private static final String TAG = "SimpleCameraActivity";
 
   private Camera          mCamera;
   private PictureCallback mPicture;
 
-  private SimpleCameraPreview mPreview;
   private boolean mVideoMode = false;
   private boolean mFilming   = false;
 
-  private List<ImageButton> mImageButtons;
-  private ImageButton       mCameraSelectButton;
-  private ImageButton       mFlashButton;
-  private ImageButton       mColorEffectButton;
-  private ImageButton       mExposureButton;
-  private ImageButton       mSettingButton;
-  private ImageButton       mCaptureButton;
+  @InjectView(R.id.app_006_cameraPreview)      SimpleCameraPreview mPreview;
 
-  private Drawable mCaptureButtonStart;
-  private Drawable mCaptureButtonPause;
+  @InjectView(R.id.app_006_cameraSelectButton) ImageButton mCameraSelectButton;
+  @InjectView(R.id.app_006_flashButton)        ImageButton mFlashButton;
+  @InjectView(R.id.app_006_colorEffectButton)  ImageButton mColorEffectButton;
+  @InjectView(R.id.app_006_exposureButton)     ImageButton mExposureButton;
+  @InjectView(R.id.app_006_settingsButton)     ImageButton mSettingButton;
+  @InjectView(R.id.app_006_captureButton)      ImageButton mCaptureButton;
+
+  @InjectViews({
+      R.id.app_006_cameraSelectButton,
+      R.id.app_006_flashButton,
+      R.id.app_006_colorEffectButton,
+      R.id.app_006_exposureButton,
+      R.id.app_006_settingsButton,
+      R.id.app_006_captureButton
+  }) List<ImageButton> mImageButtons;
 
   private int mSelectedCamera = 0;
 
   private Fragment            mActiveFragment;
   private Fragment            mActiveLevel2MenuFragment;
-  private PickIconFragment    mCameraFragment;
-  private PickIconFragment    mFlashFragment;
-  private PickIconFragment    mColorEffectFragment;
+  private SettingIconFragment mCameraFragment;
+  private SettingIconFragment mFlashFragment;
+  private SettingIconFragment mColorEffectFragment;
   private ExposureFragment    mExposureFragment;
   private SettingMenuFragment mSettingMenuFragment;
-  private EmptyFragment mEmptyFragment = EmptyFragment.newInstance();
+  private EmptyFragment       mEmptyFragment = EmptyFragment.newInstance();
 
-  private ChangeType mOpenSubMenu;
+  private ChangeType mChangeType;
 
   /*
    * As far as I can tell the ISO setting cannot be retrieved using the normal
@@ -94,7 +102,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    // AppId needs the camera feature, if it doesn't exist exit
+    // This App needs the camera feature, if it doesn't exist exit
     if (!hasCameraFeature(this)) {
       Toast.makeText(this, "No camera available", Toast.LENGTH_LONG).show();
       Log.d(TAG, "does not have camera feature");
@@ -110,37 +118,16 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
     // hide the status bar
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-    // inflate main activity view
+    // inflate main activity view and inject views
     setContentView(R.layout.app_006_activity_simple_cam);
+    ButterKnife.inject(this);
 
-    // acquire required view references
-    mPreview = (SimpleCameraPreview) findViewById(R.id.app_006_cameraPreview);
 
-    mCameraSelectButton = (ImageButton) findViewById(R.id.app_006_cameraSelectButton);
-    mFlashButton = (ImageButton) findViewById(R.id.app_006_flashButton);
-    mColorEffectButton = (ImageButton) findViewById(R.id.app_006_colorEffectButton);
-    mExposureButton = (ImageButton) findViewById(R.id.app_006_exposureButton);
-    mSettingButton = (ImageButton) findViewById(R.id.app_006_settingsButton);
-    mCaptureButton = (ImageButton) findViewById(R.id.app_006_captureButton);
-
-    // add all image buttons together in a list for easy access
-    mImageButtons = new ArrayList<ImageButton>();
-    mImageButtons.add(mCameraSelectButton);
-    mImageButtons.add(mFlashButton);
-    mImageButtons.add(mColorEffectButton);
-    mImageButtons.add(mExposureButton);
-    mImageButtons.add(mSettingButton);
-    mImageButtons.add(mCaptureButton);
 
     // make image buttons stateful for a clearer user experience
     for (ImageButton imageButton : mImageButtons) {
       DeveloperTools.makeImageButtonStateful(imageButton, Statefulness.greyWhenDisabled);
     }
-
-    // get drawables for the capture button so these can be controlled
-    // programmatically
-    mCaptureButtonStart = mCaptureButton.getDrawable();
-    mCaptureButtonPause = getResources().getDrawable(R.drawable.app_006_pause_capture);
 
     // setup camera callbacks
     mPicture = new PictureCallback() {
@@ -186,8 +173,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
       cameraFacings.add(String.valueOf(info.facing));
     }
 
-    mCameraFragment = PickIconFragment
-        .newInstance(this, cameraFacings.get(0), cameraFacings, ParameterGroup.CAMERA);
+    mCameraFragment = SettingIconFragment.newInstance(Setting.IconGroup.CAMERA);
   }
 
   /**
@@ -264,7 +250,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
     toggleActiveFragment(mExposureFragment, R.id.app_006_bottomFragmentContainer);
   }
 
-  public void toggleActiveFragment(Fragment fragment, int container) {
+  private void toggleActiveFragment(Fragment fragment, int container) {
     FragmentManager fragmentManager = getFragmentManager();
     FragmentTransaction ft = fragmentManager.beginTransaction();
 
@@ -278,7 +264,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
           if (mActiveLevel2MenuFragment != null) {
             ft.remove(mActiveLevel2MenuFragment);
             mActiveLevel2MenuFragment = null;
-            mOpenSubMenu = null;
+            mChangeType = null;
           } else {
             ft.remove(mEmptyFragment);
           }
@@ -305,7 +291,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
       } else {
         fm.beginTransaction().remove(mEmptyFragment).remove(mSettingMenuFragment).commit();
       }
-      mOpenSubMenu = null;
+      mChangeType = null;
       mActiveLevel2MenuFragment = null;
       mActiveFragment = null;
     } else {
@@ -356,7 +342,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
           mCaptureButton.setEnabled(true);
 
           mFilming = true;
-          mCaptureButton.setImageDrawable(mCaptureButtonPause);
+          mCaptureButton.setImageDrawable(getResources().getDrawable(R.drawable.app_006_pause_capture));
           mMediaRecorder.start();
         } else {
           releaseMediaRecorder();
@@ -407,7 +393,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
     enableButtons();
 
     mFilming = false;
-    mCaptureButton.setImageDrawable(mCaptureButtonStart);
+    mCaptureButton.setImageDrawable(getResources().getDrawable(R.drawable.app_006_start_capture));
   }
 
   private void releaseMediaRecorder() {
@@ -442,10 +428,8 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
              */
       Parameters params = mCamera.getParameters();
 
-      mFlashFragment = PickIconFragment.newInstance(SimpleCameraActivity.this, params.getFlashMode(),
-          params.getSupportedFlashModes(), ParameterGroup.FLASH);
-      mColorEffectFragment = PickIconFragment.newInstance(SimpleCameraActivity.this, params.getColorEffect(),
-          params.getSupportedColorEffects(), ParameterGroup.EFFECTS);
+      mFlashFragment = SettingIconFragment.newInstance(Setting.IconGroup.FLASH);
+      mColorEffectFragment = SettingIconFragment.newInstance(Setting.IconGroup.COLOR_EFFECT);
 
       mExposureFragment = ExposureFragment.newInstance(SimpleCameraActivity.this,
           params.getMinExposureCompensation(), params.getExposureCompensation(),
@@ -467,9 +451,6 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
     // no input allowed while opening a new camera
     disableButtons();
     new OpenCameraTask().execute(cameraId);
-
-    CameraInfo cameraInfo = new CameraInfo();
-    Camera.getCameraInfo(cameraId, cameraInfo);
   }
 
   @Override
@@ -535,7 +516,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
         // activity
         mCurrentISO = (String) newSetting;
         mPreview.stopPreview();
-        params.set("POSSIBLE_ISO_SETTINGS", (String) newSetting);
+        params.set("iso", (String) newSetting);
         mCamera.setParameters(params);
         mPreview.startPreview();
         break;
@@ -568,10 +549,10 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
 
     FragmentTransaction ft = fm.beginTransaction();
     // check if this is meant to close the already opened sub menu
-    if (type == mOpenSubMenu) {
+    if (type == mChangeType) {
       // close the opened sub menu
       mActiveLevel2MenuFragment = null;
-      mOpenSubMenu = null;
+      mChangeType = null;
       ft.add(R.id.app_006_settingMenuContainer, mEmptyFragment);
     } else {
       // open a new sub menu
@@ -607,7 +588,7 @@ public class SimpleCameraActivity extends AppActivity implements SettingChangeLi
               + String.valueOf(type));
           break;
       }
-      mOpenSubMenu = type;
+      mChangeType = type;
       ft.add(R.id.app_006_settingMenuContainer, mActiveLevel2MenuFragment);
     }
 

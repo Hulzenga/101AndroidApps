@@ -6,12 +6,8 @@
     <string name="app_menu_infoTitle">info</string>
 
     <!-- App 000: Table of Contents -->
-    <string name="app_000_title">101 Android Apps</string>
-    <string name="app_000_shortDescription">An open source collection of simple Android apps</string>
     <string name="app_000_item_icon">A small icon representing the app</string>
     <!-- App 001 -->
-    <string name="app_001_title">HelloWorld</string>
-    <string name="app_001_shortDescription">displays the world famous hello world string</string>
     <string name="app_001_hello_world">Hello world!</string>
     <!-- App 002 -->
     <string name="app_002_title">Bouncy Balls</string>

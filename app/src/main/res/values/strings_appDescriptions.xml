@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App 000 -->
+    <string name="app_000_title">101 Android Apps</string>
+    <string name="app_000_shortDescription">
+        An open source collection of simple Android apps
+    </string>
     <string name="app_000_longDescription">
         101 Android Apps is an open source repository of simple Android apps. For more
         information about specific apps do a long click on the chosen app in this menu, or
@@ -7,36 +13,58 @@
         \n
         The complete source of these apps is available at:\n
         https://www.github.com/Hulzenga
+    </string>
 
+    <!-- App 001 -->
+    <string name="app_001_title">HelloWorld</string>
+    <string name="app_001_shortDescription">
 
     </string>
     <string name="app_001_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 002 -->
     <string name="app_002_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 003 -->
     <string name="app_003_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 004 -->
     <string name="app_004_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 005 -->
     <string name="app_005_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 006 -->
     <string name="app_006_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 007 -->
     <string name="app_007_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 008 -->
     <string name="app_008_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 009 -->
     <string name="app_009_longDescription">
         The simplest possible activity with a single TextView.
     </string>
+
+    <!-- App 010 -->
     <string name="app_010_longDescription">
         The simplest possible activity with a single TextView.
     </string>
